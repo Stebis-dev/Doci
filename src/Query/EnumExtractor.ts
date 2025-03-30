@@ -11,6 +11,7 @@ export interface EnumDetail {
 export class EnumExtractor extends BaseQueryEngine {
     type = ExtractorType.Enum;
 
+    // TODO add enumerators parameters
     extract(tree: Tree): EnumDetail[] | [] {
         const query = `
             (enum_declaration

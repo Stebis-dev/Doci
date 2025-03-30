@@ -1,11 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Parser } from './Parser/Parser';
-import { Tree } from 'tree-sitter';
 import { MethodExtractor } from './Query/MethodExtractor';
 import { ExtractorType } from './Query/BaseQueryEngine';
 import { EnumExtractor } from './Query/EnumExtractor';
-
 
 export class DocumentationGenerator {
   private readonly supportedExtensions = ['.cs', '.js'];

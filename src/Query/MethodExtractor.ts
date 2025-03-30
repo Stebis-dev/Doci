@@ -12,6 +12,7 @@ export interface MethodDetail {
 export class MethodExtractor extends BaseQueryEngine {
     type = ExtractorType.Method;
 
+    // TODO add detail method parameters (name, type, default value, etc.)
     extract(tree: Tree): MethodDetail[] | [] {
         const query = `
             (method_declaration 
