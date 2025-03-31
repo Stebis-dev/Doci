@@ -4,6 +4,8 @@ import { Parser } from './Parser/Parser';
 import { MethodExtractor } from './Query/MethodExtractor';
 import { ExtractorType } from './Query/BaseQueryEngine';
 import { EnumExtractor } from './Query/EnumExtractor';
+import { MethodUsageExtractor } from './Query/MethodUsageExtractor';
+import { ClassExtractor } from './Query/ClassExtractor';
 
 export class DocumentationGenerator {
   private readonly supportedExtensions = ['.cs', '.js'];
@@ -33,10 +35,10 @@ export class DocumentationGenerator {
 
       const abstractSyntaxTree = parser.parse(file); // returns TreeSitter.Tree 
 
-
       const extractors = [
-        new MethodExtractor(parser),
-        new EnumExtractor(parser),
+        new ClassExtractor(parser),
+        // new MethodExtractor(parser),
+        // new EnumExtractor(parser),
       ];
 
       const doc: { filePath: string } & { [key in ExtractorType]?: any } = {

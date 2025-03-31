@@ -3,11 +3,15 @@
 ## TODO
 
 - [x] Script for downloading various programming language projects from github
-- [ ] add test to test parser output with different programming language projects
-- [ ] add query for quering class
-- [ ] add parser method references
 - [ ] add electron.js for basic application
+
+### Parser
+
+- [ ] add test to test parser output with different programming language projects
+- [ ] add query for querying class
+- [ ] add parser method references
 - [ ] add file import module for projects
+- [ ] add parser logging
 
 ## Project Initial Setup and Development Run
 

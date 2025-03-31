@@ -4,6 +4,7 @@ import { Parser } from '../Parser/Parser';
 
 export enum ExtractorType {
     Method = 'methods',
+    MethodUsage = 'methodUsage',
     Class = 'classes',
     Function = 'functions',
     Enum = 'enums',
