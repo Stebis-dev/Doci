@@ -1,6 +1,6 @@
 // Query/BaseQueryEngine.ts
 import { Tree } from 'tree-sitter';
-import { Parser } from '../Parser/Parser';
+import { Parser } from '../../Parser/Parser';
 
 export enum ExtractorType {
     Method = 'methods',

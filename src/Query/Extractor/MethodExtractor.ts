@@ -17,7 +17,7 @@ export class MethodExtractor extends BaseQueryEngine {
         const query = `
             (method_declaration 
                 name: (identifier) @method.name 
-                parameters: (parameter_list (parameter) @method.parameter) 
+                parameters: (parameter_list (parameter) @method.parameter)* 
                 body: (block) @method.body
             )
             `;

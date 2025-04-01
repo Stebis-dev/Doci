@@ -9,8 +9,6 @@ export interface ClassDetail {
     endPosition: number;
 }
 
-// TODO create assignMethodsToClasses.ts for assigning methods to classes
-// leave separated query logic for better modularity and maintainability
 // TODO add class properties (name, type, default value, etc.)
 
 export class ClassExtractor extends BaseQueryEngine {
@@ -19,17 +17,16 @@ export class ClassExtractor extends BaseQueryEngine {
     extract(tree: Tree): ClassDetail[] | [] {
         const query = `
         (class_declaration
-    name: (identifier) @class.name
-    body: (declaration_list
-      (method_declaration
-        name: (identifier) @class.method
-      )*
-      (property_declaration
-        name: (identifier) @class.property
-      )*
-    )
-)
-
+            name: (identifier) @class.name
+            body: (declaration_list
+                (method_declaration
+                    name: (identifier) @class.method
+                )*
+                (property_declaration
+                    name: (identifier) @class.property
+                )*
+            )
+        )
         `;
         const matches = this.runQuery(tree, query);
 
@@ -37,7 +34,7 @@ export class ClassExtractor extends BaseQueryEngine {
 
         matches.forEach((match) => {
             const nameCapture = match.captures.find(capture => capture.name === 'class.name');
-            const methodCaptures = match.captures.filter(capture => capture.name === 'class.name');
+            const methodCaptures = match.captures.filter(capture => capture.name === 'class.method');
             const propertyCaptures = match.captures.filter(capture => capture.name === 'class.property');
 
             if (!nameCapture) return;
@@ -52,9 +49,14 @@ export class ClassExtractor extends BaseQueryEngine {
                     name: nameCapture.node.text,
                     methods: methods,
                     properties: properties,
-                    startPosition: nameCapture.node.startPosition.row,
-                    endPosition: nameCapture.node.endPosition.row,
+                    startPosition: nameCapture.node.startPosition as unknown as number,
+                    endPosition: nameCapture.node.endPosition as unknown as number,
                 });
+            }
+            else {
+                const existingClass = classMap.get(classKey)!;
+                existingClass.methods.push(...methods);
+                existingClass.properties.push(...properties);
             }
         });
 

@@ -1,11 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Parser } from './Parser/Parser';
-import { MethodExtractor } from './Query/MethodExtractor';
-import { ExtractorType } from './Query/BaseQueryEngine';
-import { EnumExtractor } from './Query/EnumExtractor';
-import { MethodUsageExtractor } from './Query/MethodUsageExtractor';
-import { ClassExtractor } from './Query/ClassExtractor';
+import { MethodDetail, MethodExtractor } from './Query/Extractor/MethodExtractor';
+import { ExtractorType } from './Query/Extractor/BaseQueryEngine';
+import { EnumExtractor } from './Query/Extractor/EnumExtractor';
+import { MethodUsageExtractor } from './Query/Extractor/MethodUsageExtractor';
+import { ClassDetail, ClassExtractor } from './Query/Extractor/ClassExtractor';
+import { assignMethodsToClasses } from './Query/assignMethodsToClasses';
 
 export class DocumentationGenerator {
   private readonly supportedExtensions = ['.cs', '.js'];
@@ -37,7 +38,7 @@ export class DocumentationGenerator {
 
       const extractors = [
         new ClassExtractor(parser),
-        // new MethodExtractor(parser),
+        new MethodExtractor(parser),
         // new EnumExtractor(parser),
       ];
 
@@ -45,9 +46,17 @@ export class DocumentationGenerator {
         filePath: file,
       };
 
+      const extractedData: { [key in ExtractorType]?: any } = {};
       extractors.forEach(extractor => {
-        doc[extractor.type] = extractor.extract(abstractSyntaxTree);
+        extractedData[extractor.type] = extractor.extract(abstractSyntaxTree);
       });
+
+      if (extractedData[ExtractorType.Class] && extractedData[ExtractorType.Method]) {
+        const classes = extractedData[ExtractorType.Class] as ClassDetail[];
+        const methods = extractedData[ExtractorType.Method] as MethodDetail[];
+        doc[ExtractorType.Class] = assignMethodsToClasses(classes, methods);
+      }
+
 
       return doc;
     } catch (error) {
