@@ -10,23 +10,29 @@ export interface ClassDetail {
 }
 
 // TODO add class properties (name, type, default value, etc.)
+// TODO parse constructor methods 
+// TODO parse comments that are before the class
 
+// TODO get OOP details (inheritance, interfaces, etc.)
 export class ClassExtractor extends BaseQueryEngine {
     type = ExtractorType.Class;
 
     extract(tree: Tree): ClassDetail[] | [] {
         const query = `
-        (class_declaration
-            name: (identifier) @class.name
-            body: (declaration_list
-                (method_declaration
-                    name: (identifier) @class.method
-                )*
-                (property_declaration
-                    name: (identifier) @class.property
-                )*
+            (class_declaration
+                name: (identifier) @class.name
+                body: (
+                    declaration_list
+                    (
+                        (method_declaration
+                            name: (identifier) @class.method
+                        )*
+                        (property_declaration
+                            name: (identifier) @class.property
+                        )*
+                    )
+                )
             )
-        )
         `;
         const matches = this.runQuery(tree, query);
 

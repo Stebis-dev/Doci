@@ -8,19 +8,21 @@ export interface MethodDetail {
     startPosition: number;
     endPosition: number;
 }
+// TODO add detail method parameters (name, type, default value, etc.)
+// TODO parse comments that are before the methods and properties
 
 export class MethodExtractor extends BaseQueryEngine {
     type = ExtractorType.Method;
 
-    // TODO add detail method parameters (name, type, default value, etc.)
     extract(tree: Tree): MethodDetail[] | [] {
         const query = `
             (method_declaration 
                 name: (identifier) @method.name 
-                parameters: (parameter_list (parameter) @method.parameter)* 
+                parameters: (
+                    parameter_list (parameter) @method.parameter)* 
                 body: (block) @method.body
             )
-            `;
+        `;
 
         const matches = this.runQuery(tree, query);
 
