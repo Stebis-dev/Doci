@@ -14,7 +14,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@doci/importer": ["libs/importer/src/index.ts"],
+      "@doci/project-importer": ["project-importer/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
