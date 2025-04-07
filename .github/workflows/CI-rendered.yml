@@ -56,7 +56,7 @@ jobs:
 
       # Create 404.html for GitHub Pages SPA routing
       - name: Create 404.html
-        run: cp dist/apps/renderer/browser/index.html dist/apps/renderer/browser/404.html
+        run: cp dist/apps/renderer/index.html dist/apps/renderer/404.html
 
       # Setup GitHub Pages
       - name: Setup GitHub Pages
