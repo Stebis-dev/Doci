@@ -3,10 +3,10 @@ name: CI/CD - Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master
+      - 'main'
+    paths:
+      - 'apps/renderer/**'
   pull_request:
-    branches:
-      - master
   workflow_dispatch:
 
 permissions:
