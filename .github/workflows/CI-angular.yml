@@ -5,7 +5,7 @@ on:
     branches:
       - 'main'
     paths:
-      - 'apps/renderer/**'
+      - 'apps/angular-client/**'
   pull_request:
   workflow_dispatch:
 
@@ -41,34 +41,26 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      # Optional: Install Cypress if needed for your project
-      # - run: npx cypress install
-
       - name: Setup NX affected SHAs
         uses: nrwl/nx-set-shas@v4
 
       #   - name: Lint affected projects
       # run: npx nx affected -t lint
 
-      # Build the renderer app (your Angular app)
-      - name: Build renderer app
-        run: npx nx build renderer --configuration=production --base-href /${{ github.event.repository.name }}/
+      - name: Build angular-client app
+        run: npx nx build angular-client --configuration=production --base-href /${{ github.event.repository.name }}/
 
-      # Create 404.html for GitHub Pages SPA routing
       - name: Create 404.html
-        run: cp dist/apps/renderer/index.html dist/apps/renderer/404.html
+        run: cp build/apps/angular-client/index.html build/apps/angular-client/404.html
 
-      # Setup GitHub Pages
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
-      # Upload the built app as an artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist/apps/renderer'
+          path: './build/apps/angular-client'
 
-      # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

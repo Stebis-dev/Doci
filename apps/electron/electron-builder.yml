@@ -1,0 +1,48 @@
+appId: 'com.doci.code-documentation-tool'
+productName: 'Doci'
+copyright: 'Copyright © 2025'
+
+directories:
+  output: build/packages/electron-app
+
+files:
+  - from: build/apps/electron
+    to: .
+    filter: ['**/*']
+  - from: dist/apps/angular-client
+    to: renderer
+    filter: ['**/*']
+
+# Mac OS configuration
+mac:
+  target:
+    - dmg
+    - zip
+
+# Windows configuration
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+
+# Linux configuration
+linux:
+  target:
+    - AppImage
+    - deb
+    - rpm
+
+# NSIS configuration for Windows installer
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: 'Code Documentation Tool'
+
+# Publish configuration (for auto-updates)
+publish:
+  provider: github
+  owner: your-github-username
+  repo: your-repo-name

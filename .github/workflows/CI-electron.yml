@@ -1,0 +1,150 @@
+name: Build and Release Electron App
+
+on:
+  push:
+    # Run on tag pushes matching v*, e.g. v1.0.0
+    tags:
+      - 'v*'
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to create (e.g. 1.0.0)'
+        required: true
+        default: ''
+
+jobs:
+  build:
+    name: Build Electron App (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-latest
+            platform: mac
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      # For Linux, install additional dependencies
+      - name: Install Linux dependencies
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxtst-dev libpng++-dev icnsutils graphicsmagick rpm
+
+      # Setup NX if using NX workspace
+      - name: Setup NX affected SHAs
+        uses: nrwl/nx-set-shas@v4
+
+      # Build the renderer app (Angular)
+      - name: Build renderer app
+        run: npx nx build renderer --configuration=production
+
+      # Build the electron app
+      - name: Build electron app
+        run: npx nx build electron --configuration=production
+
+      # Get version from tag or input
+      - name: Get version
+        id: get_version
+        shell: bash
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION=${{ github.event.inputs.version }}
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      # Electron-builder to create distributable packages
+      - name: Build distributables
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx electron-builder --${{ matrix.platform }} --publish never --config electron-builder.yml
+
+      # Upload artifacts for different platforms
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.platform }}-build
+          path: |
+            build/packages/electron-app/*.exe
+            build/packages/electron-app/*.dmg
+            build/packages/electron-app/*.AppImage
+            build/packages/electron-app/*.snap
+            build/packages/electron-app/*.deb
+            build/packages/electron-app/*.rpm
+            build/packages/electron-app/*.zip
+            build/packages/electron-app/*.yml
+            build/packages/electron-app/*.blockmap
+          if-no-files-found: ignore
+
+  # release:
+  #   name: Create GitHub Release
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write
+  #   if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     # Download all artifacts
+  #     - name: Download all artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         path: artifacts
+
+  #     # Get version from tag or input
+  #     - name: Get version
+  #       id: get_version
+  #       run: |
+  #         if [[ "${{ github.ref_type }}" == "tag" ]]; then
+  #           VERSION=${GITHUB_REF#refs/tags/v}
+  #         else
+  #           VERSION=${{ github.event.inputs.version }}
+  #         fi
+  #         echo "VERSION=$VERSION" >> $GITHUB_ENV
+  #         echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  #     # Create Release
+  #     - name: Create Release
+  #       id: create_release
+  #       uses: softprops/action-gh-release@v1
+  #       with:
+  #         tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', github.event.inputs.version) }}
+  #         name: Release v${{ env.VERSION }}
+  #         draft: true
+  #         prerelease: false
+  #         files: |
+  #           artifacts/**/*.exe
+  #           artifacts/**/*.dmg
+  #           artifacts/**/*.AppImage
+  #           artifacts/**/*.snap
+  #           artifacts/**/*.deb
+  #           artifacts/**/*.rpm
+  #           artifacts/**/*.zip
+  #         generate_release_notes: true
