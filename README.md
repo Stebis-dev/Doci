@@ -9,7 +9,7 @@ This is monorepo project created with [Nx workspace](https://nx.dev)
 To run for development you can use these two commands:
 
 ```sh
-npx nx serve electron:renderer
+npx nx serve electron:angular-client
 ```
 
 ```sh
@@ -19,7 +19,7 @@ npm run dev
 To create a production bundle:
 
 ```sh
-npx nx build renderer && npx nx build electron
+npx nx build angular-client && npx nx build electron
 ```
 
 To package electron:
@@ -31,7 +31,7 @@ npx nx package electron
 To see all available targets to run for a project, run:
 
 ```sh
-npx nx show project renderer
+npx nx show project angular-client
 ```
 
 These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.

@@ -8,7 +8,7 @@
       "dependsOn": [
         {
           "projects": [
-            "renderer"
+            "angular-client"
           ],
           "target": "build"
         }
@@ -18,7 +18,7 @@
         "{options.outputPath}"
       ],
       "options": {
-        "outputPath": "dist/apps/electron",
+        "outputPath": "build/apps/electron",
         "main": "apps/electron/src/main.ts",
         "tsConfig": "apps/electron/tsconfig.app.json",
         "assets": [
@@ -43,7 +43,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx run renderer:serve",
+          "nx run angular-client:serve",
           "nx run electron:serve-electron"
         ]
       }
@@ -61,9 +61,9 @@
       "executor": "nx-electron:package",
       "options": {
         "name": "electron",
-        "frontendProject": "renderer",
-        "sourcePath": "dist/apps",
-        "outputPath": "dist/packages",
+        "frontendProject": "angular-client",
+        "sourcePath": "build/apps",
+        "outputPath": "build/packages",
         "prepackageOnly": true
       }
     },
@@ -71,9 +71,9 @@
       "executor": "nx-electron:make",
       "options": {
         "name": "electron",
-        "frontendProject": "renderer",
-        "sourcePath": "dist/apps",
-        "outputPath": "dist/executables"
+        "frontendProject": "angular-client",
+        "sourcePath": "build/apps",
+        "outputPath": "build/executables"
       }
     },
     "lint": {
