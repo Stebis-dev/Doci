@@ -5,6 +5,7 @@ on:
     # Run on tag pushes matching v*, e.g. v1.0.0
     tags:
       - 'v*'
+  pull_request:
   # Allow manual triggering
   workflow_dispatch:
     inputs:
