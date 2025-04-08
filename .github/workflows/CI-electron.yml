@@ -57,8 +57,8 @@ jobs:
         uses: nrwl/nx-set-shas@v4
 
       # Build the renderer app (Angular)
-      - name: Build renderer app
-        run: npx nx build renderer --configuration=production
+      - name: Build angular-client app
+        run: npx nx build angular-client --configuration=production
 
       # Build the electron app
       - name: Build electron app
