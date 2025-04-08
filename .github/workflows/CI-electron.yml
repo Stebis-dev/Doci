@@ -52,10 +52,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libxtst-dev libpng++-dev icnsutils graphicsmagick rpm
 
-      # Setup NX if using NX workspace
-      - name: Setup NX affected SHAs
-        uses: nrwl/nx-set-shas@v4
-
       # Build the renderer app (Angular)
       - name: Build angular-client app
         run: npx nx build angular-client --configuration=production
