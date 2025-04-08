@@ -41,17 +41,15 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Setup NX affected SHAs
-        uses: nrwl/nx-set-shas@v4
-
-      #   - name: Lint affected projects
-      # run: npx nx affected -t lint
+      # Lint affected projects (optional, uncomment if needed)
+      # - name: Lint affected projects
+      #   run: npx nx affected -t lint
 
       - name: Build angular-client app
         run: npx nx build angular-client --configuration=production --base-href /${{ github.event.repository.name }}/
 
       - name: Create 404.html
-        run: cp build/apps/angular-client/index.html build/apps/angular-client/404.html
+        run: cp dist/apps/angular-client/index.html dist/apps/angular-client/404.html
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
@@ -59,7 +57,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './build/apps/angular-client'
+          path: './dist/apps/angular-client'
 
       - name: Deploy to GitHub Pages
         id: deployment
