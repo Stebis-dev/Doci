@@ -23,3 +23,4 @@ ipcMain.handle('get-app-version', (event) => {
 ipcMain.on('quit', (event, code) => {
   app.exit(code);
 });
+

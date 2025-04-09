@@ -24,20 +24,6 @@
       "{workspaceRoot}/.github/workflows/doci-build.yml"
     ]
   },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ],
-        "parallel": 3
-      }
-    }
-  },
   "targetDefaults": {
     "@angular-devkit/build-angular:application": {
       "cache": true,

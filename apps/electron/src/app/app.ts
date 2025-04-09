@@ -1,4 +1,4 @@
-import { BrowserWindow, shell, screen } from 'electron';
+import { BrowserWindow, shell, screen, ipcMain } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
@@ -68,13 +68,46 @@ export default class App {
       width: width,
       height: height,
       show: false,
+      frame: false,
       webPreferences: {
         contextIsolation: true,
         backgroundThrottling: false,
         preload: join(__dirname, 'main.preload.js'),
       },
     });
-    App.mainWindow.setMenu(null);
+
+
+    ipcMain.on('window-minimize', () => {
+      App.mainWindow.minimize();
+    });
+
+    ipcMain.on('window-maximize', () => {
+      if (App.mainWindow.isMaximized()) {
+        App.mainWindow.unmaximize();
+      } else {
+        App.mainWindow.maximize();
+      }
+    });
+
+    ipcMain.on('window-close', () => {
+      App.mainWindow.close();
+    });
+
+    ipcMain.handle('window-isMaximized', () => {
+      return App.mainWindow ? App.mainWindow.isMaximized() : false;
+    });
+
+    App.mainWindow.on('maximize', () => {
+      App.mainWindow.webContents.send('window-maximized', true);
+    });
+
+    App.mainWindow.on('unmaximize', () => {
+      App.mainWindow.webContents.send('window-maximized', false);
+    });
+
+
+
+    // App.mainWindow.setMenu(null);
     App.mainWindow.center();
 
     // if main window is ready to show, close the splash window and show the main window
