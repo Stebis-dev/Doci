@@ -2,7 +2,7 @@ appId: 'com.doci.code-documentation-tool'
 productName: 'Doci'
 copyright: 'Copyright © 2025'
 
-asar: true
+asar: false
 
 directories:
   output: build/packages/electron-app
