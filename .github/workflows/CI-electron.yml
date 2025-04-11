@@ -47,11 +47,13 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Build angular-client app
-        run: npx nx build angular-client --configuration=production
+      # - name: Build angular-client app
+      #   run: npx nx build angular-client --configuration=production
 
       - name: Build electron app
-        run: npx nx build electron --configuration=production
+        run: |
+          npx nx build electron --configuration=production
+          echo "const Main = require('./electron/main.js');" >> build/apps/electron/index.js
 
       - name: Debug electron directory structure
         run: |
