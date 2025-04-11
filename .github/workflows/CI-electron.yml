@@ -1,11 +1,11 @@
-name: Build and Release Electron App
+name: CI/CD - Build Electron App Installers
 # TODO fix build release pipeline
 on:
   push:
     # Run on tag pushes matching v*, e.g. v1.0.0
     tags:
       - 'v*'
-  # pull_request:
+  pull_request:
   # Allow manual triggering
   workflow_dispatch:
     inputs:
@@ -25,10 +25,10 @@ jobs:
         include:
           - os: windows-latest
             platform: windows
-          # - os: ubuntu-latest
-          #   platform: linux
-          # - os: macos-latest
-          #   platform: mac
+          - os: ubuntu-latest
+            platform: linux
+          - os: macos-latest
+            platform: mac
 
     steps:
       - name: Checkout code
@@ -47,7 +47,7 @@ jobs:
 
       # # For Linux, install additional dependencies
       # - name: Install Linux dependencies
-      #   if: matrix.platform == 'linux'
+      # if: matrix.platform == 'linux'
       #   run: |
       #     sudo apt-get update
       #     sudo apt-get install -y libxtst-dev libpng++-dev icnsutils graphicsmagick rpm
