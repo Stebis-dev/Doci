@@ -8,6 +8,7 @@ interface ElectronWindowAPI {
     closeWindow: () => void;
     isMaximized: () => Promise<boolean>;
     onMaximizedChange: (callback: (isMaximized: boolean) => void) => () => void;
+    invoke: (arg0: string) => Promise<string>;
 }
 
 @Injectable({
@@ -15,7 +16,6 @@ interface ElectronWindowAPI {
 })
 export class ElectronService implements OnDestroy {
     private _isMaximized = new BehaviorSubject<boolean>(false);
-
     public isMaximized$: Observable<boolean> = this._isMaximized.asObservable();
 
     private cleanupListener: (() => void) | null = null;
@@ -29,7 +29,7 @@ export class ElectronService implements OnDestroy {
         }
     }
 
-    private get windowAPI(): ElectronWindowAPI | undefined {
+    private get electronAPI(): ElectronWindowAPI | undefined {
         if (this.platformService.isElectron) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return (window as any).electronAPI;
@@ -38,12 +38,12 @@ export class ElectronService implements OnDestroy {
     }
 
     private async init() {
-        if (this.windowAPI) {
-            const isMaximized = await this.windowAPI.isMaximized();
+        if (this.electronAPI) {
+            const isMaximized = await this.electronAPI.isMaximized();
             this._isMaximized.next(isMaximized);
 
             // Set up listener for changes
-            this.cleanupListener = this.windowAPI.onMaximizedChange((isMaximized) => {
+            this.cleanupListener = this.electronAPI.onMaximizedChange((isMaximized) => {
                 // Use NgZone to ensure Angular detects the change
                 this.ngZone.run(() => {
                     this._isMaximized.next(isMaximized);
@@ -52,16 +52,23 @@ export class ElectronService implements OnDestroy {
         }
     }
 
+    openDirectoryDialog(): Promise<string | null> {
+        if (this.electronAPI) {
+            return this.electronAPI.invoke('open-directory-dialog');
+        }
+        return Promise.resolve(null);
+    }
+
     minimize() {
-        this.windowAPI?.minimizeWindow();
+        this.electronAPI?.minimizeWindow();
     }
 
     maximize() {
-        this.windowAPI?.maximizeWindow();
+        this.electronAPI?.maximizeWindow();
     }
 
     close() {
-        this.windowAPI?.closeWindow();
+        this.electronAPI?.closeWindow();
     }
 
     ngOnDestroy() {

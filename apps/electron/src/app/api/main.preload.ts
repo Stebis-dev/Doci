@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
       callback(isMaximized);
     });
   },
+  // TODO ! Prevent renderer process from accessing Node.js APIs directly
+  invoke: (ipcChannel: string, ...args: any[]) => ipcRenderer.invoke(ipcChannel, ...args),
   platform: process.platform,
 
 });

@@ -3,7 +3,7 @@
  * between the frontend to the electron backend.
  */
 
-import { app, ipcMain } from 'electron';
+import { app, dialog, ipcMain } from 'electron';
 import { environment } from '../../environments/environment';
 
 export default class ElectronEvents {
@@ -19,8 +19,21 @@ ipcMain.handle('get-app-version', (event) => {
   return environment.version;
 });
 
+// TODO fix valid quit method fo application closing
 // Handle App termination
 ipcMain.on('quit', (event, code) => {
-  app.exit(code);
+  app.quit();
+  // app.exit(code);
 });
 
+ipcMain.handle('open-directory-dialog', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  });
+
+  if (result.canceled) {
+    return null;
+  }
+
+  return result.filePaths[0];
+});
