@@ -1,0 +1,66 @@
+<div
+  class="flex items-center justify-between h-[32px] bg-[#272727] text-white select-none"
+>
+  <div class="doci-titlebar-drag-region w-full h-full">
+    <div class="flex items-center h-full">
+      <app-branding />
+      <!-- TODO adding dropdown-hover to dropdown needs additional modification  -->
+      <!-- TODO add separator to divide options into categories -->
+      @for (menu of menuItems; track $index) {
+      <div class="dropdown p-0 m-0">
+        <button
+          class="doci-titlebar-menu-item text-white text-sm hover:bg-[#3b3a3a] px-2 rounded"
+        >
+          {{ menu.label }}
+        </button>
+        <ul
+          class="dropdown-content menu z-50 w-56 rounded-sm shadow-lg bg-[#3b3a3a] p-1 m-0"
+        >
+          @for (subMenu of menu.submenu; track $index) {
+          <li>
+            <a
+              class="text-white p-1 hover:bg-[#4b4a4a] flex justify-between items-center"
+              tabindex="0"
+              (click)="subMenu.action && executeAction(subMenu.action, $event)"
+              (keydown.enter)="(subMenu.action)"
+            >
+              <div class="flex items-center gap-2">
+                <span>{{ subMenu.label }}</span>
+              </div>
+            </a>
+          </li>
+          }
+        </ul>
+      </div>
+      }
+    </div>
+  </div>
+
+  @if(enableWindowControlButtons) {
+  <div class="h-full flex items-center">
+    <button
+      class="h-full px-4 flex items-center justify-center hover:bg-gray-700"
+      (click)="minimize()"
+    >
+      <app-icon name="Dash_lg" size="12"></app-icon>
+    </button>
+    <button
+      class="h-full px-4 flex items-center justify-center hover:bg-gray-700"
+      (click)="toggleMaximize()"
+    >
+      <!-- TODO fined better maximized svg icon -->
+      <app-icon
+        [name]="isMaximized ? 'Square_fill' : 'Square'"
+        size="12"
+      ></app-icon>
+    </button>
+
+    <button
+      class="h-8 px-4 flex items-center justify-center hover:bg-red-600"
+      (click)="close()"
+    >
+      <app-icon name="X_lg" size="12"></app-icon>
+    </button>
+  </div>
+  }
+</div>

@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["Doci"],
+  "cSpell.words": ["Doci", "titlebar", "unmaximize"],
   "editor.rulers": [80],
   "workbench.colorCustomizations": {
     "editorRuler.foreground": "#504e7b"
