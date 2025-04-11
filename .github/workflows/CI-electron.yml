@@ -21,13 +21,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest]
         include:
           - os: windows-latest
             platform: windows
           # need starcraft configuration
-          - os: ubuntu-latest
-            platform: linux
+          # - os: ubuntu-latest
+          # platform: linux
           # need api key
           # - os: macos-latest
           #   platform: mac
@@ -55,7 +55,7 @@ jobs:
 
       - name: Debug electron directory structure
         run: |
-          ls -la build\apps\electron
+          dir build\apps\electron
 
         # Get version from tag or input
       - name: Get version
@@ -79,7 +79,7 @@ jobs:
 
       - name: Debug electron directory structure
         run: |
-          ls -la build\packages\electron-app\win-unpacked\resources\app
+          dir build\packages\electron-app\win-unpacked\resources\app
 
       # Upload artifacts for different platforms
       - name: Upload artifacts
