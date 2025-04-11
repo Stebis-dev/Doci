@@ -55,7 +55,7 @@ jobs:
 
       - name: Debug electron directory structure
         run: |
-          dir build\apps\electron /s
+          dir build\apps\electron
 
         # Get version from tag or input
       - name: Get version
