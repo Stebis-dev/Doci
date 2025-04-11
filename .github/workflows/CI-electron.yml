@@ -55,7 +55,7 @@ jobs:
 
       - name: Debug electron directory structure
         run: |
-          dir build\apps\electron
+          ls -la build\apps\electron
 
         # Get version from tag or input
       - name: Get version
@@ -79,7 +79,7 @@ jobs:
 
       - name: Debug electron directory structure
         run: |
-          dir build\packages\electron-app\win-unpacked\resources\app
+          ls -la build\packages\electron-app\win-unpacked\resources\app
 
       # Upload artifacts for different platforms
       - name: Upload artifacts
