@@ -1,7 +1,9 @@
 <div
   class="flex items-center justify-between w-full h-[32px] bg-[#272727] text-white select-none"
 >
-  <div class="doci-titlebar-drag-region h-full">
+  <div
+    class="doci-titlebar-drag-region h-full w-full flex items-center justify-between"
+  >
     <div class="flex items-center h-full">
       <app-branding />
       <!-- TODO adding dropdown-hover to dropdown needs additional modification  -->
@@ -34,11 +36,9 @@
       </div>
       }
     </div>
-  </div>
-  <div
-    class="doci-titlebar-drag-region w-full flex items-center justify-center gap-2"
-  >
-    {{ projectName }}
+    <div class="flex items-center justify-center flex-grow">
+      {{ projectName }}
+    </div>
   </div>
   @if(enableWindowControlButtons) {
   <div class="h-full flex items-center">
