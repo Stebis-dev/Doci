@@ -2,15 +2,20 @@ appId: 'com.doci.code-documentation-tool'
 productName: 'Doci'
 copyright: 'Copyright © 2025'
 
+asar: false
+
 directories:
   output: build/packages/electron-app
 
 files:
   - from: build/apps/electron
+    to: electron
+    filter: ['**/*', '!package.json', '!index.js']
+  - from: build/apps/electron
     to: .
-    filter: ['**/*']
-  - from: dist/apps/angular-client
-    to: renderer
+    filter: ['package.json', 'index.js']
+  - from: build/apps/angular-client
+    to: angular-client
     filter: ['**/*']
 
 # Mac OS configuration
@@ -39,7 +44,7 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: 'Code Documentation Tool'
+  shortcutName: 'Doci'
 
 # Publish configuration (for auto-updates)
 publish:

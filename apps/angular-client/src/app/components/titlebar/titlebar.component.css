@@ -1,0 +1,7 @@
+.doci-titlebar-drag-region {
+  -webkit-app-region: drag;
+}
+
+.doci-titlebar-menu-item {
+  -webkit-app-region: no-drag;
+}
