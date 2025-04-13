@@ -1,6 +1,7 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { PlatformService } from './platform.service';
+import { FlatProject } from '@doci/sharedModels';
 
 interface ElectronWindowAPI {
     minimizeWindow: () => void;
@@ -8,13 +9,15 @@ interface ElectronWindowAPI {
     closeWindow: () => void;
     isMaximized: () => Promise<boolean>;
     onMaximizedChange: (callback: (isMaximized: boolean) => void) => () => void;
-    invoke: (arg0: string) => Promise<string>;
+    openDirectoryDialog(): () => Promise<string | null>;
+    importProject: (projectPath: string) => Promise<FlatProject>;
 }
 
 @Injectable({
     providedIn: 'root'
 })
 export class ElectronService implements OnDestroy {
+
     private _isMaximized = new BehaviorSubject<boolean>(false);
     public isMaximized$: Observable<boolean> = this._isMaximized.asObservable();
 
@@ -42,9 +45,7 @@ export class ElectronService implements OnDestroy {
             const isMaximized = await this.electronAPI.isMaximized();
             this._isMaximized.next(isMaximized);
 
-            // Set up listener for changes
             this.cleanupListener = this.electronAPI.onMaximizedChange((isMaximized) => {
-                // Use NgZone to ensure Angular detects the change
                 this.ngZone.run(() => {
                     this._isMaximized.next(isMaximized);
                 });
@@ -52,11 +53,31 @@ export class ElectronService implements OnDestroy {
         }
     }
 
-    openDirectoryDialog(): Promise<string | null> {
+    public async openDirectoryDialog(): Promise<string | null> {
         if (this.electronAPI) {
-            return this.electronAPI.invoke('open-directory-dialog');
+            const path = await this.electronAPI.openDirectoryDialog()
+            return path as unknown as string | null;
         }
         return Promise.resolve(null);
+    }
+
+    public async importProject(projectPath: string): Promise<FlatProject | null> {
+        try {
+            if (!this.electronAPI) {
+                throw new Error('Electron API is not available. This might be running in a non-Electron environment.');
+            }
+
+            const result = await this.electronAPI.importProject(projectPath);
+
+            if (!result) {
+                throw new Error('Failed to import project. No result returned : ' + result);
+            }
+
+            return result as FlatProject;
+        } catch (error) {
+            console.error('Failed to import project:', error);
+            return null;
+        }
     }
 
     minimize() {

@@ -5,7 +5,7 @@
 
 import { app, dialog, ipcMain } from 'electron';
 import { environment } from '../../environments/environment';
-
+import { importProject } from '../handler/projectImporter.handler';
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
     return ipcMain;
@@ -36,4 +36,8 @@ ipcMain.handle('open-directory-dialog', async () => {
   }
 
   return result.filePaths[0];
+});
+
+ipcMain.handle('import-project', async (_, projectPath) => {
+  return importProject(projectPath);
 });

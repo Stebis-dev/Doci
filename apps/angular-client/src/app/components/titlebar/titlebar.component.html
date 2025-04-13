@@ -1,7 +1,7 @@
 <div
-  class="flex items-center justify-between h-[32px] bg-[#272727] text-white select-none"
+  class="flex items-center justify-between w-full h-[32px] bg-[#272727] text-white select-none"
 >
-  <div class="doci-titlebar-drag-region w-full h-full">
+  <div class="doci-titlebar-drag-region h-full">
     <div class="flex items-center h-full">
       <app-branding />
       <!-- TODO adding dropdown-hover to dropdown needs additional modification  -->
@@ -16,7 +16,7 @@
         <ul
           class="dropdown-content menu z-50 w-56 rounded-sm shadow-lg bg-[#3b3a3a] p-1 m-0"
         >
-          @for (subMenu of menu.submenu; track $index) {
+          @for (subMenu of menu.submenu; track $index) { @if(subMenu.isShown) {
           <li>
             <a
               class="text-white p-1 hover:bg-[#4b4a4a] flex justify-between items-center"
@@ -29,13 +29,17 @@
               </div>
             </a>
           </li>
-          }
+          } }
         </ul>
       </div>
       }
     </div>
   </div>
-
+  <div
+    class="doci-titlebar-drag-region w-full flex items-center justify-center gap-2"
+  >
+    {{ projectName }}
+  </div>
   @if(enableWindowControlButtons) {
   <div class="h-full flex items-center">
     <button
