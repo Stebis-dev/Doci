@@ -3,6 +3,7 @@ import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
 import { format } from 'url';
+import GitHubAuthAPI from './api/github-auth.api';
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will
@@ -159,5 +160,7 @@ export default class App {
     App.application.on('window-all-closed', App.onWindowAllClosed); // Quit when all windows are closed.
     App.application.on('ready', App.onReady); // App is ready to load data
     App.application.on('activate', App.onActivate); // App is activated
+
+    GitHubAuthAPI.registerIpcHandlers();
   }
 }

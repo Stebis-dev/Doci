@@ -1,4 +1,4 @@
-import { FlatProject, IGNORED_PATTERNS, PARSABLE_EXTENSIONS, ProjectFile } from '@doci/sharedModels';
+import { FlatProject, IGNORED_PATTERNS, PARSABLE_EXTENSIONS, ProjectFile } from '@doci/shared';
 // TODO delete library
 import { directoryOpen } from 'browser-fs-access';
 // TODO add content reader of delete content from projectFile attribute
