@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "ms-azuretools.vscode-azurefunctions",
     "nrwl.angular-console",
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",

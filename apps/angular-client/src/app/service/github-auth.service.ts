@@ -17,32 +17,31 @@ export interface GitHubAuthCredentials {
     providedIn: 'root'
 })
 export class GitHubAuthService {
-    // private clientId = ENVIRONMENT.github.clientId;
-    // private clientSecret = ''; // Only needed for server-side OAuth flow, not stored in client
-    // private redirectUri = '';
-    private oauthState = ''; // TODO look into it
-    // private scopes = ENVIRONMENT.github.scopes;
-    private tokenStorageKey = 'github_auth_token';
+    private readonly clientId = ENVIRONMENT.github.webClientId;
+    private readonly scopes = ENVIRONMENT.github.scopes;
+    private readonly tokenStorageKey = 'github_auth_token';
+    private readonly azureFunctionUrl = ENVIRONMENT.azureFunctionUrl;
+
+    private readonly isProduction = window.location.hostname !== 'localhost' &&
+        window.location.hostname !== '127.0.0.1';
 
     private _isAuthenticated = new BehaviorSubject<boolean>(false);
     public isAuthenticated$: Observable<boolean> = this._isAuthenticated.asObservable();
 
     constructor(
-        private http: HttpClient,
-        private platformService: PlatformService,
-        private electronService: ElectronService
+        private readonly http: HttpClient,
+        private readonly platformService: PlatformService,
+        private readonly electronService: ElectronService
     ) {
         this.checkAuth();
     }
 
     public login(): Observable<GitHubAuthCredentials | null> {
-        // this.oauthState = this.generateRandomState(); // Create random state for CSRF protection
 
         if (this.platformService.isElectron) {
             return this.loginElectron();
         } else {
-            // return this.loginWeb();
-            return of(null);
+            return this.loginWeb();
         }
     }
 
@@ -94,33 +93,35 @@ export class GitHubAuthService {
         });
     }
 
-    // private loginWeb(): Observable<GitHubAuthCredentials | null> {
-    //     // Store state in localStorage for verification when GitHub redirects back
-    //     localStorage.setItem('github_oauth_state', this.oauthState);
+    private loginWeb(): Observable<GitHubAuthCredentials | null> {
+        console.log('environmentParam', this.isProduction);
 
-    //     // Redirect to GitHub OAuth login
-    //     window.location.href = this.buildAuthUrl();
+        const params = new URLSearchParams({
+            client_id: !this.isProduction ? ENVIRONMENT.github.defaultClientId : ENVIRONMENT.github.webClientId,
+            scope: this.scopes,
+        });
 
-    //     // This will never actually resolve because we're redirecting away
-    //     return of(null);
-    // }
+        const authUrl = ENVIRONMENT.github.url + params.toString();
+        console.log('Redirecting to GitHub OAuth login...', authUrl);
 
-    /**
-     * Handles the OAuth callback for Web
-     * This should be called from your callback component
-     */
-    public handleCallback(code: string, state: string): Observable<GitHubAuthCredentials | null> {
-        // Verify the state parameter to prevent CSRF attacks
-        const storedState = localStorage.getItem('github_oauth_state');
-        localStorage.removeItem('github_oauth_state'); // Clean up
+        window.location.href = authUrl;
 
-        if (state !== storedState) {
-            return of(null);
-        }
+        // This will never actually resolve because we're redirecting away
+        return of(null);
+    }
 
-        // In a real app, you'd call your backend to exchange the code for a token
-        // to avoid exposing the client secret
-        return this.http.post<GitHubAuthCredentials>('/api/github/token', { code })
+    public handleCallback(code: string): Observable<GitHubAuthCredentials | null> {
+        const environmentParam = !this.isProduction ? 'default' : 'web';
+
+        const url = `${this.azureFunctionUrl}?code=${code}&environment=${environmentParam}`;
+        const options = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: false
+        };
+
+        return this.http.get<GitHubAuthCredentials>(url, options)
             .pipe(
                 tap(credentials => {
                     this.storeCredentials(credentials);
@@ -133,25 +134,6 @@ export class GitHubAuthService {
             );
     }
 
-    /**
-     * Builds the GitHub authorization URL
-     */
-    // private buildAuthUrl(): string {
-    //     const params = new URLSearchParams({
-    //         client_id: this.clientId,
-    //         redirect_uri: this.redirectUri,
-    //         scope: this.scopes.join(' '),
-    //         state: this.oauthState,
-    //         response_type: 'code'
-    //     });
-
-    //     return `https://github.com/login/oauth/authorize?${params.toString()}`;
-    // }
-
-    // private generateRandomState(): string {
-    //     return Math.random().toString(36).substring(2, 15) +
-    //         Math.random().toString(36).substring(2, 15);
-    // }
 
     // TODO add expiration to environment
     // TODO add storing to separate service

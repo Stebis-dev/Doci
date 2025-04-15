@@ -1,16 +1,15 @@
 import { BrowserWindow, ipcMain, session, app } from 'electron';
 import * as url from 'url';
+import * as http from 'http';
 import * as https from 'https';
-import * as querystring from 'querystring';
 import App from '../app';
 import { ENVIRONMENT, GitHubAuthCredentials } from '@doci/shared';
 import { getEnv } from '../utils/env.util';
 
 export default class GitHubAuthAPI {
-    private static readonly clientId = getEnv('GITHUB_CLIENT_ID', '');
-    private static readonly clientSecret = getEnv('GITHUB_CLIENT_SECRET', ''); // TODO put into electron variables
-    private static readonly redirectUri = ENVIRONMENT.github.redirectUri.electron;
+    private static readonly clientId = ENVIRONMENT.github.electronClientId;
     private static readonly scopes = ENVIRONMENT.github.scopes;
+    private static readonly azureFunctionUrl = getEnv('AZURE_FUNCTION_URL') || 'http://localhost:7071/api/githubTokenExchange';
 
     static registerIpcHandlers(): void {
         if (App.isDevelopmentMode()) {
@@ -48,6 +47,8 @@ export default class GitHubAuthAPI {
             const githubUrl = ENVIRONMENT.github.url;
             const authUrl =
                 githubUrl + 'client_id=' + GitHubAuthAPI.clientId + '&scope=' + GitHubAuthAPI.scopes;
+
+            console.log('GitHub OAuth URL:', authUrl);
 
             authWindow.loadURL(authUrl);
             authWindow.show();
@@ -97,26 +98,17 @@ export default class GitHubAuthAPI {
 
     private static exchangeCodeForToken(code: string): Promise<GitHubAuthCredentials> {
         return new Promise((resolve, reject) => {
-            const tokenRequestData = querystring.stringify({
-                client_id: this.clientId,
-                client_secret: this.clientSecret,
-                code: code,
-                redirect_uri: this.redirectUri
-            });
+            // Call Azure Function instead of GitHub directly
+            const azureFunctionUrl = `${this.azureFunctionUrl}?code=${code}&environment=electron`;
 
-            const options = {
-                hostname: 'github.com',
-                port: 443,
-                path: '/login/oauth/access_token',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Content-Length': tokenRequestData.length,
-                    'Accept': 'application/json'
-                }
-            };
+            console.log('Calling Azure Function for token exchange:', azureFunctionUrl);
 
-            const req = https.request(options, (res) => {
+            const parsedUrl = url.parse(azureFunctionUrl);
+            const isHttps = parsedUrl.protocol === 'https:';
+
+            const requestModule = isHttps ? https : http;
+
+            const req = requestModule.get(azureFunctionUrl, (res) => {
                 let data = '';
 
                 res.on('data', (chunk) => {
@@ -128,29 +120,28 @@ export default class GitHubAuthAPI {
                         const response = JSON.parse(data);
 
                         if (response.error) {
-                            reject(new Error(`GitHub OAuth error: ${response.error_description || response.error}`));
+                            reject(new Error(`Azure Function error: ${response.error}`));
                             return;
                         }
 
                         const credentials: GitHubAuthCredentials = {
-                            accessToken: response.access_token,
-                            tokenType: response.token_type,
+                            accessToken: response.accessToken,
+                            tokenType: response.tokenType,
                             scope: response.scope,
-                            expiresAt: Date.now() + (response.expires_in ? response.expires_in * 1000 : 3600 * 1000)
+                            expiresAt: response.expiresAt
                         };
 
                         resolve(credentials);
                     } catch (error) {
-                        reject(new Error(`Failed to parse GitHub response: ${error.message}`));
+                        reject(new Error(`Failed to parse Azure Function response: ${error.message}`));
                     }
                 });
             });
 
             req.on('error', (error) => {
-                reject(new Error(`GitHub token request failed: ${error.message}`));
+                reject(new Error(`Azure Function request failed: ${error.message}`));
             });
 
-            req.write(tokenRequestData);
             req.end();
         });
     }

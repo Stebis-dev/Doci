@@ -6,12 +6,12 @@
   "author": "Gediminas Šeibokas",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
-    "build_electron": "npm run generate-env && nx run electron:build",
+    "build_electron": "nx run electron:build",
     "build_angular-client": "nx run angular-client:build",
-    "serve_electron": "npm run generate-env && nx run electron:serve",
+    "serve_electron": " nx run electron:serve",
     "serve_angular-client": "nx run angular-client:serve",
-    "package_electron": "npm run generate-env && nx run angular-client:build --configuration=production && nx run electron:build --configuration=production && npx nx package electron",
-    "electron_builder": "npm run generate-env && nx run angular-client:build --configuration=production && nx run electron:build --configuration=production && npx electron-builder --config electron-builder.yml"
+    "package_electron": "nx run angular-client:build --configuration=production && nx run electron:build --configuration=production && npx nx package electron",
+    "electron_builder": "nx run angular-client:build --configuration=production && nx run electron:build --configuration=production && npx electron-builder --config electron-builder.yml"
   },
   "build": {
     "appId": "com.doci.source",

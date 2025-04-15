@@ -3,5 +3,12 @@
   "editor.rulers": [80],
   "workbench.colorCustomizations": {
     "editorRuler.foreground": "#504e7b"
-  }
+  },
+  "azureFunctions.deploySubpath": "azure",
+  "azureFunctions.postDeployTask": "npm install (functions)",
+  "azureFunctions.projectLanguage": "TypeScript",
+  "azureFunctions.projectRuntime": "~4",
+  "debug.internalConsoleOptions": "neverOpen",
+  "azureFunctions.projectLanguageModel": 4,
+  "azureFunctions.preDeployTask": "npm prune (functions)"
 }
