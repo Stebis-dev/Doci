@@ -29,4 +29,9 @@ export class ProjectService {
             console.error('Error selecting directory:', error);
         }
     }
+
+    public setCurrentProject(project: FlatProject): void {
+        console.log('Setting current project:', project);
+        this.currentProjectSubject.next(project);
+    }
 }
