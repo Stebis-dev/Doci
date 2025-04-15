@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PlatformService } from './platform.service';
 import { ElectronService } from './electron.service';
-import { FlatProject } from '@doci/sharedModels';
+import { FlatProject } from '@doci/shared';
 import { importProjectBrowser } from '../utils/browserProjectImporter';
 
 @Injectable({

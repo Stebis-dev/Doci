@@ -8,7 +8,7 @@
     "postinstall": "electron-builder install-app-deps",
     "build_electron": "nx run electron:build",
     "build_angular-client": "nx run angular-client:build",
-    "serve_electron": "nx run electron:serve",
+    "serve_electron": " nx run electron:serve",
     "serve_angular-client": "nx run angular-client:serve",
     "package_electron": "nx run angular-client:build --configuration=production && nx run electron:build --configuration=production && npx nx package electron",
     "electron_builder": "nx run angular-client:build --configuration=production && nx run electron:build --configuration=production && npx electron-builder --config electron-builder.yml"
@@ -28,6 +28,8 @@
     "@angular/router": "~19.2.0",
     "browser-fs-access": "^0.35.0",
     "daisyui": "^5.0.17",
+    "dotenv": "^16.5.0",
+    "electron-is-dev": "^3.0.1",
     "rxjs": "~7.8.0",
     "zone.js": "~0.15.0"
   },

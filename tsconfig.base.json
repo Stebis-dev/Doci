@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@doci/sharedModels": ["libs/shared/index.ts"]
+      "@doci/shared": ["libs/shared/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

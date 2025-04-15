@@ -20,16 +20,21 @@
         >
           @for (subMenu of menu.submenu; track $index) { @if(subMenu.isShown) {
           <li>
-            <a
+            <button
               class="text-white p-1 hover:bg-[#4b4a4a] flex justify-between items-center"
-              tabindex="0"
-              (click)="subMenu.action && executeAction(subMenu.action, $event)"
-              (keydown.enter)="(subMenu.action)"
+              [class.opacity-50]="subMenu.isDisabled"
+              [style.cursor]="subMenu.isDisabled ? 'auto' : 'pointer'"
+              [disabled]="subMenu.isDisabled"
+              (click)="
+                !subMenu.isDisabled &&
+                  subMenu.action &&
+                  executeAction(subMenu.action, $event)
+              "
             >
               <div class="flex items-center gap-2">
                 <span>{{ subMenu.label }}</span>
               </div>
-            </a>
+            </button>
           </li>
           } }
         </ul>

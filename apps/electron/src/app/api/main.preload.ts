@@ -13,4 +13,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   importProject: (projectPath) => ipcRenderer.invoke('import-project', projectPath),
   openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
+
+  // GitHub OAuth methods
+  openGitHubOAuth: (authUrl: string, state: string) => ipcRenderer.invoke('github:oauth', authUrl, state),
+  exchangeCodeForToken: (code: string) => ipcRenderer.invoke('github:exchange-code', code),
 });

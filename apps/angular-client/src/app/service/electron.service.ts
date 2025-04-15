@@ -1,7 +1,7 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { PlatformService } from './platform.service';
-import { FlatProject } from '@doci/sharedModels';
+import { FlatProject, GitHubAuthCredentials, GitHubAuthResponse } from '@doci/shared';
 
 interface ElectronWindowAPI {
     minimizeWindow: () => void;
@@ -11,6 +11,8 @@ interface ElectronWindowAPI {
     onMaximizedChange: (callback: (isMaximized: boolean) => void) => () => void;
     openDirectoryDialog(): () => Promise<string | null>;
     importProject: (projectPath: string) => Promise<FlatProject>;
+    openGitHubOAuth: () => Promise<GitHubAuthResponse>;
+    exchangeCodeForToken: (code: string) => Promise<GitHubAuthCredentials>;
 }
 
 @Injectable({
@@ -24,8 +26,8 @@ export class ElectronService implements OnDestroy {
     private cleanupListener: (() => void) | null = null;
 
     constructor(
-        private platformService: PlatformService,
-        private ngZone: NgZone
+        private readonly platformService: PlatformService,
+        private readonly ngZone: NgZone
     ) {
         if (this.platformService.isElectron) {
             this.init();
@@ -78,6 +80,21 @@ export class ElectronService implements OnDestroy {
             console.error('Failed to import project:', error);
             return null;
         }
+    }
+
+    openGitHubOAuth(): Promise<GitHubAuthResponse> | null {
+        if (this.electronAPI) {
+            return this.electronAPI.openGitHubOAuth();
+        }
+
+        return null;
+    }
+
+    exchangeCodeForToken(result: { code: string; state: string }): Promise<GitHubAuthCredentials> | null {
+        if (this.electronAPI) {
+            return this.electronAPI.exchangeCodeForToken(result.code);
+        }
+        return null;
     }
 
     minimize() {

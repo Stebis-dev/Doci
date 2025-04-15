@@ -43,3 +43,9 @@ Thumbs.db
 .nx/workspace-data
 
 .angular
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production

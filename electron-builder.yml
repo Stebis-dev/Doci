@@ -18,6 +18,12 @@ files:
     to: angular-client
     filter: ['**/*']
 
+# Environment variables for the packaged app
+extraResources:
+  - from: .env
+    to: .env
+    filter: ['**/*']
+
 # Mac OS configuration
 mac:
   target:

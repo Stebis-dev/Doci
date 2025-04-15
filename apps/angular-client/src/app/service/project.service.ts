@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { FileSystemService } from './fileSystem.service';
-import { FlatProject } from '@doci/sharedModels';
+import { FlatProject } from '@doci/shared';
 
 @Injectable({
     providedIn: 'root'

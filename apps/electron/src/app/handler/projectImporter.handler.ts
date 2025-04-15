@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { FILE_SIZE_LIMIT, FlatProject, IGNORED_PATTERNS, PARSABLE_EXTENSIONS, ProjectFile } from '@doci/sharedModels';
+import { FILE_SIZE_LIMIT, FlatProject, IGNORED_PATTERNS, PARSABLE_EXTENSIONS, ProjectFile } from '@doci/shared';
 
 
 interface ImportStats {
