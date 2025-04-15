@@ -73,3 +73,10 @@
   </div>
   }
 </div>
+
+<!-- GitHub Repository Modal -->
+@if(showGitHubRepoModal) {
+<app-github-repo-modal
+  (modalClosed)="closeGitHubRepoModal()"
+></app-github-repo-modal>
+}

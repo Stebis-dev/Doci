@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { GitHubAuthService } from './github-auth.service';
-import { ENVIRONMENT, GitHubRepoDto, GitHubRepoMapper } from '@doci/shared';
+import { ENVIRONMENT, GitHubRepo, GitHubRepoMapper } from '@doci/shared';
 
 @Injectable({
     providedIn: 'root'
@@ -16,7 +16,7 @@ export class GitHubService {
         private githubAuthService: GitHubAuthService
     ) { }
 
-    getUserRepositories(): Observable<GitHubRepoDto[]> {
+    getUserRepositories(): Observable<GitHubRepo[]> {
         return this.getWithAuth<any[]>(`${this.apiUrl}/user/repos`).pipe(
             map(repos => repos.map(repo => GitHubRepoMapper.toDto(repo)))
         );

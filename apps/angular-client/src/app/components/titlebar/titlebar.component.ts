@@ -8,6 +8,7 @@ import { ProjectService } from '../../service/project.service';
 import { FlatProject } from '@doci/shared';
 import { GitHubAuthService } from '../../service/github-auth.service';
 import { GitHubService } from '../../service/github.service';
+import { GitHubRepoModalComponent } from '../github-repo-modal/github-repo-modal.component';
 
 interface MenuItem {
   label: string;
@@ -19,19 +20,19 @@ interface MenuItem {
 
 @Component({
   selector: 'app-titlebar',
-  imports: [CommonModule, IconComponent, BrandingComponent],
+  imports: [CommonModule, IconComponent, BrandingComponent, GitHubRepoModalComponent],
   templateUrl: './titlebar.component.html',
   styleUrl: './titlebar.component.css',
+  standalone: true
 })
-
 export class TitleBarComponent implements OnInit {
-
   isMaximized = false;
   enableWindowControlButtons = false;
   isElectron = false;
   isGitHubAuthenticated = false;
   projectName: string | null = null;
   menuItems: MenuItem[] = [];
+  showGitHubRepoModal = false;
 
   constructor(
     private platformService: PlatformService,
@@ -101,7 +102,7 @@ export class TitleBarComponent implements OnInit {
           },
           {
             label: 'Show all repositories',
-            action: () => this.getGitHubRepos(),
+            action: () => this.showGitHubRepositories(),
             isShown: this.isGitHubAuthenticated,
             isDisabled: !this.isGitHubAuthenticated
           }
@@ -119,36 +120,22 @@ export class TitleBarComponent implements OnInit {
   async connectWithGitHub(): Promise<void> {
     this.githubAuthService.login().subscribe({
       next: (credentials) => {
-        // this.isLoading = false;
         if (credentials) {
           console.log('Successfully authenticated with GitHub', credentials);
-          // You can emit an event or use a service to notify the rest of the app
         }
       },
       error: (error) => {
-        // this.isLoading = false;
         console.error('GitHub authentication failed:', error);
-        // You can show an error message to the user
       }
     });
   }
 
-  getGitHubRepos(): void {
-    if (this.isGitHubAuthenticated) {
-      this.githubService.getUserRepositories().subscribe({
-        next: (repos) => {
-          console.log('GitHub repositories:', repos);
-        },
-        error: (error) => {
-          console.error('Error fetching GitHub repositories:', error);
-        },
-        complete: () => {
-          console.log('Finished fetching GitHub repositories');
-        }
-      });
-    } else {
-      console.warn('User is not authenticated with GitHub');
-    }
+  showGitHubRepositories(): void {
+    this.showGitHubRepoModal = true;
+  }
+
+  closeGitHubRepoModal(): void {
+    this.showGitHubRepoModal = false;
   }
 
   logoutFromGithub(): void {

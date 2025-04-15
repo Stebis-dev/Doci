@@ -4,12 +4,11 @@ import * as http from 'http';
 import * as https from 'https';
 import App from '../app';
 import { ENVIRONMENT, GitHubAuthCredentials } from '@doci/shared';
-import { getEnv } from '../utils/env.util';
 
 export default class GitHubAuthAPI {
     private static readonly clientId = ENVIRONMENT.github.electronClientId;
     private static readonly scopes = ENVIRONMENT.github.scopes;
-    private static readonly azureFunctionUrl = getEnv('AZURE_FUNCTION_URL') || 'http://localhost:7071/api/githubTokenExchange';
+    private static readonly azureFunctionUrl = ENVIRONMENT.azureFunctionUrl;
 
     static registerIpcHandlers(): void {
         if (App.isDevelopmentMode()) {
