@@ -11,6 +11,7 @@ jobs:
   tag-version:
     name: Automate Git Tag Versioning
     runs-on: ubuntu-latest
+    environment: git
 
     steps:
       # Step 1: Checkout the repository
@@ -34,9 +35,12 @@ jobs:
       # Step 4: Create a new Git tag
       - name: Create Git tag
         id: create_tag
+        env:
+          GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
+          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          git config user.name "${GIT_USER_NAME}"
+          git config user.email "${GIT_USER_EMAIL}"
           git tag -a "v${VERSION}" -m "Release version ${VERSION}"
           echo "Created tag v${VERSION}"
 
