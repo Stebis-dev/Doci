@@ -102,7 +102,7 @@ jobs:
             build/packages/electron-app/*.zip
             build/packages/electron-app/*.yml
             build/packages/electron-app/*.blockmap
-              if-no-files-found: ignore
+          if-no-files-found: ignore
 
       - name: Upload installer artifacts
         uses: actions/upload-artifact@v4
@@ -115,7 +115,7 @@ jobs:
             build/packages/electron-app/*.snap
             build/packages/electron-app/*.deb
             build/packages/electron-app/*.rpm
-              if-no-files-found: ignore
+          if-no-files-found: ignore
 
   # release:
   #   name: Create GitHub Release
