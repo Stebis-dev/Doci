@@ -94,7 +94,7 @@ async function exchangeCodeForToken(code: string, credentials: { clientId: strin
                     console.log(response);
 
                     if (response.error) {
-                        reject(new Error(`GitHub OAuth error: ${response.error_description ?? response.error}`));
+                        reject(new Error(`GitHub OAuth error description: ${response.error_description ?? response.error}`));
                         return;
                     }
 

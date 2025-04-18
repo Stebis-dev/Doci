@@ -71,6 +71,7 @@ jobs:
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
 
       # Electron-builder to create distributable packages
       - name: Build distributables
@@ -79,12 +80,16 @@ jobs:
         run: |
           npx electron-builder --${{ matrix.platform }} --publish never --config electron-builder.yml
 
-      - name: Debug electron directory structure
+      - name: Debug electron packaged directory structure
+        run: |
+          dir build\packages\electron-app
+
+      - name: Debug electron windows packaged resource directory structure
         run: |
           dir build\packages\electron-app\win-unpacked\resources\app
 
       # Upload artifacts for different platforms
-      - name: Upload artifacts
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-build
@@ -98,6 +103,19 @@ jobs:
             build/packages/electron-app/*.zip
             build/packages/electron-app/*.yml
             build/packages/electron-app/*.blockmap
+          if-no-files-found: ignore
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-installer
+          path: |
+            build/packages/electron-app/*.exe
+            build/packages/electron-app/*.dmg
+            build/packages/electron-app/*.AppImage
+            build/packages/electron-app/*.snap
+            build/packages/electron-app/*.deb
+            build/packages/electron-app/*.rpm
           if-no-files-found: ignore
 
   # release:
