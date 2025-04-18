@@ -71,6 +71,7 @@ jobs:
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
 
       # Electron-builder to create distributable packages
       - name: Build distributables
@@ -104,7 +105,7 @@ jobs:
             build/packages/electron-app/*.blockmap
           if-no-files-found: ignore
 
-      - name: Upload installer artifacts
+      - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-installer
