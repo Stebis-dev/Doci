@@ -1,3 +1,5 @@
+import { Tree } from "web-tree-sitter";
+
 export interface FlatProject {
     name: string;
     path: string;
@@ -12,4 +14,5 @@ export interface ProjectFile {
     path: string;
     content?: string;
     type?: string;
+    AST?: Tree; // Tree-sitter AST
 }

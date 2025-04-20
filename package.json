@@ -1,6 +1,6 @@
 {
   "name": "@doci/source",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "license": "MIT",
   "description": "Code documentation tool",
   "author": "Gediminas Šeibokas",
