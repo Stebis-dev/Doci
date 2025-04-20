@@ -3,12 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <title>Doci</title>
+    <!-- TODO for electron ./ is needed but for web ./ brakes the callback -->
     <base href="/" />
     <meta
       http-equiv="Content-Security-Policy"
       content="
       default-src 'self';
-      script-src 'self' 'unsafe-inline';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval';
       style-src 'self' 'unsafe-inline';
       font-src 'self';
       img-src 'self' data:;

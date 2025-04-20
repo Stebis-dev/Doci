@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TitleBarComponent } from "../components/titlebar/titlebar.component";
-import { GitHubAuthService } from '../service/github-auth.service';
-import { GitHubService } from '../service/github.service';
+import { GitHubAuthService } from '../service/github/github-auth.service';
+import { GitHubService } from '../service/github/github.service';
 import { FileTreeComponent } from '../components/file-tree/file-tree.component';
+import { CodeParserComponent } from "../components/code-parser/code-parser.component";
 
 @Component({
     selector: 'app-main-layout',
     standalone: true,
-    imports: [RouterOutlet, TitleBarComponent, FileTreeComponent],
+    imports: [RouterOutlet, TitleBarComponent, FileTreeComponent, CodeParserComponent],
     providers: [GitHubAuthService, GitHubService],
     template: `
         <div class="layout-container">
@@ -18,6 +19,7 @@ import { FileTreeComponent } from '../components/file-tree/file-tree.component';
                     <app-file-tree></app-file-tree>
                 </div>
                 <div class="main-content">
+                    <app-code-parser></app-code-parser>
                     <router-outlet></router-outlet>
                 </div>
             </div>

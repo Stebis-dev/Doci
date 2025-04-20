@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GitHubAuthService } from '../../service/github-auth.service';
+import { GitHubAuthService } from '../../service/github/github-auth.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
