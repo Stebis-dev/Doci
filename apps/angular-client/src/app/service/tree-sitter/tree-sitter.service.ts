@@ -46,8 +46,6 @@ export class TreeSitterService {
             throw new Error(`No language found for extension: ${extension}`);
         }
 
-
-
         try {
             const grammarPath = `assets/tree-sitter-${language}.wasm`;
             console.log('Loading grammar from:', grammarPath);

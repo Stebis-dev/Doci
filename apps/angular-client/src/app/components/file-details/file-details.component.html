@@ -1,0 +1,58 @@
+<div
+  class="flex p-4 w-full h-full items-start align-middle justify-items-center overflow-auto"
+>
+  @if (file) { @if (file.details?.[ExtractorType.Class]) {
+  <div class="space-y-4">
+    @for (classDetail of file.details[ExtractorType.Class]; track $index) {
+    <div class="card bg-base-200">
+      <div class="card-body">
+        <h3 class="card-title">Class: {{ classDetail.name }}</h3>
+        @if (classDetail.properties?.length) {
+        <div class="mt-2">
+          <h4 class="font-semibold">Properties:</h4>
+          <ul class="list-disc list-inside">
+            @for (prop of classDetail.properties; track prop.name) {
+            <li>{{ prop.name }}</li>
+            }
+          </ul>
+        </div>
+        } @if (classDetail.methods?.length) {
+        <div class="mt-2">
+          <h4 class="font-semibold">Methods:</h4>
+          <ul class="list-disc list-inside">
+            @for (method of classDetail.methods; track $index) {
+            <li>{{ method.name }}</li>
+            }
+          </ul>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+  } @if (file.details?.[ExtractorType.Enum]) {
+  <div class="space-y-4">
+    @for (enumDetail of file.details[ExtractorType.Enum]; track $index) {
+    <div class="card bg-base-200">
+      <div class="card-body">
+        <h3 class="card-title">{{ enumDetail.name }}</h3>
+        @if (enumDetail.members?.length) {
+        <div class="mt-2">
+          <h4 class="font-semibold">Members:</h4>
+          <ul class="list-disc list-inside">
+            @for (member of enumDetail.members; track member.name) {
+            <li>{{ member.name }}</li>
+            }
+          </ul>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+  } } @else {
+  <div class="text-center p-8">
+    <p class="text-lg">Select a file to view its details</p>
+  </div>
+  }
+</div>

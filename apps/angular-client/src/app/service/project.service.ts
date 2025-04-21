@@ -12,13 +12,13 @@ import { Tree } from 'web-tree-sitter';
 
 export class ProjectService {
 
-    private currentProjectSubject = new BehaviorSubject<FlatProject | null>(null);
+    private readonly currentProjectSubject = new BehaviorSubject<FlatProject | null>(null);
 
     public currentProject$ = this.currentProjectSubject.asObservable();
 
     constructor(
-        private fileSystemService: FileSystemService,
-        private treeSitterService: TreeSitterService
+        private readonly fileSystemService: FileSystemService,
+        private readonly treeSitterService: TreeSitterService
     ) { }
 
     public async selectLocalProject(): Promise<void> {
