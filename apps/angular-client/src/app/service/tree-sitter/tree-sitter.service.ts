@@ -40,7 +40,13 @@ export class TreeSitterService {
         if (!this.parser) {
             throw new Error('Parser not initialized');
         }
-        const language = extensionToLanguage.get(extension as ProgrammingLanguageExtension);
+        const language = extensionToLanguage.get(extension as ProgrammingLanguageExtension) ?? null;
+
+        if (!language) {
+            throw new Error(`No language found for extension: ${extension}`);
+        }
+
+
 
         try {
             const grammarPath = `assets/tree-sitter-${language}.wasm`;
@@ -49,6 +55,7 @@ export class TreeSitterService {
             const loadedLanguage = await Language.load(grammarPath);
             if (loadedLanguage) {
                 this.language = loadedLanguage;
+                // console.log('Language loaded:', this.language);
                 this.parser.setLanguage(this.language);
                 console.log(`Language ${language} loaded successfully`);
             } else {
@@ -82,5 +89,11 @@ export class TreeSitterService {
         }
     }
 
-    // abstract getLanguage(): string;
+    // Get the parser instance
+    getParser(): Parser {
+        if (!this.parser) {
+            throw new Error('Parser not initialized');
+        }
+        return this.parser;
+    }
 } 

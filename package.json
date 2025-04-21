@@ -6,6 +6,7 @@
   "author": "Gediminas Šeibokas",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
+    "test_setup": "powershell ./clone-repos.ps1",
     "copy_wasm": "node apps/angular-client/scripts/copy-tree-sitter.js",
     "build_electron": "nx run electron:build",
     "build_angular-client": "nx run angular-client:build --verbose",

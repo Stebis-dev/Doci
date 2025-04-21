@@ -15,4 +15,5 @@ export interface ProjectFile {
     content?: string;
     type?: string;
     AST?: Tree; // Tree-sitter AST
+    details?: any; // Extracted details from the AST
 }

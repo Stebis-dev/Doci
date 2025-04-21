@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { FileSystemService } from './fileSystem.service';
-import { FlatProject, ProjectFile } from '@doci/shared';
+import { FlatProject } from '@doci/shared';
 import { TreeSitterService } from './tree-sitter/tree-sitter.service';
+import { extractDetails } from './query/extract-details';
+import { Tree } from 'web-tree-sitter';
 
 @Injectable({
     providedIn: 'root'
@@ -16,7 +18,7 @@ export class ProjectService {
 
     constructor(
         private fileSystemService: FileSystemService,
-        private treeSitterService: TreeSitterService,
+        private treeSitterService: TreeSitterService
     ) { }
 
     public async selectLocalProject(): Promise<void> {
@@ -50,9 +52,11 @@ export class ProjectService {
                         try {
                             await this.treeSitterService.setLanguage(file.type);
                             const ast = await this.treeSitterService.parse(file.content);
+                            const details = extractDetails(file, ast as Tree, this.treeSitterService.getParser());
                             return {
                                 ...file,
-                                AST: ast || undefined
+                                AST: ast || undefined,
+                                details: details || undefined
                             };
                         } catch (error) {
                             console.warn(`Failed to parse AST for file ${file.path}:`, error);
