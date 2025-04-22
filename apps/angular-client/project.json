@@ -18,11 +18,21 @@
         "polyfills": [
           "zone.js"
         ],
+        "externalDependencies": [
+          "module",
+          "fs",
+          "path"
+        ],
         "tsConfig": "apps/angular-client/tsconfig.app.json",
         "assets": [
           {
             "glob": "**/*",
             "input": "apps/angular-client/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/angular-client/src/assets",
+            "output": "/assets"
           }
         ],
         "styles": [

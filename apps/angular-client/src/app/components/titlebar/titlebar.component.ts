@@ -6,8 +6,8 @@ import { IconComponent } from '../icon.component';
 import { BrandingComponent } from '../branding/branding.component';
 import { ProjectService } from '../../service/project.service';
 import { FlatProject } from '@doci/shared';
-import { GitHubAuthService } from '../../service/github-auth.service';
-import { GitHubService } from '../../service/github.service';
+import { GitHubAuthService } from '../../service/github/github-auth.service';
+import { GitHubService } from '../../service/github/github.service';
 import { GitHubRepoModalComponent } from '../github-repo-modal/github-repo-modal.component';
 
 interface MenuItem {

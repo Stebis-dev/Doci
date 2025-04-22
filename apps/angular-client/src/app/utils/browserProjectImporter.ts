@@ -1,4 +1,4 @@
-import { FlatProject, IGNORED_PATTERNS, PARSABLE_EXTENSIONS, ProjectFile } from '@doci/shared';
+import { FILE_SIZE_LIMIT, FlatProject, IGNORED_PATTERNS, PARSABLE_EXTENSIONS, ProjectFile } from '@doci/shared';
 // TODO delete library
 import { directoryOpen } from 'browser-fs-access';
 // TODO add content reader of delete content from projectFile attribute
@@ -10,7 +10,6 @@ interface ImportStats {
 
 async function customDirectoryOpen(): Promise<FlatProject | null> {
     try {
-
         const importStats: ImportStats = {
             totalFiles: 0,
             parsableFiles: 0
@@ -47,10 +46,18 @@ async function customDirectoryOpen(): Promise<FlatProject | null> {
 
                         const extension = file.webkitRelativePath.split('.').pop()?.toLowerCase() || '';
 
+                        let content = undefined
+                        if (file.size <= FILE_SIZE_LIMIT) {
+                            content = await file.text();
+                        } else {
+                            console.warn(`File ${file.name} is too large to read entirely.`);
+                        }
+
                         const tempProjectFile: ProjectFile = {
                             name: file.name,
                             path: `${projectName}/${file.webkitRelativePath}`,
                             type: extension,
+                            content: content,
                         }
 
                         importStats.parsableFiles++;

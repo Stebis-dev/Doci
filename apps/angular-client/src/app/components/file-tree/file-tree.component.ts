@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../../service/project.service';
-import { FlatProject, ProjectFile } from '@doci/shared';
+import { ProjectFile } from '@doci/shared';
 
 interface TreeNode {
     name: string;
@@ -9,6 +9,7 @@ interface TreeNode {
     type: 'file' | 'directory';
     children?: TreeNode[];
     isExpanded?: boolean;
+    file?: ProjectFile;
 }
 
 @Component({
@@ -120,6 +121,7 @@ interface TreeNode {
 })
 export class FileTreeComponent implements OnInit {
     treeData: TreeNode[] = [];
+    @Output() nodeSelected = new EventEmitter<ProjectFile>();
 
     constructor(private projectService: ProjectService) { }
 
@@ -154,7 +156,8 @@ export class FileTreeComponent implements OnInit {
                         path: currentPath,
                         type: isLastPart ? 'file' : 'directory',
                         children: isLastPart ? undefined : [],
-                        isExpanded: false
+                        isExpanded: false,
+                        file: isLastPart ? file : undefined
                     };
 
                     const parentPath = parts.slice(0, i).join('/');
@@ -162,8 +165,6 @@ export class FileTreeComponent implements OnInit {
                         currentLevel[parentPath].children?.push(currentLevel[currentPath]);
                     }
                 }
-
-                // currentLevel = currentLevel[currentPath].children || {};
             }
         }
 
@@ -174,6 +175,8 @@ export class FileTreeComponent implements OnInit {
     toggleNode(node: TreeNode): void {
         if (node.type === 'directory') {
             node.isExpanded = !node.isExpanded;
+        } else if (node.file) {
+            this.nodeSelected.emit(node.file);
         }
     }
 } 

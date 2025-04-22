@@ -1,0 +1,64 @@
+import { Parser, Tree } from "web-tree-sitter";
+import { buildClassDetails } from "./assign-methods-to-classes";
+import { ClassExtractor } from "./extractor/class.extractor";
+import { MethodExtractor } from "./extractor/method.extractor";
+import { EnumExtractor } from "./extractor/enum.extractor";
+import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile } from "@doci/shared";
+import { ConstructorExtractor } from "./extractor/constructor.extractor";
+import { ClassTemporaryDetail } from "@doci/shared";
+import { ConstructorMethodDetail } from "@doci/shared";
+
+
+
+export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): ExtractedDetails | null {
+    try {
+        const extractors = [
+            new ClassExtractor(parser),
+            new MethodExtractor(parser),
+            new ConstructorExtractor(parser),
+            new EnumExtractor(parser),
+        ];
+
+        const extractedData: { [key in ExtractorType]?: any } = {};
+        extractors.forEach(extractor => {
+            try {
+                extractedData[extractor.type] = extractor.extract(AST);
+            } catch (error) {
+                console.warn(`Error extracting ${extractor.type} from ${file.name}:`, error);
+            }
+        });
+
+        const doc: ExtractedDetails = {
+            filePath: file.name,
+        };
+
+        const classTempDetails = extractedData[ExtractorType.Class] as ClassTemporaryDetail[];
+        const methodDetails = extractedData[ExtractorType.Method] as MethodDetail[];
+        const constructorDetails = extractedData[ExtractorType.Constructor] as ConstructorMethodDetail[];
+
+        // Assign methods to their respective classes
+        if (classTempDetails && methodDetails) {
+            const classesWithMethods = buildClassDetails(classTempDetails, methodDetails, constructorDetails);
+            doc[ExtractorType.Class] = classesWithMethods;
+        } else if (classTempDetails) {
+            doc[ExtractorType.Class] = classTempDetails.map(cls => ({
+                name: cls.name,
+                startPosition: cls.startPosition,
+                endPosition: cls.endPosition,
+                inheritance: cls.inheritance,
+                properties: cls.properties,
+                constructor: [],
+                methods: []
+            }));
+        }
+
+        if (extractedData[ExtractorType.Enum]) {
+            doc[ExtractorType.Enum] = extractedData[ExtractorType.Enum];
+        }
+
+        return doc;
+    } catch (error) {
+        console.warn(`Skipping unsupported file: ${file.name}`, error);
+    }
+    return null;
+}

@@ -1,8 +1,8 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GitHubService } from '../../service/github.service';
-import { GitHubImporterService } from '../../service/github-importer.service';
+import { GitHubService } from '../../service/github/github.service';
+import { GitHubImporterService } from '../../service/github/github-importer.service';
 import { ProjectService } from '../../service/project.service';
 import { GitHubRepo } from '@doci/shared';
 
