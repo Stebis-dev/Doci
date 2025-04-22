@@ -6,6 +6,8 @@ import { TreeSitterService } from './tree-sitter/tree-sitter.service';
 import { extractDetails } from './query/extract-details';
 import { Tree } from 'web-tree-sitter';
 
+const STORED_PROJECT_KEY = 'doci_current_project';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -19,7 +21,29 @@ export class ProjectService {
     constructor(
         private readonly fileSystemService: FileSystemService,
         private readonly treeSitterService: TreeSitterService
-    ) { }
+    ) {
+        this.loadStoredProject();
+    }
+
+    private async loadStoredProject(): Promise<void> {
+        try {
+            const storedProject = localStorage.getItem(STORED_PROJECT_KEY);
+            if (storedProject) {
+                const project = JSON.parse(storedProject) as FlatProject;
+                await this.setCurrentProject(project);
+            }
+        } catch (error) {
+            console.error('Error loading stored project:', error);
+        }
+    }
+
+    private saveProjectToStorage(project: FlatProject): void {
+        try {
+            localStorage.setItem(STORED_PROJECT_KEY, JSON.stringify(project));
+        } catch (error) {
+            console.error('Error saving project to storage:', error);
+        }
+    }
 
     public async selectLocalProject(): Promise<void> {
         try {
@@ -29,6 +53,7 @@ export class ProjectService {
                 // Convert files to AST
                 const projectWithAST = await this.convertFilesToAST(result);
                 this.currentProjectSubject.next(projectWithAST);
+                this.saveProjectToStorage(projectWithAST);
                 console.log('Selected project with AST', projectWithAST);
             }
         } catch (error) {
@@ -40,6 +65,16 @@ export class ProjectService {
         const projectWithAST = await this.convertFilesToAST(project);
         console.log('Setting current project with AST:', projectWithAST);
         this.currentProjectSubject.next(projectWithAST);
+        this.saveProjectToStorage(projectWithAST);
+    }
+
+    public clearStoredProject(): void {
+        try {
+            localStorage.removeItem(STORED_PROJECT_KEY);
+            this.currentProjectSubject.next(null);
+        } catch (error) {
+            console.error('Error clearing stored project:', error);
+        }
     }
 
     private async convertFilesToAST(project: FlatProject): Promise<FlatProject> {
