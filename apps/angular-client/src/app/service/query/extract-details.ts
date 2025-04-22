@@ -3,12 +3,8 @@ import { buildClassDetails } from "./assign-methods-to-classes";
 import { ClassExtractor } from "./extractor/class.extractor";
 import { MethodExtractor } from "./extractor/method.extractor";
 import { EnumExtractor } from "./extractor/enum.extractor";
-import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile } from "@doci/shared";
+import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail } from "@doci/shared";
 import { ConstructorExtractor } from "./extractor/constructor.extractor";
-import { ClassTemporaryDetail } from "@doci/shared";
-import { ConstructorMethodDetail } from "@doci/shared";
-
-
 
 export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): ExtractedDetails | null {
     try {
