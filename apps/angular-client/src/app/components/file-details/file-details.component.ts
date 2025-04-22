@@ -14,7 +14,6 @@ import { MermaidService } from '../../service/mermaid/mermaid.service';
 })
 export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     @Input() file: ProjectFile | null = null;
-    activeTab: 'classes' | 'methods' | 'enums' = 'classes';
     classes?: ClassDetail[] = [];
     constructors?: ConstructorMethodDetail[] = [];
     methods?: MethodDetail[] = [];
@@ -32,6 +31,15 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
         mermaid.initialize({
             startOnLoad: true,
             theme: 'default',
+            themeVariables: {
+                primaryColor: '#f9f9f9',
+                edgeLabelBackground: '#ffffff',
+                primaryTextColor: '#333333',
+                secondaryTextColor: '#555555',
+                tertiaryTextColor: '#777777',
+                lineColor: '#ffffff',
+                arrowheadColor: '#333333',
+            }
         });
     }
 

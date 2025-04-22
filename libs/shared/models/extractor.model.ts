@@ -20,6 +20,7 @@ export interface Details {
 }
 
 export interface ClassTemporaryDetail extends Details {
+    modifiers: string[];
     inheritance: { name: string }[];
     methods: { name: string }[];
     properties: { name: string }[];
@@ -27,10 +28,12 @@ export interface ClassTemporaryDetail extends Details {
 }
 
 export interface ClassDetail extends Details {
-    inheritance: { name: string }[];
+    modifiers: string[];
     properties: { name: string }[];
     constructor: ConstructorMethodDetail[];
     methods: MethodDetail[];
+    parentClasses?: string[];
+    inheritance: { name: string }[];
 }
 
 export interface MethodDetail extends Details {

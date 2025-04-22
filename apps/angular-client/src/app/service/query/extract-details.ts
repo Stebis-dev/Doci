@@ -39,12 +39,13 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
         } else if (classTempDetails) {
             doc[ExtractorType.Class] = classTempDetails.map(cls => ({
                 name: cls.name,
-                startPosition: cls.startPosition,
-                endPosition: cls.endPosition,
+                modifiers: cls.modifiers,
                 inheritance: cls.inheritance,
                 properties: cls.properties,
                 constructor: [],
-                methods: []
+                methods: [],
+                startPosition: cls.startPosition,
+                endPosition: cls.endPosition
             }));
         }
 

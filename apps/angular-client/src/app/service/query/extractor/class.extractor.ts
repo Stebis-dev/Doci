@@ -12,6 +12,7 @@ export class ClassExtractor extends BaseQueryEngine {
     extract(tree: Tree): ClassTemporaryDetail[] | [] {
         const query = `
             (class_declaration
+                (modifier) @class.modifier
                 name: (identifier) @class.name
                 (base_list (identifier) @class.inheritance)*
                 body: (
@@ -35,6 +36,7 @@ export class ClassExtractor extends BaseQueryEngine {
         const classMap = new Map<string, ClassTemporaryDetail>();
 
         matches.forEach((match: { captures: any[]; }) => {
+            const modifierCaptures = match.captures.filter(capture => capture.name === 'class.modifier');
             const nameCapture = match.captures.find(capture => capture.name === 'class.name');
             const methodCaptures = match.captures.filter(capture => capture.name === 'class.method');
             const propertyCaptures = match.captures.filter(capture => capture.name === 'class.property');
@@ -42,18 +44,20 @@ export class ClassExtractor extends BaseQueryEngine {
             const inheritanceCaptures = match.captures.filter(capture => capture.name === 'class.inheritance');
 
             if (!nameCapture) return;
-
+            const modifiers = modifierCaptures.map(mod => mod.node.text) as string[];
             const methods = methodCaptures.map(method => ({ name: method.node.text }));
             const properties = propertyCaptures.map(property => ({ name: property.node.text }));
             const constructorsMethods = constructorCaptures.map(constructor => ({ name: constructor.node.text }));
             const inheritance = inheritanceCaptures.map(inherit => ({ name: inherit.node.text }));
 
+            console.log(modifiers);
             // Extract constructor parameters
             const classKey = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
 
             if (!classMap.has(classKey)) {
                 classMap.set(classKey, {
                     name: nameCapture.node.text,
+                    modifiers: modifiers,
                     inheritance: inheritance,
                     properties: properties,
                     constructor: constructorsMethods,
@@ -64,6 +68,7 @@ export class ClassExtractor extends BaseQueryEngine {
             }
             else {
                 const existingClass = classMap.get(classKey)!;
+                existingClass.modifiers.push(...modifiers);
                 existingClass.inheritance.push(...inheritance);
                 existingClass.properties.push(...properties);
                 existingClass.constructor.push(...constructorsMethods);

@@ -35,12 +35,13 @@ export function buildClassDetails(
 
         return {
             name: cls.name,
-            startPosition: cls.startPosition,
-            endPosition: cls.endPosition,
+            modifiers: cls.modifiers,
             inheritance: cls.inheritance,
             constructor: constructorDetails,
             properties: cls.properties,
             methods: methodDetails,
+            startPosition: cls.startPosition,
+            endPosition: cls.endPosition,
         };
     });
 }
