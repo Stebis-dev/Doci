@@ -3,12 +3,8 @@ import { buildClassDetails } from "./assign-methods-to-classes";
 import { ClassExtractor } from "./extractor/class.extractor";
 import { MethodExtractor } from "./extractor/method.extractor";
 import { EnumExtractor } from "./extractor/enum.extractor";
-import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile } from "@doci/shared";
+import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail } from "@doci/shared";
 import { ConstructorExtractor } from "./extractor/constructor.extractor";
-import { ClassTemporaryDetail } from "@doci/shared";
-import { ConstructorMethodDetail } from "@doci/shared";
-
-
 
 export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): ExtractedDetails | null {
     try {
@@ -43,12 +39,13 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
         } else if (classTempDetails) {
             doc[ExtractorType.Class] = classTempDetails.map(cls => ({
                 name: cls.name,
-                startPosition: cls.startPosition,
-                endPosition: cls.endPosition,
+                modifiers: cls.modifiers,
                 inheritance: cls.inheritance,
                 properties: cls.properties,
                 constructor: [],
-                methods: []
+                methods: [],
+                startPosition: cls.startPosition,
+                endPosition: cls.endPosition
             }));
         }
 

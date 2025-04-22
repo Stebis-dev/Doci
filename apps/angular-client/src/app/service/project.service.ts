@@ -5,6 +5,7 @@ import { FlatProject } from '@doci/shared';
 import { TreeSitterService } from './tree-sitter/tree-sitter.service';
 import { extractDetails } from './query/extract-details';
 import { Tree } from 'web-tree-sitter';
+import { resolveInheritance } from './query/inheritance-resolver';
 
 const STORED_PROJECT_KEY = 'doci_current_project';
 
@@ -63,8 +64,10 @@ export class ProjectService {
         // Convert files to AST
         const projectWithAST = await this.convertFilesToAST(project);
         console.log('Setting current project with AST:', projectWithAST);
-        this.currentProjectSubject.next(projectWithAST);
-        this.saveProjectToStorage(projectWithAST);
+        const resolvedProject = resolveInheritance(projectWithAST);
+
+        this.currentProjectSubject.next(resolvedProject);
+        this.saveProjectToStorage(resolvedProject);
     }
 
     public clearStoredProject(): void {
@@ -109,5 +112,9 @@ export class ProjectService {
             console.error('Error converting files to AST:', error);
             return project;
         }
+    }
+
+    public getCurrentProject(): FlatProject | null {
+        return this.currentProjectSubject.getValue();
     }
 }

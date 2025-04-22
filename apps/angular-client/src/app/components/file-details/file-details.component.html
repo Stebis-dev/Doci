@@ -9,38 +9,97 @@
     <h2 class="text-2xl font-bold mb-4">File: {{ getFileName() }}</h2>
     <div class="divider"></div>
 
-    <div
-      class="flex flex-col w-full h-full items-start align-middle justify-items-center overflow-auto mx-10"
-    >
-      @for (classDetail of classes; track $index) {
-      <h3 class="text-xl font-semibold mb-2">Class</h3>
-      <div class="divider m-0"></div>
-      <div class="flex flex-col">
-        {{ classDetail.name }}
-      </div>
+    <div class="flex flex-row w-full h-full overflow-auto">
+      <div class="flex-1/2 mx-10">
+        <!-- Existing class details -->
+        @for (classDetail of classes; track $index) {
+        <h3 class="text-xl font-semibold mb-2">Class</h3>
+        <div class="divider m-0"></div>
+        <div class="flex flex-col">
+          {{ classDetail.name }}
+        </div>
 
-      @if(showProperties()){
-      <h3 class="text-xl font-semibold mb-2 my-5">Properties</h3>
-      <div class="divider m-0"></div>
-      @for (property of properties; track $index) {
-      <div class="flex flex-col">
-        {{ property.name }}
+        @if(showProperties()){
+        <h3 class="text-xl font-semibold mb-2 my-5">Properties</h3>
+        <div class="divider m-0"></div>
+        @for (property of properties; track $index) {
+        <div class="flex flex-col">
+          {{ property.name }}
+        </div>
+        } } @if(showConstructors()){
+        <h3 class="text-xl font-semibold mb-2 my-5">Constructor</h3>
+        <div class="divider m-0"></div>
+        <div class="overflow-x-auto w-1/2">
+          <table class="table">
+            <tbody>
+              @for (constructor of constructors; track $index) {
+              <tr>
+                @for ( modifier of constructor.modifiers; track $index) {
+                <td>{{ modifier }}</td>
+                }
+                <td>
+                  {{ constructor.name }}
+                  {{ '(' }}
+                  @for ( parameter of constructor.parameters; track $index) {
+                  {{ parameter.type }} {{ parameter.name }} }
+                  <!-- TODO add method for multiple parameters -->
+                  {{ ')' }}
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        } @if(showMethods()){
+        <h3 class="text-xl font-semibold mb-2 my-5">Method</h3>
+        <div class="divider m-0"></div>
+
+        <div class="overflow-x-auto w-1/2">
+          <table class="table">
+            <tbody>
+              @for (method of methods; track $index) {
+              <tr>
+                @for ( modifier of method.modifiers; track $index) {
+                <td>{{ modifier }}</td>
+                }
+                <td>
+                  {{ method.name }}
+                  <!-- +
+                      '(' +
+                      method.parameters[0].type +
+                      ' ' +
+                      method.parameters[0].name +
+                      ')'
+                  }} -->
+                  {{ '(' }}
+
+                  @for ( parameter of method.parameters; track $index) {
+                  {{ parameter.type }} {{ parameter.name }} }
+                  {{ ')' }}
+
+                  <!-- TODO add method for multiple parameters -->
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        } }
       </div>
-      } } @if(showConstructors()){
-      <h3 class="text-xl font-semibold mb-2 my-5">Constructor</h3>
-      <div class="divider m-0"></div>
-      @for (constructor of constructors; track $index) {
-      <div class="flex flex-col">
-        {{ constructor.name }}
+      <div class="flex-1/2 items-center justify-center">
+        <!-- Class Diagram -->
+        @if (mermaidDiagram) {
+        <div class="mb-8">
+          <h3 class="text-xl font-semibold mb-4">Class Diagram</h3>
+          <div class="bg-base-200 p-4 rounded-lg">
+            <div
+              class="bg-base-200 p-4 rounded-lg"
+              [innerHTML]="renderedSVG"
+            ></div>
+          </div>
+        </div>
+        }
       </div>
-      } } @if(showMethods()){
-      <h3 class="text-xl font-semibold mb-2 my-5">Method</h3>
-      <div class="divider m-0"></div>
-      @for (method of methods; track $index) {
-      <div class="flex flex-col">
-        {{ method.name }}
-      </div>
-      } } }
     </div>
     }
   </div>
