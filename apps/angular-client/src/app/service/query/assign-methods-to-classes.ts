@@ -37,9 +37,10 @@ export function buildClassDetails(
             name: cls.name,
             startPosition: cls.startPosition,
             endPosition: cls.endPosition,
-            methods: methodDetails,
+            inheritance: cls.inheritance,
+            constructor: constructorDetails,
             properties: cls.properties,
-            constructor: constructorDetails
+            methods: methodDetails,
         };
     });
 }

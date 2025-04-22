@@ -13,6 +13,7 @@ export class ClassExtractor extends BaseQueryEngine {
         const query = `
             (class_declaration
                 name: (identifier) @class.name
+                (base_list (identifier) @class.inheritance)*
                 body: (
                     declaration_list
                     (
@@ -38,12 +39,14 @@ export class ClassExtractor extends BaseQueryEngine {
             const methodCaptures = match.captures.filter(capture => capture.name === 'class.method');
             const propertyCaptures = match.captures.filter(capture => capture.name === 'class.property');
             const constructorCaptures = match.captures.filter(capture => capture.name === 'class.constructor');
+            const inheritanceCaptures = match.captures.filter(capture => capture.name === 'class.inheritance');
 
             if (!nameCapture) return;
 
             const methods = methodCaptures.map(method => ({ name: method.node.text }));
             const properties = propertyCaptures.map(property => ({ name: property.node.text }));
             const constructorsMethods = constructorCaptures.map(constructor => ({ name: constructor.node.text }));
+            const inheritance = inheritanceCaptures.map(inherit => ({ name: inherit.node.text }));
 
             // Extract constructor parameters
             const classKey = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
@@ -51,18 +54,20 @@ export class ClassExtractor extends BaseQueryEngine {
             if (!classMap.has(classKey)) {
                 classMap.set(classKey, {
                     name: nameCapture.node.text,
-                    methods: methods,
+                    inheritance: inheritance,
                     properties: properties,
                     constructor: constructorsMethods,
+                    methods: methods,
                     startPosition: nameCapture.node.startPosition as unknown as number,
                     endPosition: nameCapture.node.endPosition as unknown as number,
                 });
             }
             else {
                 const existingClass = classMap.get(classKey)!;
-                existingClass.methods.push(...methods);
-                existingClass.constructor.push(...constructorsMethods);
+                existingClass.inheritance.push(...inheritance);
                 existingClass.properties.push(...properties);
+                existingClass.constructor.push(...constructorsMethods);
+                existingClass.methods.push(...methods);
                 // Constructor is already set in the first occurrence
             }
         });

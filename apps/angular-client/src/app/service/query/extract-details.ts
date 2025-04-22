@@ -45,9 +45,10 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
                 name: cls.name,
                 startPosition: cls.startPosition,
                 endPosition: cls.endPosition,
-                methods: [],
+                inheritance: cls.inheritance,
                 properties: cls.properties,
-                constructor: []
+                constructor: [],
+                methods: []
             }));
         }
 

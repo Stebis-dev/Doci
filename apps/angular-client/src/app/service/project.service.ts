@@ -30,7 +30,9 @@ export class ProjectService {
             const storedProject = localStorage.getItem(STORED_PROJECT_KEY);
             if (storedProject) {
                 const project = JSON.parse(storedProject) as FlatProject;
-                await this.setCurrentProject(project);
+                console.log('Loading stored project:', project);
+                // this.currentProjectSubject.next(project);
+                this.setCurrentProject(project); // remove later
             }
         } catch (error) {
             console.error('Error loading stored project:', error);
@@ -50,11 +52,7 @@ export class ProjectService {
             const result = await this.fileSystemService.openDirectoryPicker();
 
             if (result) {
-                // Convert files to AST
-                const projectWithAST = await this.convertFilesToAST(result);
-                this.currentProjectSubject.next(projectWithAST);
-                this.saveProjectToStorage(projectWithAST);
-                console.log('Selected project with AST', projectWithAST);
+                this.setCurrentProject(result);
             }
         } catch (error) {
             console.error('Error selecting directory:', error);
@@ -62,6 +60,7 @@ export class ProjectService {
     }
 
     public async setCurrentProject(project: FlatProject): Promise<void> {
+        // Convert files to AST
         const projectWithAST = await this.convertFilesToAST(project);
         console.log('Setting current project with AST:', projectWithAST);
         this.currentProjectSubject.next(projectWithAST);

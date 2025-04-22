@@ -20,15 +20,17 @@ export interface Details {
 }
 
 export interface ClassTemporaryDetail extends Details {
+    inheritance: { name: string }[];
     methods: { name: string }[];
     properties: { name: string }[];
     constructor: { name: string }[];
 }
 
 export interface ClassDetail extends Details {
-    methods: MethodDetail[];
+    inheritance: { name: string }[];
     properties: { name: string }[];
     constructor: ConstructorMethodDetail[];
+    methods: MethodDetail[];
 }
 
 export interface MethodDetail extends Details {
