@@ -50,11 +50,12 @@ export class ClassExtractor extends BaseQueryEngine {
             const constructorsMethods = constructorCaptures.map(constructor => ({ name: constructor.node.text }));
             const inheritance = inheritanceCaptures.map(inherit => ({ name: inherit.node.text }));
 
-            console.log(modifiers);
+            console.log(properties);
             // Extract constructor parameters
             const classKey = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
 
-            if (!classMap.has(classKey)) {
+            const existingClass = classMap.get(classKey);
+            if (!existingClass) {
                 classMap.set(classKey, {
                     name: nameCapture.node.text,
                     modifiers: modifiers,
@@ -66,15 +67,13 @@ export class ClassExtractor extends BaseQueryEngine {
                     endPosition: nameCapture.node.endPosition as unknown as number,
                 });
             }
-            else {
-                const existingClass = classMap.get(classKey)!;
+            else { // TODO investigate duplicate methods and properties
                 existingClass.modifiers.push(...modifiers);
                 existingClass.inheritance.push(...inheritance);
-                existingClass.properties.push(...properties);
+                // existingClass.properties.push(...properties);
                 existingClass.constructor.push(...constructorsMethods);
                 existingClass.methods.push(...methods);
-                // Constructor is already set in the first occurrence
-            }
+            };
         });
 
         return Array.from(classMap.values());

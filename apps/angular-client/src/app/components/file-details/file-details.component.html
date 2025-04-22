@@ -29,18 +29,62 @@
         } } @if(showConstructors()){
         <h3 class="text-xl font-semibold mb-2 my-5">Constructor</h3>
         <div class="divider m-0"></div>
-        @for (constructor of constructors; track $index) {
-        <div class="flex flex-col">
-          {{ constructor.name }}
+        <div class="overflow-x-auto w-1/2">
+          <table class="table">
+            <tbody>
+              @for (constructor of constructors; track $index) {
+              <tr>
+                @for ( modifier of constructor.modifiers; track $index) {
+                <td>{{ modifier }}</td>
+                }
+                <td>
+                  {{ constructor.name }}
+                  {{ '(' }}
+                  @for ( parameter of constructor.parameters; track $index) {
+                  {{ parameter.type }} {{ parameter.name }} }
+                  <!-- TODO add method for multiple parameters -->
+                  {{ ')' }}
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
-        } } @if(showMethods()){
+        } @if(showMethods()){
         <h3 class="text-xl font-semibold mb-2 my-5">Method</h3>
         <div class="divider m-0"></div>
-        @for (method of methods; track $index) {
-        <div class="flex flex-col">
-          {{ method.name }}
+
+        <div class="overflow-x-auto w-1/2">
+          <table class="table">
+            <tbody>
+              @for (method of methods; track $index) {
+              <tr>
+                @for ( modifier of method.modifiers; track $index) {
+                <td>{{ modifier }}</td>
+                }
+                <td>
+                  {{ method.name }}
+                  <!-- +
+                      '(' +
+                      method.parameters[0].type +
+                      ' ' +
+                      method.parameters[0].name +
+                      ')'
+                  }} -->
+                  {{ '(' }}
+
+                  @for ( parameter of method.parameters; track $index) {
+                  {{ parameter.type }} {{ parameter.name }} }
+                  {{ ')' }}
+
+                  <!-- TODO add method for multiple parameters -->
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
-        } } }
+        } }
       </div>
       <div class="flex-1/2 items-center justify-center">
         <!-- Class Diagram -->

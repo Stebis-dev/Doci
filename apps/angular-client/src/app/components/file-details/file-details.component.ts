@@ -30,16 +30,7 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
         this.renderMermaidDiagram();
         mermaid.initialize({
             startOnLoad: true,
-            theme: 'default',
-            themeVariables: {
-                primaryColor: '#f9f9f9',
-                edgeLabelBackground: '#ffffff',
-                primaryTextColor: '#333333',
-                secondaryTextColor: '#555555',
-                tertiaryTextColor: '#777777',
-                lineColor: '#ffffff',
-                arrowheadColor: '#333333',
-            }
+            theme: 'dark',
         });
     }
 
