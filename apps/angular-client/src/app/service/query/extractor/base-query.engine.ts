@@ -1,19 +1,6 @@
 // Query/BaseQueryEngine.ts
+import { ExtractorType } from "@doci/shared";
 import { Parser, Tree, Query } from "web-tree-sitter";
-
-export enum ExtractorType {
-    Method = 'methods',
-    MethodUsage = 'methodUsage',
-    Class = 'classes',
-    Function = 'functions',
-    Enum = 'enums',
-}
-
-export interface Details {
-    name: string;
-    startPosition: number;
-    endPosition: number;
-}
 
 
 export abstract class BaseQueryEngine {

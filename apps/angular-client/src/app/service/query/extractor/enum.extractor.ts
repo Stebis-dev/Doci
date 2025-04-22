@@ -1,9 +1,8 @@
 import { Tree } from "web-tree-sitter";
-import { BaseQueryEngine, Details, ExtractorType } from "./base-query.engine";
+import { BaseQueryEngine } from "./base-query.engine";
+import { EnumDetail, ExtractorType } from "@doci/shared";
 
-export interface EnumDetail extends Details {
-    members: { name: string }[];
-}
+
 
 export class EnumExtractor extends BaseQueryEngine {
     type = ExtractorType.Enum;

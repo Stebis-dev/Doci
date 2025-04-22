@@ -1,12 +1,12 @@
-import { ClassDetail } from "./extractor/class.extractor";
-import { MethodDetail } from "./extractor/method.extractor";
+import { ClassDetail, MethodDetail, ClassTemporaryDetail, ConstructorMethodDetail } from "@doci/shared";
 
-export function assignMethodsToClasses(
-    classes: ClassDetail[],
-    methods: MethodDetail[]
-) {
-    for (const cls of classes) {
-        const methodDetails: MethodDetail[] = []
+export function buildClassDetails(
+    classes: ClassTemporaryDetail[],
+    methods: MethodDetail[],
+    constructors: ConstructorMethodDetail[]
+): ClassDetail[] {
+    return classes.map(cls => {
+        const methodDetails: MethodDetail[] = [];
 
         for (const methodName of cls.methods) {
             const methodDetail = methods.find(method =>
@@ -19,8 +19,27 @@ export function assignMethodsToClasses(
                 methodDetails.push(methodDetail);
             }
         }
-        cls.methods = methodDetails;
-    }
 
-    return classes;
+        const constructorDetails: MethodDetail[] = [];
+        for (const constructorName of cls.constructor) {
+            const constructorDetail = constructors.find(constructor =>
+                constructor.name === constructorName.name &&
+                constructor.startPosition >= cls.startPosition &&
+                constructor.endPosition <= cls.endPosition
+            );
+
+            if (constructorDetail) {
+                constructorDetails.push(constructorDetail);
+            }
+        }
+
+        return {
+            name: cls.name,
+            startPosition: cls.startPosition,
+            endPosition: cls.endPosition,
+            methods: methodDetails,
+            properties: cls.properties,
+            constructor: constructorDetails
+        };
+    });
 }

@@ -1,4 +1,5 @@
 import { Tree } from "web-tree-sitter";
+import { ExtractedDetails } from "./extractor.model";
 
 export interface FlatProject {
     name: string;
@@ -15,5 +16,6 @@ export interface ProjectFile {
     content?: string;
     type?: string;
     AST?: Tree; // Tree-sitter AST
-    details?: any; // Extracted details from the AST
+    details?: ExtractedDetails; // Extracted details from the AST
 }
+

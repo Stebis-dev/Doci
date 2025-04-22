@@ -1,29 +1,23 @@
 import { Parser, Tree } from "web-tree-sitter";
-import { assignMethodsToClasses } from "./assign-methods-to-classes";
-import { ExtractorType } from "./extractor/base-query.engine";
-import { ClassExtractor, ClassDetail } from "./extractor/class.extractor";
-import { MethodExtractor, MethodDetail } from "./extractor/method.extractor";
+import { buildClassDetails } from "./assign-methods-to-classes";
+import { ClassExtractor } from "./extractor/class.extractor";
+import { MethodExtractor } from "./extractor/method.extractor";
 import { EnumExtractor } from "./extractor/enum.extractor";
-import { ProjectFile } from "@doci/shared";
+import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile } from "@doci/shared";
+import { ConstructorExtractor } from "./extractor/constructor.extractor";
+import { ClassTemporaryDetail } from "@doci/shared";
+import { ConstructorMethodDetail } from "@doci/shared";
 
-export interface ExtractedDetails {
-    filePath: string;
-    [ExtractorType.Class]?: ClassDetail[];
-    [ExtractorType.Method]?: MethodDetail[];
-    [ExtractorType.Enum]?: EnumExtractor[];
-}
+
 
 export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): ExtractedDetails | null {
     try {
         const extractors = [
             new ClassExtractor(parser),
             new MethodExtractor(parser),
+            new ConstructorExtractor(parser),
             new EnumExtractor(parser),
         ];
-
-        const doc: ExtractedDetails = {
-            filePath: file.name,
-        };
 
         const extractedData: { [key in ExtractorType]?: any } = {};
         extractors.forEach(extractor => {
@@ -34,19 +28,27 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
             }
         });
 
+        const doc: ExtractedDetails = {
+            filePath: file.name,
+        };
+
+        const classTempDetails = extractedData[ExtractorType.Class] as ClassTemporaryDetail[];
+        const methodDetails = extractedData[ExtractorType.Method] as MethodDetail[];
+        const constructorDetails = extractedData[ExtractorType.Constructor] as ConstructorMethodDetail[];
+
         // Assign methods to their respective classes
-        if (extractedData[ExtractorType.Class] && extractedData[ExtractorType.Method]) {
-            const classes = extractedData[ExtractorType.Class] as ClassDetail[];
-            const methods = extractedData[ExtractorType.Method] as MethodDetail[];
-            doc[ExtractorType.Class] = assignMethodsToClasses(classes, methods);
-        } else {
-            // If we have classes or methods but not both, still include them in the result
-            if (extractedData[ExtractorType.Class]) {
-                doc[ExtractorType.Class] = extractedData[ExtractorType.Class];
-            }
-            if (extractedData[ExtractorType.Method]) {
-                doc[ExtractorType.Method] = extractedData[ExtractorType.Method];
-            }
+        if (classTempDetails && methodDetails) {
+            const classesWithMethods = buildClassDetails(classTempDetails, methodDetails, constructorDetails);
+            doc[ExtractorType.Class] = classesWithMethods;
+        } else if (classTempDetails) {
+            doc[ExtractorType.Class] = classTempDetails.map(cls => ({
+                name: cls.name,
+                startPosition: cls.startPosition,
+                endPosition: cls.endPosition,
+                methods: [],
+                properties: cls.properties,
+                constructor: []
+            }));
         }
 
         if (extractedData[ExtractorType.Enum]) {

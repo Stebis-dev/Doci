@@ -1,58 +1,105 @@
 <div
-  class="flex p-4 w-full h-full items-start align-middle justify-items-center overflow-auto"
+  class="flex p-4 w-full h-full overflow-x-hidden overflow-y-auto items-start align-middle justify-items-center"
 >
-  @if (file) { @if (file.details?.[ExtractorType.Class]) {
-  <div class="space-y-4">
-    @for (classDetail of file.details[ExtractorType.Class]; track $index) {
-    <div class="card bg-base-200">
-      <div class="card-body">
-        <h3 class="card-title">Class: {{ classDetail.name }}</h3>
-        @if (classDetail.properties?.length) {
-        <div class="mt-2">
-          <h4 class="font-semibold">Properties:</h4>
-          <ul class="list-disc list-inside">
-            @for (prop of classDetail.properties; track prop.name) {
-            <li>{{ prop.name }}</li>
-            }
-          </ul>
-        </div>
-        } @if (classDetail.methods?.length) {
-        <div class="mt-2">
-          <h4 class="font-semibold">Methods:</h4>
-          <ul class="list-disc list-inside">
-            @for (method of classDetail.methods; track $index) {
-            <li>{{ method.name }}</li>
-            }
-          </ul>
-        </div>
-        }
+  @if (file) {
+  <div
+    class="flex flex-col w-full h-full overflow-x-hidden overflow-y-auto items-start align-middle justify-items-center"
+  >
+    @if (showClasses()){
+    <h2 class="text-2xl font-bold mb-4">File: {{ getFileName() }}</h2>
+    <div class="divider"></div>
+
+    <div
+      class="flex flex-col w-full h-full items-start align-middle justify-items-center overflow-auto mx-10"
+    >
+      @for (classDetail of classes; track $index) {
+      <h3 class="text-xl font-semibold mb-2">Class</h3>
+      <div class="divider m-0"></div>
+      <div class="flex flex-col">
+        {{ classDetail.name }}
       </div>
+
+      @if(showProperties()){
+      <h3 class="text-xl font-semibold mb-2 my-5">Properties</h3>
+      <div class="divider m-0"></div>
+      @for (property of properties; track $index) {
+      <div class="flex flex-col">
+        {{ property.name }}
+      </div>
+      } } @if(showConstructors()){
+      <h3 class="text-xl font-semibold mb-2 my-5">Constructor</h3>
+      <div class="divider m-0"></div>
+      @for (constructor of constructors; track $index) {
+      <div class="flex flex-col">
+        {{ constructor.name }}
+      </div>
+      } } @if(showMethods()){
+      <h3 class="text-xl font-semibold mb-2 my-5">Method</h3>
+      <div class="divider m-0"></div>
+      @for (method of methods; track $index) {
+      <div class="flex flex-col">
+        {{ method.name }}
+      </div>
+      } } }
     </div>
     }
-  </div>
-  } @if (file.details?.[ExtractorType.Enum]) {
-  <div class="space-y-4">
-    @for (enumDetail of file.details[ExtractorType.Enum]; track $index) {
-    <div class="card bg-base-200">
-      <div class="card-body">
-        <h3 class="card-title">{{ enumDetail.name }}</h3>
-        @if (enumDetail.members?.length) {
-        <div class="mt-2">
-          <h4 class="font-semibold">Members:</h4>
-          <ul class="list-disc list-inside">
-            @for (member of enumDetail.members; track member.name) {
-            <li>{{ member.name }}</li>
-            }
-          </ul>
-        </div>
-        }
-      </div>
-    </div>
-    }
-  </div>
-  } } @else {
-  <div class="text-center p-8">
-    <p class="text-lg">Select a file to view its details</p>
   </div>
   }
 </div>
+<!-- <div class="space-y-4">
+      @for (classDetail of file.details[ExtractorType.Class]; track $index) {
+      <div class="card bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title">Class: {{ classDetail.name }}</h3>
+          @if (classDetail.properties && classDetail.properties?.length) {
+          <div class="mt-2">
+            <h4 class="font-semibold">Properties:</h4>
+            <ul class="list-disc list-inside">
+              @for (prop of classDetail.properties; track prop.name) {
+              <li>{{ prop.name }}</li>
+              }
+            </ul>
+          </div>
+          } @if (classDetail.methods && classDetail.methods?.length) {
+          <div class="mt-2">
+            <h4 class="font-semibold">Methods:</h4>
+            <ul class="list-disc list-inside">
+              @for (method of classDetail.methods; track $index) {
+              <li>{{ method.name }}</li>
+              }
+            </ul>
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+    } @if (file.details && file.details?.[ExtractorType.Enum]) {
+    <div class="space-y-4">
+      @for (enumDetail of file.details[ExtractorType.Enum]; track $index) {
+      <div class="card bg-base-200">
+        <div class="card-body">
+          <h3 class="card-title">{{ enumDetail.name }}</h3>
+          @if (enumDetail && enumDetail.members && enumDetail.members?.length) {
+          <div class="mt-2">
+            <h4 class="font-semibold">Members:</h4>
+            <ul class="list-disc list-inside">
+              @for (member of enumDetail.members; track member.name) {
+              <li>{{ member.name }}</li>
+              }
+            </ul>
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+    } } @else {
+    <div class="text-center p-8">
+      <p class="text-lg">Select a file to view its details</p>
+    </div>
+    }
+  </div>
+</div> 
+  </div>
+</div>-->

@@ -1,10 +1,8 @@
 import { Tree } from "web-tree-sitter";
-import { BaseQueryEngine, Details, ExtractorType } from "./base-query.engine";
+import { BaseQueryEngine } from "./base-query.engine";
+import { ExtractorType, MethodDetail } from "@doci/shared";
 
-export interface MethodDetail extends Details {
-    parameters: { name: string }[];
-    body: string;
-}
+
 // TODO add detail method parameters (name, type, default value, etc.)
 // TODO parse comments that are before the methods and properties
 
@@ -13,8 +11,12 @@ export class MethodExtractor extends BaseQueryEngine {
 
     extract(tree: Tree): MethodDetail[] | [] {
         const query = `
-            (method_declaration 
-                name: (identifier) @method.name 
+            (method_declaration
+                (modifier)* @method.modifiers
+                returns: (identifier)? @method.return
+                (predefined_type)? @method.return
+                type: (_)? @method.returnType
+                name: (identifier) @method.name
                 parameters: (
                     parameter_list (parameter) @method.parameter)* 
                 body: (block) @method.body
@@ -29,21 +31,45 @@ export class MethodExtractor extends BaseQueryEngine {
             const nameCapture = match.captures.find(capture => capture.name === 'method.name');
             const bodyCapture = match.captures.find(capture => capture.name === 'method.body');
             const parameterCaptures = match.captures.filter(capture => capture.name === 'method.parameter');
+            const modifierCaptures = match.captures.filter(capture => capture.name === 'method.modifiers');
+            const returnTypeCaptures = match.captures.filter(capture => capture.name === 'method.return' || capture.name === 'method.returnType');
 
             if (!nameCapture) return;
 
             const methodKey = this.getMethodKey(nameCapture);
-            const parameters = parameterCaptures.map(param => ({ name: param.node.text }));
+            const modifiers = modifierCaptures.map(mod => mod.node.text);
+            const returnType = returnTypeCaptures.length > 0 ? returnTypeCaptures[0].node.text : null;
+
+            // Extract parameter details
+            const parameters = parameterCaptures.map(param => {
+                const paramText = param.node.text;
+                // Simple parsing of parameter text to extract name and type
+                // Format is typically "type name" or just "name"
+                const parts = paramText.trim().split(/\s+/);
+                if (parts.length > 1) {
+                    return {
+                        name: parts[parts.length - 1],
+                        type: parts.slice(0, -1).join(' ')
+                    };
+                } else {
+                    return {
+                        name: parts[0],
+                        type: null
+                    };
+                }
+            });
 
             if (methodMap.has(methodKey)) {
                 const existingMethod = methodMap.get(methodKey);
 
                 if (!existingMethod) return;
 
-                existingMethod.parameters.push(...parameters);
+                // existingMethod.parameters.push(...parameters);
             } else {
                 methodMap.set(methodKey, {
                     name: nameCapture.node.text,
+                    modifiers: modifiers,
+                    // returnType: returnType,
                     parameters: parameters,
                     body: bodyCapture?.node.text ?? '',
                     startPosition: nameCapture.node.startPosition as unknown as number,

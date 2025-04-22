@@ -8,7 +8,7 @@ import { ProjectExplorerComponent } from '../pages/project-explorer/project-expl
 @Component({
     selector: 'app-main-layout',
     standalone: true,
-    imports: [RouterOutlet, TitleBarComponent, ProjectExplorerComponent],
+    imports: [TitleBarComponent, ProjectExplorerComponent],
     providers: [GitHubAuthService, GitHubService],
     template: `
         <div class="layout-container">
