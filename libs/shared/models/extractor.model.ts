@@ -1,5 +1,6 @@
 export enum ExtractorType {
     Method = 'methods',
+    MethodsUsed = 'methodsUsed',
     Class = 'classes',
     Enum = 'enums',
     Constructor = "constructors",
@@ -12,6 +13,7 @@ export interface ExtractedDetails {
     [ExtractorType.Property]?: MethodDetail[];
     [ExtractorType.Method]?: MethodDetail[];
     [ExtractorType.Constructor]?: MethodDetail[];
+    [ExtractorType.MethodsUsed]?: MethodsUsedDetail[];
     [ExtractorType.Enum]?: EnumDetail[];
 }
 
@@ -20,6 +22,7 @@ export interface Details {
     startPosition: NodePosition;
     endPosition: NodePosition;
 }
+
 export interface NodePosition {
     row: number;
     column: number;
@@ -44,14 +47,20 @@ export interface ClassDetail extends Details {
 
 export interface PropertyDetail extends Details {
     modifiers: string[];
-    type: string | null;
+    type: string[];
+    objectType?: string;
 }
 
 export interface MethodDetail extends Details {
     modifiers: string[];
-    // returnType: string | null;
+    returnType?: string;
     parameters: { name: string; type: string | null }[];
     body: string;
+}
+
+export interface MethodsUsedDetail extends Details {
+    expressionName: string
+    methodName: string;
 }
 
 export interface ConstructorMethodDetail extends Details {

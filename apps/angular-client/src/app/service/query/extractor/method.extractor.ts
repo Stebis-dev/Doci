@@ -13,8 +13,9 @@ export class MethodExtractor extends BaseQueryEngine {
         const query = `
             (method_declaration
                 (modifier)* @method.modifiers
-                returns: (identifier)? @method.return
-                (predefined_type)? @method.return
+                returns: (identifier) @method.return*
+	            returns: (predefined_type) @method.return*
+                returns: (generic_name) @method.return*
                 type: (_)? @method.returnType
                 name: (identifier) @method.name
                 parameters: (
@@ -38,7 +39,7 @@ export class MethodExtractor extends BaseQueryEngine {
 
             const methodKey = this.getMethodKey(nameCapture);
             const modifiers = modifierCaptures.map(mod => mod.node.text);
-            const returnType = returnTypeCaptures.length > 0 ? returnTypeCaptures[0].node.text : null;
+            const returnType = returnTypeCaptures.map(mod => mod.node.text)[0];
 
             // Extract parameter details
             const parameters = parameterCaptures.map(param => {
@@ -69,7 +70,7 @@ export class MethodExtractor extends BaseQueryEngine {
                 methodMap.set(methodKey, {
                     name: nameCapture.node.text,
                     modifiers: modifiers,
-                    // returnType: returnType,
+                    returnType: returnType,
                     parameters: parameters,
                     body: bodyCapture?.node.text ?? '',
                     startPosition: nameCapture.node.startPosition as NodePosition,

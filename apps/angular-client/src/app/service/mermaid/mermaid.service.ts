@@ -66,7 +66,7 @@ export class MermaidService {
         // Add properties
         if (classDetail.properties && classDetail.properties.length > 0) {
             classDetail.properties.forEach(prop => {
-                lines.push(`\t${this.getModifierString(prop.modifiers)} ${prop.name}`);
+                lines.push(`\t${this.getModifierString(prop.modifiers)} ${prop.name} : ${prop.type}`);
             });
         }
 
@@ -82,10 +82,19 @@ export class MermaidService {
         if (classDetail.methods && classDetail.methods.length > 0) {
             classDetail.methods.forEach(method => {
                 const params = this.formatMethodParameters(method);
-                lines.push(`\t${this.getModifierString(method.modifiers)} ${method.name}(${params})`);
+                lines.push(`\t${this.getModifierString(method.modifiers)} ${method.name}(${params}) ${this.getReturnType(method.returnType)}`);
             });
         }
         lines.push('}');
+    }
+
+    getReturnType(returnType: string | undefined) {
+        let modifiedReturnType = '';
+        if (returnType && returnType != 'void') {
+            modifiedReturnType = returnType;
+        }
+        // console.log(modifiedReturnType);
+        return modifiedReturnType;
     }
 
     private getModifierString(modifiers: string[]): string {
@@ -105,7 +114,7 @@ export class MermaidService {
     }
 
     private getAnnotations(annotations: string[]): string {
-        console.log(annotations);
+        // console.log(annotations);
         for (const anno of annotations) {
             switch (anno) {
                 case 'abstract':

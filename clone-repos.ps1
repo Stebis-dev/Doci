@@ -4,6 +4,7 @@ $BASE_DIR = "./tests/external-projects"
 
 $REPOSITORIES = @{
     "csharp" = @("https://github.com/exceptionnotfound/BattleshipModellingPractice.git")
+    "csharp2" = @("https://github.com/winqus/Savanna.git")
     "cpp" = @("https://github.com/zer0main/battleship.git")
     "java" = @("https://github.com/cosenary/Battleship.git")
 }

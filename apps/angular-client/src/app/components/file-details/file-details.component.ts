@@ -4,11 +4,14 @@ import { ClassDetail, ConstructorMethodDetail, ExtractorType, MethodDetail, Proj
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import mermaid from 'mermaid';
 import { MermaidService } from '../../service/mermaid/mermaid.service';
+import { MethodListComponent } from '../method-list/method-list.component';
+import { PropertyListComponent } from '../property-list/property-list.component';
+import { ConstructorListComponent } from '../constructor-list/constructor-list.component';
 
 @Component({
     selector: 'app-file-details',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, MethodListComponent, PropertyListComponent, ConstructorListComponent],
     templateUrl: './file-details.component.html',
     styleUrls: ['./file-details.component.css']
 })
@@ -76,6 +79,9 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
                 this.methods = this.classes[0].methods;
                 this.properties = this.classes[0].properties;
             }
+            this.properties = this.properties || [];
+            this.constructors = this.constructors || [];
+            this.methods = this.methods || [];
         }
     }
 
@@ -94,4 +100,20 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     showMethods(): boolean {
         return this.methods !== undefined && this.methods.length > 0;
     }
-} 
+
+    getPublicMethods(): MethodDetail[] {
+        return this.methods?.filter(method => method.modifiers.includes('public')) || [];
+    }
+
+    getPrivateMethods(): MethodDetail[] {
+        return this.methods?.filter(method => method.modifiers.includes('private')) || [];
+    }
+
+    getProtectedMethods(): MethodDetail[] {
+        return this.methods?.filter(method => method.modifiers.includes('protected')) || [];
+    }
+
+    getMethods(): MethodDetail[] {
+        return this.methods?.filter(method => !method.modifiers.some(modifier => ['public', 'private', 'protected'].includes(modifier))) || [];
+    }
+}

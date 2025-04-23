@@ -1,0 +1,24 @@
+@if(showMethods()){
+<h3 class="text-xl font-semibold mb-2 my-5">{{ methodLabel }}</h3>
+<div class="divider m-0"></div>
+<div class="overflow-x-auto w-1/2">
+  <table class="table">
+    <tbody>
+      @for (method of methods; track $index) {
+      <tr>
+        <td>{{ this.getReturnType(method) }}</td>
+        <td>
+          {{ method.name }}
+          {{ '(' }}
+          @for ( parameter of method.parameters; track $index) {
+          {{ parameter.type }} {{ parameter.name }} }
+          {{ ')' }}
+
+          <!-- TODO add method for multiple parameters -->
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}

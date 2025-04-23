@@ -20,77 +20,31 @@
           </a>
         </h2>
 
-        @if(showProperties()){
-        <h3 class="text-xl font-semibold mb-2 my-5">Properties</h3>
-        <div class="divider m-0"></div>
-        <div class="overflow-x-auto w-1/2">
-          <table class="table">
-            <tbody>
-              @for (property of properties; track $index) {
-              <tr>
-                @for ( modifier of property.modifiers; track $index) {
-                <td>{{ modifier }}</td>
-                }
-                <td>{{ property.type }}</td>
-                <td>
-                  {{ property.name }}
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-        } @if(showConstructors()){
-        <h3 class="text-xl font-semibold mb-2 my-5">Constructor</h3>
-        <div class="divider m-0"></div>
-        <div class="overflow-x-auto w-1/2">
-          <table class="table">
-            <tbody>
-              @for (constructor of constructors; track $index) {
-              <tr>
-                @for ( modifier of constructor.modifiers; track $index) {
-                <td>{{ modifier }}</td>
-                }
-                <td>
-                  {{ constructor.name }}
-                  {{ '(' }}
-                  @for ( parameter of constructor.parameters; track $index) {
-                  {{ parameter.type }} {{ parameter.name }} }
-                  <!-- TODO add method for multiple parameters -->
-                  {{ ')' }}
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-        } @if(showMethods()){
-        <h3 class="text-xl font-semibold mb-2 my-5">Method</h3>
-        <div class="divider m-0"></div>
-
-        <div class="overflow-x-auto w-1/2">
-          <table class="table">
-            <tbody>
-              @for (method of methods; track $index) {
-              <tr>
-                @for ( modifier of method.modifiers; track $index) {
-                <td>{{ modifier }}</td>
-                }
-                <td>
-                  {{ method.name }}
-                  {{ '(' }}
-                  @for ( parameter of method.parameters; track $index) {
-                  {{ parameter.type }} {{ parameter.name }} }
-                  {{ ')' }}
-
-                  <!-- TODO add method for multiple parameters -->
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-        } }
+        <app-property-list
+          propertyLabel="Properties"
+          [properties]="properties"
+        ></app-property-list>
+        <app-constructor-list
+          constructorLabel="Constructor"
+          [constructors]="constructors"
+        ></app-constructor-list>
+        }
+        <app-method-list
+          methodLabel="Methods"
+          [methods]="getMethods()"
+        ></app-method-list>
+        <app-method-list
+          methodLabel="Protected Methods"
+          [methods]="getProtectedMethods()"
+        ></app-method-list>
+        <app-method-list
+          methodLabel="Public Methods"
+          [methods]="getPublicMethods()"
+        ></app-method-list>
+        <app-method-list
+          methodLabel="Private Methods"
+          [methods]="getPrivateMethods()"
+        ></app-method-list>
       </div>
       <div class="flex-1/2 items-center justify-center">
         <!-- Class Diagram -->

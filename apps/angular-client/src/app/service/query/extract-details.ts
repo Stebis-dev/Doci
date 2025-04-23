@@ -6,6 +6,7 @@ import { EnumExtractor } from "./extractor/enum.extractor";
 import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail } from "@doci/shared";
 import { ConstructorExtractor } from "./extractor/constructor.extractor";
 import { PropertyExtractor } from "./extractor/property.extractor";
+import { MethodUsageExtractor } from "./extractor/method-usage.extractor";
 
 export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): ExtractedDetails | null {
     try {
@@ -13,6 +14,7 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
             new ClassExtractor(parser),
             new PropertyExtractor(parser),
             new MethodExtractor(parser),
+            new MethodUsageExtractor(parser),
             new ConstructorExtractor(parser),
             new EnumExtractor(parser),
         ];
@@ -50,6 +52,22 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
                 startPosition: cls.startPosition,
                 endPosition: cls.endPosition
             }));
+        }
+
+        if (extractedData[ExtractorType.Method]) {
+            doc[ExtractorType.Method] = extractedData[ExtractorType.Method];
+        }
+
+        if (extractedData[ExtractorType.MethodsUsed]) {
+            doc[ExtractorType.MethodsUsed] = extractedData[ExtractorType.MethodsUsed];
+        }
+
+        if (extractedData[ExtractorType.Constructor]) {
+            doc[ExtractorType.Constructor] = extractedData[ExtractorType.Constructor];
+        }
+
+        if (extractedData[ExtractorType.Property]) {
+            doc[ExtractorType.Property] = extractedData[ExtractorType.Property];
         }
 
         if (extractedData[ExtractorType.Enum]) {

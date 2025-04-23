@@ -11,8 +11,9 @@ export class PropertyExtractor extends BaseQueryEngine {
                 (modifier) @property.modifier
                 type: (identifier) @property.type*
                 type: (predefined_type) @property.type*
-                name: (identifier) @property.name
-            )*
+                type: (generic_name) @property.type*
+                name: (identifier) @property.name 
+            )?
         `;
         const matches = this.runQuery(tree, query);
 
@@ -36,7 +37,7 @@ export class PropertyExtractor extends BaseQueryEngine {
                 propertyMap.set(propertyKey, {
                     name: nameCapture.node.text,
                     modifiers: modifiers,
-                    type: types[0], // why array?
+                    type: types,
                     startPosition: nameCapture.node.startPosition as NodePosition,
                     endPosition: nameCapture.node.endPosition as NodePosition,
                 });
