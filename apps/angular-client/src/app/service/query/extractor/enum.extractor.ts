@@ -1,6 +1,6 @@
 import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { EnumDetail, ExtractorType } from "@doci/shared";
+import { EnumDetail, ExtractorType, NodePosition } from "@doci/shared";
 
 
 
@@ -33,8 +33,8 @@ export class EnumExtractor extends BaseQueryEngine {
                 enumMap.set(enumKey, {
                     name: nameCapture.node.text,
                     members: [],
-                    startPosition: nameCapture.node.startPosition as unknown as number,
-                    endPosition: nameCapture.node.endPosition as unknown as number,
+                    startPosition: nameCapture.node.startPosition as NodePosition,
+                    endPosition: nameCapture.node.endPosition as NodePosition,
                 });
             }
         });

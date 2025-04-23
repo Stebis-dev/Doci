@@ -3,11 +3,13 @@ export enum ExtractorType {
     Class = 'classes',
     Enum = 'enums',
     Constructor = "constructors",
+    Property = "properties",
 }
 
 export interface ExtractedDetails {
     filePath: string;
     [ExtractorType.Class]?: ClassDetail[];
+    [ExtractorType.Property]?: MethodDetail[];
     [ExtractorType.Method]?: MethodDetail[];
     [ExtractorType.Constructor]?: MethodDetail[];
     [ExtractorType.Enum]?: EnumDetail[];
@@ -15,8 +17,12 @@ export interface ExtractedDetails {
 
 export interface Details {
     name: string;
-    startPosition: number;
-    endPosition: number;
+    startPosition: NodePosition;
+    endPosition: NodePosition;
+}
+export interface NodePosition {
+    row: number;
+    column: number;
 }
 
 export interface ClassTemporaryDetail extends Details {
@@ -29,11 +35,16 @@ export interface ClassTemporaryDetail extends Details {
 
 export interface ClassDetail extends Details {
     modifiers: string[];
-    properties: { name: string }[];
+    properties: PropertyDetail[];
     constructor: ConstructorMethodDetail[];
     methods: MethodDetail[];
     parentClasses?: string[];
     inheritance: { name: string }[];
+}
+
+export interface PropertyDetail extends Details {
+    modifiers: string[];
+    type: string | null;
 }
 
 export interface MethodDetail extends Details {

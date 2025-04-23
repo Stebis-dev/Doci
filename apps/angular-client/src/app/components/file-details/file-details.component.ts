@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClassDetail, ConstructorMethodDetail, ExtractorType, MethodDetail, ProjectFile } from '@doci/shared';
+import { ClassDetail, ConstructorMethodDetail, ExtractorType, MethodDetail, ProjectFile, PropertyDetail } from '@doci/shared';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import mermaid from 'mermaid';
 import { MermaidService } from '../../service/mermaid/mermaid.service';
@@ -17,7 +17,7 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     classes?: ClassDetail[] = [];
     constructors?: ConstructorMethodDetail[] = [];
     methods?: MethodDetail[] = [];
-    properties?: { name: string }[] = [];
+    properties?: PropertyDetail[] = [];
     mermaidDiagram = '';
     renderedSVG: SafeHtml = ''
 

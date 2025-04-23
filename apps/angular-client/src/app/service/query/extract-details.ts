@@ -3,13 +3,15 @@ import { buildClassDetails } from "./assign-methods-to-classes";
 import { ClassExtractor } from "./extractor/class.extractor";
 import { MethodExtractor } from "./extractor/method.extractor";
 import { EnumExtractor } from "./extractor/enum.extractor";
-import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail } from "@doci/shared";
+import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail } from "@doci/shared";
 import { ConstructorExtractor } from "./extractor/constructor.extractor";
+import { PropertyExtractor } from "./extractor/property.extractor";
 
 export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): ExtractedDetails | null {
     try {
         const extractors = [
             new ClassExtractor(parser),
+            new PropertyExtractor(parser),
             new MethodExtractor(parser),
             new ConstructorExtractor(parser),
             new EnumExtractor(parser),
@@ -29,19 +31,20 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
         };
 
         const classTempDetails = extractedData[ExtractorType.Class] as ClassTemporaryDetail[];
+        const propertyDetails = extractedData[ExtractorType.Property] as PropertyDetail[];
         const methodDetails = extractedData[ExtractorType.Method] as MethodDetail[];
         const constructorDetails = extractedData[ExtractorType.Constructor] as ConstructorMethodDetail[];
 
         // Assign methods to their respective classes
         if (classTempDetails && methodDetails) {
-            const classesWithMethods = buildClassDetails(classTempDetails, methodDetails, constructorDetails);
+            const classesWithMethods = buildClassDetails(classTempDetails, propertyDetails, methodDetails, constructorDetails);
             doc[ExtractorType.Class] = classesWithMethods;
         } else if (classTempDetails) {
             doc[ExtractorType.Class] = classTempDetails.map(cls => ({
                 name: cls.name,
                 modifiers: cls.modifiers,
                 inheritance: cls.inheritance,
-                properties: cls.properties,
+                properties: [],
                 constructor: [],
                 methods: [],
                 startPosition: cls.startPosition,

@@ -1,18 +1,19 @@
-import { ClassDetail, MethodDetail, ClassTemporaryDetail, ConstructorMethodDetail } from "@doci/shared";
+import { ClassDetail, MethodDetail, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail } from "@doci/shared";
 
 export function buildClassDetails(
     classes: ClassTemporaryDetail[],
+    properties: PropertyDetail[],
     methods: MethodDetail[],
     constructors: ConstructorMethodDetail[]
 ): ClassDetail[] {
-    return classes.map(cls => {
+    return classes.map(classObj => {
         const methodDetails: MethodDetail[] = [];
 
-        for (const methodName of cls.methods) {
+        for (const methodName of classObj.methods) {
             const methodDetail = methods.find(method =>
                 method.name === methodName.name &&
-                method.startPosition >= cls.startPosition &&
-                method.endPosition <= cls.endPosition
+                method.startPosition >= classObj.startPosition &&
+                method.endPosition <= classObj.endPosition
             );
 
             if (methodDetail) {
@@ -21,11 +22,11 @@ export function buildClassDetails(
         }
 
         const constructorDetails: MethodDetail[] = [];
-        for (const constructorName of cls.constructor) {
+        for (const constructorName of classObj.constructor) {
             const constructorDetail = constructors.find(constructor =>
                 constructor.name === constructorName.name &&
-                constructor.startPosition >= cls.startPosition &&
-                constructor.endPosition <= cls.endPosition
+                constructor.startPosition >= classObj.startPosition &&
+                constructor.endPosition <= classObj.endPosition
             );
 
             if (constructorDetail) {
@@ -33,15 +34,28 @@ export function buildClassDetails(
             }
         }
 
+        const propertyDetails: PropertyDetail[] = [];
+        for (const propertyName of classObj.properties) {
+            const propertyDetail = properties.find(property =>
+                property.name === propertyName.name &&
+                property.startPosition >= classObj.startPosition &&
+                property.endPosition <= classObj.endPosition
+            );
+
+            if (propertyDetail) {
+                propertyDetails.push(propertyDetail);
+            }
+        }
+
         return {
-            name: cls.name,
-            modifiers: cls.modifiers,
-            inheritance: cls.inheritance,
+            name: classObj.name,
+            modifiers: classObj.modifiers,
+            inheritance: classObj.inheritance,
             constructor: constructorDetails,
-            properties: cls.properties,
+            properties: propertyDetails,
             methods: methodDetails,
-            startPosition: cls.startPosition,
-            endPosition: cls.endPosition,
+            startPosition: classObj.startPosition,
+            endPosition: classObj.endPosition,
         };
     });
 }

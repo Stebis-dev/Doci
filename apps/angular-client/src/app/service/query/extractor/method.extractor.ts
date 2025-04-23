@@ -1,6 +1,6 @@
 import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { ExtractorType, MethodDetail } from "@doci/shared";
+import { ExtractorType, MethodDetail, NodePosition } from "@doci/shared";
 
 
 // TODO add detail method parameters (name, type, default value, etc.)
@@ -72,8 +72,8 @@ export class MethodExtractor extends BaseQueryEngine {
                     // returnType: returnType,
                     parameters: parameters,
                     body: bodyCapture?.node.text ?? '',
-                    startPosition: nameCapture.node.startPosition as unknown as number,
-                    endPosition: nameCapture.node.endPosition as unknown as number,
+                    startPosition: nameCapture.node.startPosition as NodePosition,
+                    endPosition: nameCapture.node.endPosition as NodePosition,
                 });
             }
         });

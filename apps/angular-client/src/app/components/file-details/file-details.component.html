@@ -5,28 +5,42 @@
   <div
     class="flex flex-col w-full h-full overflow-x-hidden overflow-y-auto items-start align-middle justify-items-center"
   >
-    @if (showClasses()){
     <h2 class="text-2xl font-bold mb-4">File: {{ getFileName() }}</h2>
     <div class="divider"></div>
 
+    @if (showClasses()){
     <div class="flex flex-row w-full h-full overflow-auto">
       <div class="flex-1/2 mx-10">
         <!-- Existing class details -->
         @for (classDetail of classes; track $index) {
-        <h3 class="text-xl font-semibold mb-2">Class</h3>
-        <div class="divider m-0"></div>
-        <div class="flex flex-col">
-          {{ classDetail.name }}
-        </div>
+        <h2 class="text-xl font-light mb-2">
+          Class
+          <a class="text-xl font-semibold">
+            {{ classDetail.name }}
+          </a>
+        </h2>
 
         @if(showProperties()){
         <h3 class="text-xl font-semibold mb-2 my-5">Properties</h3>
         <div class="divider m-0"></div>
-        @for (property of properties; track $index) {
-        <div class="flex flex-col">
-          {{ property.name }}
+        <div class="overflow-x-auto w-1/2">
+          <table class="table">
+            <tbody>
+              @for (property of properties; track $index) {
+              <tr>
+                @for ( modifier of property.modifiers; track $index) {
+                <td>{{ modifier }}</td>
+                }
+                <td>{{ property.type }}</td>
+                <td>
+                  {{ property.name }}
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
-        } } @if(showConstructors()){
+        } @if(showConstructors()){
         <h3 class="text-xl font-semibold mb-2 my-5">Constructor</h3>
         <div class="divider m-0"></div>
         <div class="overflow-x-auto w-1/2">
@@ -64,15 +78,7 @@
                 }
                 <td>
                   {{ method.name }}
-                  <!-- +
-                      '(' +
-                      method.parameters[0].type +
-                      ' ' +
-                      method.parameters[0].name +
-                      ')'
-                  }} -->
                   {{ '(' }}
-
                   @for ( parameter of method.parameters; track $index) {
                   {{ parameter.type }} {{ parameter.name }} }
                   {{ ')' }}

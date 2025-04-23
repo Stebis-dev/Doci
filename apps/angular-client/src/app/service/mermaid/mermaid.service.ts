@@ -66,7 +66,7 @@ export class MermaidService {
         // Add properties
         if (classDetail.properties && classDetail.properties.length > 0) {
             classDetail.properties.forEach(prop => {
-                lines.push(`\t${prop.name}`);
+                lines.push(`\t${this.getModifierString(prop.modifiers)} ${prop.name}`);
             });
         }
 
