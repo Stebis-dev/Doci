@@ -1,0 +1,25 @@
+@if(showConstructors()){
+<h3 class="text-xl font-semibold mb-2 my-5">Constructors</h3>
+<div class="divider m-0"></div>
+<div class="overflow-x-auto w-1/2">
+  <table class="table">
+    <tbody>
+      @for (constructor of constructors; track $index) {
+      <tr>
+        @for ( modifier of constructor.modifiers; track $index) {
+        <td>{{ modifier }}</td>
+        }
+        <td>
+          {{ constructor.name }}
+          {{ '(' }}
+          @for ( parameter of constructor.parameters; track $index) {
+          {{ parameter.type }} {{ parameter.name }} }
+          <!-- TODO add method for multiple parameters -->
+          {{ ')' }}
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}

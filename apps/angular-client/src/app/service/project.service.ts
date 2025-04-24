@@ -6,6 +6,7 @@ import { TreeSitterService } from './tree-sitter/tree-sitter.service';
 import { extractDetails } from './query/extract-details';
 import { Tree } from 'web-tree-sitter';
 import { resolveInheritance } from './query/inheritance-resolver';
+import { resolveMethodUsages } from './query/method-usages-resolve';
 
 const STORED_PROJECT_KEY = 'doci_current_project';
 
@@ -63,11 +64,15 @@ export class ProjectService {
     public async setCurrentProject(project: FlatProject): Promise<void> {
         // Convert files to AST
         const projectWithAST = await this.convertFilesToAST(project);
-        console.log('Setting current project with AST:', projectWithAST);
         const resolvedProject = resolveInheritance(projectWithAST);
 
-        this.currentProjectSubject.next(resolvedProject);
-        this.saveProjectToStorage(resolvedProject);
+        // Resolve method usage relationships
+        const projectWithMethodUsages = resolveMethodUsages(resolvedProject);
+
+        console.log('Setting current project:', projectWithMethodUsages);
+
+        this.currentProjectSubject.next(projectWithMethodUsages);
+        this.saveProjectToStorage(projectWithMethodUsages);
     }
 
     public clearStoredProject(): void {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ClassDetail, MethodDetail, ExtractedDetails } from '@doci/shared';
+import { ClassDetail, MethodDetail, ExtractedDetails, PropertyDetail, EnumDetail } from '@doci/shared';
 import { ProjectService } from '../project.service';
 
 @Injectable({
@@ -10,12 +10,15 @@ export class MermaidService {
     constructor(private readonly projectService: ProjectService) { }
 
     public generateClassDiagram(details: ExtractedDetails): string {
-        if (!details || !details.classes || details.classes.length === 0) {
+        if (!details)
             return '';
-        }
+        if ((!details.classes || details.classes.length === 0)
+            && (!details.enums || details.enums.length === 0))
+            return '';
 
         const lines: string[] = [
             'classDiagram',
+            'direction BT',
         ];
 
         // Get the current project
@@ -33,30 +36,84 @@ export class MermaidService {
             });
         }
 
-        details.classes.forEach(classDetail => {
-            // Add class declaration
-            this.buildClass(lines, classDetail);
+        const enumMap = new Map<string, EnumDetail>();
 
-            // Add inheritance relationships
-            if (classDetail.parentClasses) {
-                classDetail.parentClasses.forEach((parentName: string) => {
+        // Populate the enum map for quick lookup
+        if (currentProject) {
+            currentProject.files.forEach(file => {
+                if (file.details && file.details.enums) {
+                    file.details.enums.forEach(cls => {
+                        enumMap.set(cls.name, cls);
+                    });
+                }
+            });
+        }
 
-                    const parentClass = classMap.get(parentName);
-                    if (parentClass) {
-                        lines.push(`${parentName} <|-- ${classDetail.name}`);
-                        this.buildClass(lines, parentClass);
-                    }
-                });
-            }
+        // Tracks classes and enums that have been processed to avoid duplicates
+        const processedObjects = new Set<string>();
+
+        details.classes?.forEach(classDetail => {
+            this.processClassHierarchy(lines, classDetail, classMap, enumMap, processedObjects);
         });
+
+        details.enums?.forEach(enumDetail => {
+            this.buildEnumClass(lines, enumDetail);
+        });
+
         const buildScript = lines.join('\n');
-        console.log(buildScript);
+        console.log({ buildScript });
         return buildScript;
     }
 
+    private processClassHierarchy(lines: string[], classDetail: ClassDetail, classMap: Map<string, ClassDetail>, enumMap: Map<string, EnumDetail>, processedClasses: Set<string>) {
+        if (processedClasses.has(classDetail.name)) {
+            return;
+        }
+        processedClasses.add(classDetail.name);
+
+        // Add class declaration
+        this.buildClass(lines, classDetail);
+        // Add inheritance relationships
+        if (classDetail.inheritance) {
+            classDetail.inheritance.forEach((parentName: string) => {
+                const parentClass = classMap.get(parentName);
+                if (parentClass) {
+                    lines.push(`${parentName} <|-- ${classDetail.name}`);
+                    this.processClassHierarchy(lines, parentClass, classMap, enumMap, processedClasses);
+                }
+            });
+        }
+
+        // Add object usage relationships
+        if (classDetail.objectsUsed) {
+            classDetail.objectsUsed.forEach((parentName: string) => {
+                const parentClass = classMap.get(parentName);
+                if (parentClass) {
+                    lines.push(`${parentName} -- ${classDetail.name}`);
+                    this.processClassHierarchy(lines, parentClass, classMap, enumMap, processedClasses);
+                }
+            });
+        }
+
+        if (classDetail.objectsUsed) {
+            classDetail.objectsUsed.forEach((parentName: string) => {
+                const parentEnum = enumMap.get(parentName);
+                if (parentEnum) {
+                    lines.push(`${parentName} -- ${classDetail.name}`);
+                    if (processedClasses.has(parentEnum.name)) {
+                        return;
+                    }
+                    processedClasses.add(parentEnum.name);
+                    this.buildEnumClass(lines, parentEnum);
+                    // this.processClassHierarchy(lines, parentClass, classMap, enumMap, processedClasses);
+                }
+            });
+        }
+    }
+
     private buildClass(lines: string[], classDetail: ClassDetail) {
-        lines.push(this.generateClassDeclaration(classDetail) + '{');
-        // lines.push('<<Abstract>>');
+
+        lines.push(this.generateClassDeclaration(classDetail.name) + '{');
 
         const annotations = this.getAnnotations(classDetail.modifiers);
         if (annotations) {
@@ -66,14 +123,14 @@ export class MermaidService {
         // Add properties
         if (classDetail.properties && classDetail.properties.length > 0) {
             classDetail.properties.forEach(prop => {
-                lines.push(`\t${prop.name}`);
+                lines.push(this.buildProperty(prop));
             });
         }
 
         // Add constructors
         if (classDetail.constructor && classDetail.constructor.length > 0) {
             classDetail.constructor.forEach(ctor => {
-                const params = this.formatMethodParameters(ctor);
+                const params = this.formatMethodParameters(ctor.parameters);
                 lines.push(`\t${this.getModifierString(ctor.modifiers)} ${ctor.name}(${params})`);
             });
         }
@@ -81,11 +138,66 @@ export class MermaidService {
         // Add methods
         if (classDetail.methods && classDetail.methods.length > 0) {
             classDetail.methods.forEach(method => {
-                const params = this.formatMethodParameters(method);
-                lines.push(`\t${this.getModifierString(method.modifiers)} ${method.name}(${params})`);
+                const params = this.formatMethodParameters(method.parameters);
+                lines.push(`\t${this.getModifierString(method.modifiers)} ${method.name}(${params}) ${this.getReturnType(method)}`);
             });
         }
         lines.push('}');
+
+    }
+
+    private buildEnumClass(lines: string[], enumDetail: EnumDetail) {
+
+        lines.push(this.generateClassDeclaration(enumDetail.name) + '{');
+
+        lines.push('<<enumeration>>');
+
+        // Add properties
+        if (enumDetail.members && enumDetail.members.length > 0) {
+            enumDetail.members.forEach(member => {
+                lines.push(member.member);
+            });
+        }
+        lines.push('}');
+    }
+
+    buildProperty(property: PropertyDetail): string {
+        let propertyType = ''
+
+        if (property.genericName)
+            propertyType += property.genericName + '< ';
+
+        if (property.objectType[0])
+            propertyType += property.objectType[0];
+
+        if (property.predefinedType[0])
+            propertyType += property.predefinedType[0];
+
+        if (property.genericName)
+            propertyType += ' >';
+
+        return `\t${this.getModifierString(property.modifiers)} ${property.name} : ${propertyType}`;
+    }
+
+    getReturnType(returnType: MethodDetail) {
+        let modifiedReturnType = '';
+
+        if (returnType.predefinedType[0] == 'void')
+            return modifiedReturnType
+
+        if (returnType.genericName)
+            modifiedReturnType += returnType.genericName + '< ';
+
+        if (returnType.objectType[0])
+            modifiedReturnType += returnType.objectType[0];
+
+        if (returnType.predefinedType[0])
+            modifiedReturnType += returnType.predefinedType[0];
+
+        if (returnType.genericName)
+            modifiedReturnType += ' >';
+
+        return modifiedReturnType;
     }
 
     private getModifierString(modifiers: string[]): string {
@@ -105,7 +217,7 @@ export class MermaidService {
     }
 
     private getAnnotations(annotations: string[]): string {
-        console.log(annotations);
+        // console.log(annotations);
         for (const anno of annotations) {
             switch (anno) {
                 case 'abstract':
@@ -115,17 +227,17 @@ export class MermaidService {
         return '';
     }
 
-    private generateClassDeclaration(classDetail: ClassDetail): string {
-        const declaration = `class ${classDetail.name}`;
+    private generateClassDeclaration(className: string): string {
+        const declaration = `class ${className}`;
         return declaration;
     }
 
-    private formatMethodParameters(method: MethodDetail): string {
-        if (!method.parameters || method.parameters.length === 0) {
+    private formatMethodParameters(parameters: { name: string; type: string | null }[]): string {
+        if (!parameters || parameters.length === 0) {
             return '';
         }
 
-        return method.parameters
+        return parameters
             .map(param => {
                 if (param.type) {
                     return `${param.name}: ${param.type}`;

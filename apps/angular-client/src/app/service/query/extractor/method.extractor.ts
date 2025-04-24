@@ -1,7 +1,6 @@
 import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { ExtractorType, MethodDetail } from "@doci/shared";
-
+import { ExtractorType, MethodDetail, NodePosition } from "@doci/shared";
 
 // TODO add detail method parameters (name, type, default value, etc.)
 // TODO parse comments that are before the methods and properties
@@ -13,9 +12,11 @@ export class MethodExtractor extends BaseQueryEngine {
         const query = `
             (method_declaration
                 (modifier)* @method.modifiers
-                returns: (identifier)? @method.return
-                (predefined_type)? @method.return
-                type: (_)? @method.returnType
+                returns: (identifier) @method.identifier.type*
+                returns: (predefined_type) @method.predefinedType.type*
+                returns: (generic_name (identifier) @method.genericName)*
+                returns: (generic_name (type_argument_list (predefined_type) @method.predefinedType.type))*
+                returns: (generic_name (type_argument_list (identifier) @method.identifier.type))*
                 name: (identifier) @method.name
                 parameters: (
                     parameter_list (parameter) @method.parameter)* 
@@ -29,16 +30,26 @@ export class MethodExtractor extends BaseQueryEngine {
 
         matches.forEach((match: { captures: any[]; }) => {
             const nameCapture = match.captures.find(capture => capture.name === 'method.name');
-            const bodyCapture = match.captures.find(capture => capture.name === 'method.body');
-            const parameterCaptures = match.captures.filter(capture => capture.name === 'method.parameter');
-            const modifierCaptures = match.captures.filter(capture => capture.name === 'method.modifiers');
-            const returnTypeCaptures = match.captures.filter(capture => capture.name === 'method.return' || capture.name === 'method.returnType');
-
             if (!nameCapture) return;
 
-            const methodKey = this.getMethodKey(nameCapture);
+            const bodyCapture = match.captures.filter(capture => capture.name === 'method.body');
+            const body = bodyCapture.map(mod => mod.node.text)[0] as string;
+
+            const modifierCaptures = match.captures.filter(capture => capture.name === 'method.modifiers');
             const modifiers = modifierCaptures.map(mod => mod.node.text);
-            const returnType = returnTypeCaptures.length > 0 ? returnTypeCaptures[0].node.text : null;
+
+            const parameterCaptures = match.captures.filter(capture => capture.name === 'method.parameter');
+
+            const identifierTypeCaptures = match.captures.filter(capture => capture.name === 'method.identifier.type');
+            const objectType = identifierTypeCaptures.map(type => type.node.text) as string[];
+
+            const predefinedTypeCaptures = match.captures.filter(capture => capture.name === 'method.predefinedType.type');
+            const predefinedType = predefinedTypeCaptures.map(type => type.node.text) as string[];
+
+            const genericNameCaptures = match.captures.filter(capture => capture.name === 'method.genericName');
+            const genericName = genericNameCaptures.map(type => type.node.text)[0] as string;
+
+            const methodKey = this.getMethodKey(nameCapture);
 
             // Extract parameter details
             const parameters = parameterCaptures.map(param => {
@@ -59,67 +70,28 @@ export class MethodExtractor extends BaseQueryEngine {
                 }
             });
 
-            if (methodMap.has(methodKey)) {
-                const existingMethod = methodMap.get(methodKey);
-
-                if (!existingMethod) return;
-
-                // existingMethod.parameters.push(...parameters);
-            } else {
+            const existingMethod = methodMap.get(methodKey);
+            if (!existingMethod) {
                 methodMap.set(methodKey, {
                     name: nameCapture.node.text,
                     modifiers: modifiers,
-                    // returnType: returnType,
+                    objectType: objectType,
+                    predefinedType: predefinedType,
+                    genericName: genericName,
                     parameters: parameters,
-                    body: bodyCapture?.node.text ?? '',
-                    startPosition: nameCapture.node.startPosition as unknown as number,
-                    endPosition: nameCapture.node.endPosition as unknown as number,
+                    body: body ?? '',
+                    startPosition: bodyCapture[0].node.startPosition as NodePosition,
+                    endPosition: bodyCapture[0].node.endPosition as NodePosition,
                 });
+            } else {
+                existingMethod.predefinedType.push(...predefinedType);
+                existingMethod.predefinedType = Array.from(new Set(existingMethod.predefinedType));
+                existingMethod.objectType.push(...objectType);
+                existingMethod.objectType = Array.from(new Set(existingMethod.objectType));
             }
         });
         return Array.from(methodMap.values());
     }
-
-    // private extractMethod(parser: Parser, abstractSyntaxTree: Tree) {
-    //     const query = `
-    //     (method_declaration 
-    //       name: (identifier) @method.name 
-    //       parameters: (parameter_list (parameter) @method.parameter) 
-    //       body: (block) @method.body
-    //     )`;
-    //     const matches = parser.query(query).matches(abstractSyntaxTree.rootNode);
-
-    //     const methodMap = new Map<string, MethodDetail>();
-
-    //     matches.forEach((match) => {
-    //         const nameCapture = match.captures.find(capture => capture.name === 'method.name');
-    //         const bodyCapture = match.captures.find(capture => capture.name === 'method.body');
-    //         const parameterCaptures = match.captures.filter(capture => capture.name === 'method.parameter');
-
-    //         if (!nameCapture) return;
-
-    //         const methodKey = this.getMethodKey(nameCapture);
-    //         const parameters = parameterCaptures.map(param => ({ name: param.node.text }));
-
-    //         if (methodMap.has(methodKey)) {
-    //             const existingMethod = methodMap.get(methodKey);
-
-    //             if (!existingMethod) return;
-
-    //             existingMethod.parameters.push(...parameters);
-    //         } else {
-    //             methodMap.set(methodKey, {
-    //                 name: nameCapture.node.text,
-    //                 parameters: parameters,
-    //                 body: bodyCapture?.node.text ?? '',
-    //                 startPosition: nameCapture.node.startPosition,
-    //                 endPosition: nameCapture.node.endPosition,
-    //             });
-    //         }
-    //     });
-
-    //     return Array.from(methodMap.values());
-    // }
 
     private getMethodKey(capture: any): string {
         const { text, startPosition } = capture.node;

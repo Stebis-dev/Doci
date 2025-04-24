@@ -1,23 +1,28 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClassDetail, ConstructorMethodDetail, ExtractorType, MethodDetail, ProjectFile } from '@doci/shared';
+import { ClassDetail, ConstructorMethodDetail, EnumDetail, ExtractorType, MethodDetail, ProjectFile, PropertyDetail } from '@doci/shared';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import mermaid from 'mermaid';
 import { MermaidService } from '../../service/mermaid/mermaid.service';
+import { MethodListComponent } from '../method-list/method-list.component';
+import { PropertyListComponent } from '../property-list/property-list.component';
+import { ConstructorListComponent } from '../constructor-list/constructor-list.component';
+import { EnumMemberListComponent } from '../enum-member-list/enum-member-list.component';
 
 @Component({
     selector: 'app-file-details',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, MethodListComponent, PropertyListComponent, ConstructorListComponent, EnumMemberListComponent],
     templateUrl: './file-details.component.html',
-    styleUrls: ['./file-details.component.css']
 })
 export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
+
     @Input() file: ProjectFile | null = null;
     classes?: ClassDetail[] = [];
+    enums?: EnumDetail[] = [];
     constructors?: ConstructorMethodDetail[] = [];
     methods?: MethodDetail[] = [];
-    properties?: { name: string }[] = [];
+    properties?: PropertyDetail[] = [];
     mermaidDiagram = '';
     renderedSVG: SafeHtml = ''
 
@@ -31,6 +36,7 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
         mermaid.initialize({
             startOnLoad: true,
             theme: 'dark',
+            securityLevel: 'loose',
         });
     }
 
@@ -76,6 +82,10 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
                 this.methods = this.classes[0].methods;
                 this.properties = this.classes[0].properties;
             }
+            this.enums = this.file.details[ExtractorType.Enum];
+            this.properties = this.properties || [];
+            this.constructors = this.constructors || [];
+            this.methods = this.methods || [];
         }
     }
 
@@ -84,6 +94,9 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     }
     showClasses(): boolean {
         return this.classes !== undefined && this.classes.length > 0;
+    }
+    showEnums(): boolean {
+        return this.enums !== undefined && this.enums.length > 0;
     }
     showProperties(): boolean {
         return this.properties !== undefined && this.properties.length > 0;
@@ -94,4 +107,20 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     showMethods(): boolean {
         return this.methods !== undefined && this.methods.length > 0;
     }
-} 
+
+    getPublicMethods(): MethodDetail[] {
+        return this.methods?.filter(method => method.modifiers.includes('public')) || [];
+    }
+
+    getPrivateMethods(): MethodDetail[] {
+        return this.methods?.filter(method => method.modifiers.includes('private')) || [];
+    }
+
+    getProtectedMethods(): MethodDetail[] {
+        return this.methods?.filter(method => method.modifiers.includes('protected')) || [];
+    }
+
+    getMethods(): MethodDetail[] {
+        return this.methods?.filter(method => !method.modifiers.some(modifier => ['public', 'private', 'protected'].includes(modifier))) || [];
+    }
+}
