@@ -5,7 +5,7 @@
   <table class="table">
     <tbody>
       @for (property of properties; track $index) {
-      <tr>
+      <tr class="hover:bg-base-300">
         @for ( modifier of property.modifiers; track $index) {
         <td>{{ modifier }}</td>
         }

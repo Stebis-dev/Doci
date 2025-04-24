@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../../service/project.service';
 import { ProjectFile } from '@doci/shared';
+import { IconComponent } from '../icon.component';
 
 interface TreeNode {
     name: string;
@@ -15,7 +16,7 @@ interface TreeNode {
 @Component({
     selector: 'app-file-tree',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, IconComponent],
     template: `
         <div class="file-tree">
             @if (treeData.length > 0) {
@@ -30,8 +31,8 @@ interface TreeNode {
         </div>
 
         <ng-template #treeNode let-node>
-            <div class="tree-node">
-                <div class="node-content" 
+            <div class="tree-node ">
+                <div class="node-content hover:bg-base-300"
                      [class.file]="node.type === 'file'"
                      [class.directory]="node.type === 'directory'"
                      [class.expanded]="node.isExpanded"
@@ -39,11 +40,16 @@ interface TreeNode {
                      role="button"
                      tabindex="0"
                      (keydown.enter)="toggleNode(node)">
-                    <span class="node-icon">
+                    <span class="node-icon ">
                         @if (node.type === 'directory') {
-                            {{ node.isExpanded ? '📂' : '📁' }}
+                            @if (node.isExpanded) {
+                                <app-icon name = "Folder2_open" size = "15" color="white"/>
+                            }
+                            @else {
+                                <app-icon name = "Folder2" size = "15" />
+                            }
                         } @else {
-                            📄
+                            <app-icon name = "File_earmark" size = "15" />
                         }
                     </span>
                     <span class="node-name">{{ node.name }}</span>
@@ -88,10 +94,6 @@ interface TreeNode {
             cursor: pointer;
             border-radius: 4px;
             user-select: none;
-        }
-
-        .node-content:hover {
-            background: var(--hover-color);
         }
 
         .node-content:focus {
