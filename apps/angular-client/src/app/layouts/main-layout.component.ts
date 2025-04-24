@@ -11,19 +11,13 @@ import { ProjectExplorerComponent } from '../pages/project-explorer/project-expl
     imports: [TitleBarComponent, ProjectExplorerComponent],
     providers: [GitHubAuthService, GitHubService],
     template: `
-        <div class="layout-container">
-            <app-titlebar></app-titlebar>
-            <app-project-explorer class="h-full w-full flex flex-row"></app-project-explorer>
+        <div class="h-screen flex flex-col overflow-hidden">
+            <app-titlebar class="flex-none"></app-titlebar>
+            <div class="flex-1 overflow-hidden">
+                <app-project-explorer></app-project-explorer>
+            </div>
         </div>
     `,
-    styles: [`
-        .layout-container {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-    `]
 })
 export class MainLayoutComponent {
 }
