@@ -48,7 +48,7 @@ export class ClassExtractor extends BaseQueryEngine {
             const methods = methodCaptures.map(method => ({ name: method.node.text }));
 
             const inheritanceCaptures = match.captures.filter(capture => capture.name === 'class.inheritance');
-            const inheritance = inheritanceCaptures.map(inherit => ({ name: inherit.node.text }));
+            const inheritance = inheritanceCaptures.map(inherit => (inherit.node.text)) as string[];
 
             const constructorCaptures = match.captures.filter(capture => capture.name === 'class.constructor');
             const constructorsMethods = constructorCaptures.map(constructor => ({ name: constructor.node.text }));

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ClassDetail, MethodDetail, ExtractedDetails } from '@doci/shared';
+import { ClassDetail, MethodDetail, ExtractedDetails, PropertyDetail } from '@doci/shared';
 import { ProjectService } from '../project.service';
 
 @Injectable({
@@ -38,12 +38,23 @@ export class MermaidService {
             this.buildClass(lines, classDetail);
 
             // Add inheritance relationships
-            if (classDetail.parentClasses) {
-                classDetail.parentClasses.forEach((parentName: string) => {
+            if (classDetail.inheritance) {
+                classDetail.inheritance.forEach((parentName: string) => {
 
                     const parentClass = classMap.get(parentName);
                     if (parentClass) {
                         lines.push(`${parentName} <|-- ${classDetail.name}`);
+                        this.buildClass(lines, parentClass);
+                    }
+                });
+            }
+
+            if (classDetail.objectsUsed) {
+                classDetail.objectsUsed.forEach((parentName: string) => {
+
+                    const parentClass = classMap.get(parentName);
+                    if (parentClass) {
+                        lines.push(`${parentName} -- ${classDetail.name}`);
                         this.buildClass(lines, parentClass);
                     }
                 });
@@ -66,7 +77,7 @@ export class MermaidService {
         // Add properties
         if (classDetail.properties && classDetail.properties.length > 0) {
             classDetail.properties.forEach(prop => {
-                lines.push(`\t${this.getModifierString(prop.modifiers)} ${prop.name} : ${prop.type}`);
+                lines.push(this.buildProperty(prop));
             });
         }
 
@@ -86,6 +97,24 @@ export class MermaidService {
             });
         }
         lines.push('}');
+    }
+
+    buildProperty(property: PropertyDetail): string {
+        let propertyType = ''
+
+        if (property.genericName)
+            propertyType += property.genericName + '< ';
+
+        if (property.objectType[0])
+            propertyType += property.objectType[0];
+
+        if (property.predefinedType[0])
+            propertyType += property.predefinedType[0];
+
+        if (property.genericName)
+            propertyType += ' >';
+
+        return `\t${this.getModifierString(property.modifiers)} ${property.name} : ${propertyType}`;
     }
 
     getReturnType(returnType: string | undefined) {

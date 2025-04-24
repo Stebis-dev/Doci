@@ -1,9 +1,9 @@
 import { Parser, Tree } from "web-tree-sitter";
-import { buildClassDetails } from "./assign-methods-to-classes";
+import { buildClassDetails } from "./build-class-details";
 import { ClassExtractor } from "./extractor/class.extractor";
 import { MethodExtractor } from "./extractor/method.extractor";
 import { EnumExtractor } from "./extractor/enum.extractor";
-import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail } from "@doci/shared";
+import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, MethodsUsedDetail } from "@doci/shared";
 import { ConstructorExtractor } from "./extractor/constructor.extractor";
 import { PropertyExtractor } from "./extractor/property.extractor";
 import { MethodUsageExtractor } from "./extractor/method-usage.extractor";
@@ -36,10 +36,11 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
         const propertyDetails = extractedData[ExtractorType.Property] as PropertyDetail[];
         const methodDetails = extractedData[ExtractorType.Method] as MethodDetail[];
         const constructorDetails = extractedData[ExtractorType.Constructor] as ConstructorMethodDetail[];
+        const methodsUsedDetails = extractedData[ExtractorType.MethodsUsed] as MethodsUsedDetail[];
 
         // Assign methods to their respective classes
         if (classTempDetails && methodDetails) {
-            const classesWithMethods = buildClassDetails(classTempDetails, propertyDetails, methodDetails, constructorDetails);
+            const classesWithMethods = buildClassDetails(classTempDetails, propertyDetails, methodDetails, constructorDetails, methodsUsedDetails);
             doc[ExtractorType.Class] = classesWithMethods;
         } else if (classTempDetails) {
             doc[ExtractorType.Class] = classTempDetails.map(cls => ({
@@ -49,26 +50,28 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
                 properties: [],
                 constructor: [],
                 methods: [],
+                methodsUsed: [],
+                objectsUsed: [],
                 startPosition: cls.startPosition,
                 endPosition: cls.endPosition
             }));
         }
 
-        if (extractedData[ExtractorType.Method]) {
-            doc[ExtractorType.Method] = extractedData[ExtractorType.Method];
-        }
+        // if (extractedData[ExtractorType.Method]) {
+        //     doc[ExtractorType.Method] = extractedData[ExtractorType.Method];
+        // }
 
-        if (extractedData[ExtractorType.MethodsUsed]) {
-            doc[ExtractorType.MethodsUsed] = extractedData[ExtractorType.MethodsUsed];
-        }
+        // if (extractedData[ExtractorType.MethodsUsed]) {
+        //     doc[ExtractorType.MethodsUsed] = extractedData[ExtractorType.MethodsUsed];
+        // }
 
-        if (extractedData[ExtractorType.Constructor]) {
-            doc[ExtractorType.Constructor] = extractedData[ExtractorType.Constructor];
-        }
+        // if (extractedData[ExtractorType.Constructor]) {
+        //     doc[ExtractorType.Constructor] = extractedData[ExtractorType.Constructor];
+        // }
 
-        if (extractedData[ExtractorType.Property]) {
-            doc[ExtractorType.Property] = extractedData[ExtractorType.Property];
-        }
+        // if (extractedData[ExtractorType.Property]) {
+        //     doc[ExtractorType.Property] = extractedData[ExtractorType.Property];
+        // }
 
         if (extractedData[ExtractorType.Enum]) {
             doc[ExtractorType.Enum] = extractedData[ExtractorType.Enum];

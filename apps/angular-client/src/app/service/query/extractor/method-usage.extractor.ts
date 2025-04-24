@@ -1,10 +1,3 @@
-// (invocation_expression
-//     (member_access_expression
-//       expression: (identifier) @class
-//         name: (identifier) @method
-//     ) *
-// )
-
 import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
 import { ExtractorType, NodePosition, MethodsUsedDetail } from "@doci/shared";
@@ -37,7 +30,6 @@ export class MethodUsageExtractor extends BaseQueryEngine {
 
             if (!expressionNames || !methodNames) return;
 
-            console.log(expressionNames, methodNames);
             const usingMethodKey = `${expressionNames}-${methodNames}-${invocationCapture.node.startPosition.row}-${invocationCapture.node.startPosition.column}`;
             // Extract constructor parameters
 

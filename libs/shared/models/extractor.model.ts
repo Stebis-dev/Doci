@@ -30,7 +30,7 @@ export interface NodePosition {
 
 export interface ClassTemporaryDetail extends Details {
     modifiers: string[];
-    inheritance: { name: string }[];
+    inheritance: string[];
     methods: { name: string }[];
     properties: { name: string }[];
     constructor: { name: string }[];
@@ -41,14 +41,16 @@ export interface ClassDetail extends Details {
     properties: PropertyDetail[];
     constructor: ConstructorMethodDetail[];
     methods: MethodDetail[];
-    parentClasses?: string[];
-    inheritance: { name: string }[];
+    methodsUsed: MethodsUsedDetail[];
+    inheritance: string[]
+    objectsUsed: string[];
 }
 
 export interface PropertyDetail extends Details {
     modifiers: string[];
-    type: string[];
-    objectType?: string;
+    genericName: string;
+    predefinedType: string[];
+    objectType: string[];
 }
 
 export interface MethodDetail extends Details {
@@ -61,6 +63,7 @@ export interface MethodDetail extends Details {
 export interface MethodsUsedDetail extends Details {
     expressionName: string
     methodName: string;
+    objectType?: string;
 }
 
 export interface ConstructorMethodDetail extends Details {

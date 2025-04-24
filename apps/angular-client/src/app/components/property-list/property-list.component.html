@@ -9,7 +9,7 @@
         @for ( modifier of property.modifiers; track $index) {
         <td>{{ modifier }}</td>
         }
-        <td>{{ property.type }}</td>
+        <td>{{ getPropertyType(property) }}</td>
         <td>
           {{ property.name }}
         </td>
