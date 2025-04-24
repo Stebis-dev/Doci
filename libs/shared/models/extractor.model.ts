@@ -55,7 +55,9 @@ export interface PropertyDetail extends Details {
 
 export interface MethodDetail extends Details {
     modifiers: string[];
-    returnType?: string;
+    genericName: string;
+    predefinedType: string[];
+    objectType: string[];
     parameters: { name: string; type: string | null }[];
     body: string;
 }
@@ -74,6 +76,12 @@ export interface ConstructorMethodDetail extends Details {
 }
 
 export interface EnumDetail extends Details {
-    members: { name: string }[];
+    modifiers: string[];
+    members: EnumMember[];
+}
+
+export interface EnumMember {
+    member: string;
+    value: string;
 }
 

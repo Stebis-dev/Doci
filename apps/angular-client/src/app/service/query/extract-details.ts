@@ -61,9 +61,9 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
         //     doc[ExtractorType.Method] = extractedData[ExtractorType.Method];
         // }
 
-        // if (extractedData[ExtractorType.MethodsUsed]) {
-        //     doc[ExtractorType.MethodsUsed] = extractedData[ExtractorType.MethodsUsed];
-        // }
+        if (extractedData[ExtractorType.MethodsUsed]) {
+            doc[ExtractorType.MethodsUsed] = extractedData[ExtractorType.MethodsUsed];
+        }
 
         // if (extractedData[ExtractorType.Constructor]) {
         //     doc[ExtractorType.Constructor] = extractedData[ExtractorType.Constructor];

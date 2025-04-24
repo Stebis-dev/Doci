@@ -14,15 +14,24 @@ export class MethodListComponent {
     }
 
     getReturnType(method: MethodDetail): string {
-        if (method.returnType)
-            return method.returnType;
-        return ''
-    }
-    // getModifierString(): string {
-    //     if (this.methods)
-    //         return this.methods.modifiers.filter(modifier => modifier !== 'private' && modifier !== 'public').join(' ');
+        let propertyType = '';
+        if (!method) {
+            return propertyType;
+        }
 
-    //     return '';
-    // }
+        if (method.genericName)
+            propertyType = method.genericName + '<';
+
+        if (method.predefinedType)
+            propertyType += method.predefinedType.join('');
+
+        if (method.objectType)
+            propertyType += method.objectType.join('');
+
+        if (method.genericName)
+            propertyType += '>';
+
+        return propertyType;
+    }
 
 } 

@@ -5,14 +5,12 @@
   <div
     class="flex flex-col w-full h-full overflow-x-hidden overflow-y-auto items-start align-middle justify-items-center"
   >
-    <h2 class="text-2xl font-bold mb-4">File: {{ getFileName() }}</h2>
-    <div class="divider"></div>
-
-    @if (showClasses()){
     <div class="flex flex-row w-full h-full overflow-auto">
-      <div class="flex-1/2 mx-10">
+      <div class="flex-1/3 mx-10">
+        <h2 class="text-2xl font-bold mb-4">File: {{ getFileName() }}</h2>
+        <div class="divider"></div>
         <!-- Existing class details -->
-        @for (classDetail of classes; track $index) {
+        @if (showClasses()){ @for (classDetail of classes; track $index) {
         <h2 class="text-xl font-light mb-2">
           Class
           <a class="text-xl font-semibold">
@@ -45,23 +43,33 @@
           methodLabel="Private Methods"
           [methods]="getPrivateMethods()"
         ></app-method-list>
+        } @if (showEnums()){ @for (enumDetail of enums; track $index) {
+        <h2 class="text-xl font-light mb-2">
+          Enum
+          <a class="text-xl font-semibold">
+            {{ enumDetail.name }}
+          </a>
+        </h2>
+        <app-enum-member-list
+          propertyLabel="Members"
+          [members]="enumDetail.members"
+        ></app-enum-member-list>
+        <div class="my-10"></div>
+        } }
       </div>
       <div class="flex-1/2 items-center justify-center">
         <!-- Class Diagram -->
         @if (mermaidDiagram) {
         <div class="mb-8">
           <h3 class="text-xl font-semibold mb-4">Class Diagram</h3>
-          <div class="bg-base-200 p-4 rounded-lg">
-            <div
-              class="bg-base-200 p-4 rounded-lg"
-              [innerHTML]="renderedSVG"
-            ></div>
-          </div>
+          <div
+            class="flex bg-base-200 p-4 rounded-lg align-middle items-center justify-center"
+            [innerHTML]="renderedSVG"
+          ></div>
         </div>
         }
       </div>
     </div>
-    }
   </div>
   }
 </div>
