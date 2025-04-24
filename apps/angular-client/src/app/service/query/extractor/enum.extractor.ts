@@ -45,8 +45,6 @@ export class EnumExtractor extends BaseQueryEngine {
 
             const enumKey = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
 
-            console.log(members, values, enumKey);
-
             const existingEnum = enumMap.get(enumKey);
             if (!existingEnum) {
                 enumMap.set(enumKey, {

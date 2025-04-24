@@ -29,6 +29,25 @@ function mapMethodsUsedWithProperties(
         });
 }
 
+function mapMethodsUsedWithContainingMethods(
+    methodsUsed: MethodsUsedDetail[],
+    methods: MethodDetail[]
+): MethodsUsedDetail[] {
+    return methodsUsed.map(methodUsed => {
+        // Find the containing method by checking position boundaries
+        const containingMethod = methods.find(method =>
+            methodUsed.startPosition.row >= method.startPosition.row &&
+            methodUsed.endPosition.row <= method.endPosition.row
+        );
+
+        if (containingMethod) {
+            methodUsed.methodUsedIn = containingMethod.name;
+        }
+
+        return methodUsed;
+    });
+}
+
 export function buildClassDetails(
     classes: ClassTemporaryDetail[],
     properties: PropertyDetail[],
@@ -41,9 +60,18 @@ export function buildClassDetails(
         const constructorDetails = findDetails(constructors, constructorNames, { startPosition, endPosition });
         const propertyDetails = findDetails(properties, propertyNames, { startPosition, endPosition });
 
-        const updatedMethodsUsed = mapMethodsUsedWithProperties(methodsUsed, propertyDetails);
-        let objectsUsed = propertyDetails.map(property => property.objectType[0]).filter((value) => value !== undefined) as string[];
-        objectsUsed = Array.from(new Set(objectsUsed)) as string[];
+        // First map methods used with properties to get objectType
+        let updatedMethodsUsed = mapMethodsUsedWithProperties(methodsUsed, propertyDetails);
+        // Then map methods used with containing methods to get usedIn
+        updatedMethodsUsed = mapMethodsUsedWithContainingMethods(updatedMethodsUsed, methodDetails);
+        // Populate the classUsedIn field with the name property
+        updatedMethodsUsed = updatedMethodsUsed.map(methodUsed => {
+            methodUsed.classUsedIn = name;
+            return methodUsed;
+        });
+
+        let objectsUsed = propertyDetails.map(property => property.objectType[0]).filter((value) => value !== undefined);
+        objectsUsed = Array.from(new Set(objectsUsed));
 
         return {
             name,

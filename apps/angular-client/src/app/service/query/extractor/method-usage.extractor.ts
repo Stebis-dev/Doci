@@ -2,6 +2,7 @@ import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
 import { ExtractorType, NodePosition, MethodsUsedDetail } from "@doci/shared";
 
+// TODO add local method usage 
 export class MethodUsageExtractor extends BaseQueryEngine {
     type = ExtractorType.MethodsUsed;
 
@@ -14,13 +15,14 @@ export class MethodUsageExtractor extends BaseQueryEngine {
                 ) *
             ) @invocation
         `;
+
         const matches = this.runQuery(tree, query);
 
         const usingMethodMap = new Map<string, MethodsUsedDetail>();
 
         matches.forEach((match: { captures: any[]; }) => {
             const invocationCapture = match.captures.find(capture => capture.name === 'invocation');
-            if (!invocationCapture) return;
+            // if (!invocationCapture) return;
 
             const expressionCaptures = match.captures.filter(capture => capture.name === 'invocation.expression');
             const expressionNames = expressionCaptures.map(classObj => classObj.node.text)[0] as string;

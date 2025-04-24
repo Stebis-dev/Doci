@@ -19,12 +19,6 @@ import { ProjectFile } from '@doci/shared';
             </div>
         </div>
     `,
-    styles: [`
-        :host {
-            display: block;
-            height: 100%;
-        }
-    `]
 })
 export class ProjectExplorerComponent implements OnInit {
     selectedFile: ProjectFile | null = null;

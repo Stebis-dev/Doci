@@ -60,11 +60,14 @@ export interface MethodDetail extends Details {
     objectType: string[];
     parameters: { name: string; type: string | null }[];
     body: string;
+    usedIn?: MethodsUsedDetail[];
 }
 
 export interface MethodsUsedDetail extends Details {
-    expressionName: string
+    expressionName?: string
     methodName: string;
+    methodUsedIn?: string;
+    classUsedIn?: string;
     objectType?: string;
 }
 

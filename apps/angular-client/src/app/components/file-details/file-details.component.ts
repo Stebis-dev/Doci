@@ -14,7 +14,6 @@ import { EnumMemberListComponent } from '../enum-member-list/enum-member-list.co
     standalone: true,
     imports: [CommonModule, MethodListComponent, PropertyListComponent, ConstructorListComponent, EnumMemberListComponent],
     templateUrl: './file-details.component.html',
-    styleUrls: ['./file-details.component.css']
 })
 export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
