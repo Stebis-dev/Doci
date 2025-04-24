@@ -49,7 +49,7 @@ export class ProjectExplorerComponent implements OnInit {
                 // selection.className available
                 break;
             case 'method':
-                this.selectedFile = selection.file;
+                // this.selectedFile = selection.file;
                 // Show method details
                 // selection.className and selection.methodName available
                 break;

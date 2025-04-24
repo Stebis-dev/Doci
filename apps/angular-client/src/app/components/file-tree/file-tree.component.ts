@@ -137,8 +137,8 @@ export class FileTreeComponent implements OnInit {
                 className: node.path.split('#')[1],
                 methodName: node.name.replace('()', '')
             });
-        } else if (node.type === 'class' || node.type === 'enum' || node.type === 'interface') {
-            // Toggle expansion for class/enum/interface nodes
+        } else if (node.type === 'class' || node.type === 'interface') {
+            // Toggle expansion for class/interface nodes
             node.isExpanded = !node.isExpanded;
             // Emit class selection
             this.nodeSelected.emit({
@@ -146,13 +146,23 @@ export class FileTreeComponent implements OnInit {
                 selectedType: 'class',
                 className: node.name
             });
+        } else if (node.type === 'enum') {
+            // Toggle expansion for file nodes
+            node.isExpanded = !node.isExpanded;
+            // Emit file selection
+            this.nodeSelected.emit({
+                file: node.file!,
+                selectedType: 'enum',
+                enumName: node.name
+            });
         } else if (node.type === 'file') {
             // Toggle expansion for file nodes
             node.isExpanded = !node.isExpanded;
             // Emit file selection
             this.nodeSelected.emit({
                 file: node.file!,
-                selectedType: 'file'
+                selectedType: 'file',
+                enumName: node.name
             });
         } else if (node.type === 'directory') {
             // Toggle expansion for directory nodes

@@ -16,7 +16,8 @@ export interface TreeNode {
 
 export interface FileTreeSelection {
     file: ProjectFile;
-    selectedType: 'file' | 'class' | 'method';
+    selectedType: 'file' | 'class' | 'enum' | 'method';
     className?: string;
+    enumName?: string;
     methodName?: string;
 } 
