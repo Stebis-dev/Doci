@@ -2,11 +2,12 @@ import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { ClassDetail, ExtractorType, MethodDetail, ProjectFile } from '@doci/shared';
 import { FileTreeSelection } from '../file-tree/file-tree.types';
+import { MethodGraphComponent } from '../method-graph/method-graph.component';
 
 @Component({
     selector: 'app-method-details',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, MethodGraphComponent],
     templateUrl: './method-details.component.html',
 })
 export class MethodDetailsComponent implements OnInit, OnChanges {
@@ -15,7 +16,7 @@ export class MethodDetailsComponent implements OnInit, OnChanges {
     @Input() selectedNode: FileTreeSelection | null = null;
 
     classDetail: ClassDetail | null = null;
-    methods: MethodDetail | null = null;
+    method: MethodDetail | null = null;
 
     constructor() {
         //
@@ -29,7 +30,6 @@ export class MethodDetailsComponent implements OnInit, OnChanges {
         if (changes['file'] || changes['selectedNode']) {
             this.updateFileDetails();
         }
-        console.log('MethodDetailsComponent - ngOnChanges', this.file, this.selectedNode);
     }
 
     private updateFileDetails() {
@@ -38,7 +38,7 @@ export class MethodDetailsComponent implements OnInit, OnChanges {
             const methodName = this.selectedNode?.methodName || '';
 
             this.classDetail = this.file.details[ExtractorType.Class]?.filter(c => c.name === className)[0] || null;
-            this.methods = this.classDetail?.methods.filter(c => c.name === methodName)[0] || null;;
+            this.method = this.classDetail?.methods.filter(c => c.name === methodName)[0] || null;
         }
     }
 
@@ -50,4 +50,34 @@ export class MethodDetailsComponent implements OnInit, OnChanges {
         return this.classDetail?.name || '';
     }
 
+    getMethodName(): string {
+        if (this.method) {
+            return this.method.name;
+        }
+        return '';
+    }
+
+    getReturnType(): string {
+        let propertyType = '';
+        if (!this.method) {
+            return propertyType;
+        }
+
+        if (this.method.genericName)
+            propertyType = this.method.genericName + '<';
+
+        if (this.method.predefinedType)
+            propertyType += this.method.predefinedType.join('');
+
+        if (this.method.objectType)
+            propertyType += this.method.objectType.join('');
+
+        if (this.method.genericName)
+            propertyType += '>';
+
+        return propertyType;
+    }
+    getParameters() {
+        return this.method?.parameters;
+    }
 }

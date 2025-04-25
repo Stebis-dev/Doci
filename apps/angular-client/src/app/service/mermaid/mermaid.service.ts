@@ -66,7 +66,7 @@ export class MermaidService {
         this.processClassHierarchy(lines, classObj, classMap, enumMap, processedObjects);
 
         const buildScript = lines.join('\n');
-        console.log({ buildScript });
+        // console.log({ buildScript });
         return buildScript;
     }
 
