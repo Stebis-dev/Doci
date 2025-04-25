@@ -48,7 +48,7 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
                 modifiers: cls.modifiers,
                 inheritance: cls.inheritance,
                 properties: [],
-                constructor: [],
+                constructors: [],
                 methods: [],
                 methodsUsed: [],
                 objectsUsed: [],

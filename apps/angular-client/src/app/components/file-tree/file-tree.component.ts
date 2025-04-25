@@ -158,12 +158,6 @@ export class FileTreeComponent implements OnInit {
         } else if (node.type === 'file') {
             // Toggle expansion for file nodes
             node.isExpanded = !node.isExpanded;
-            // Emit file selection
-            this.nodeSelected.emit({
-                file: node.file!,
-                selectedType: 'file',
-                enumName: node.name
-            });
         } else if (node.type === 'directory') {
             // Toggle expansion for directory nodes
             node.isExpanded = !node.isExpanded;

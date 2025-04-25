@@ -1,28 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FileTreeComponent } from '../../components/file-tree/file-tree.component';
-import { FileDetailsComponent } from '../../components/file-details/file-details.component';
+import { ClassDetailsComponent } from '../../components/class-details/class-details.component';
 import { ProjectService } from '../../service/project.service';
 import { ProjectFile } from '@doci/shared';
 import { FileTreeSelection } from '../../components/file-tree/file-tree.types';
+import { MethodDetailsComponent } from '../../components/method-details/method-details.component';
 
 @Component({
     selector: 'app-project-explorer',
     standalone: true,
-    imports: [CommonModule, FileTreeComponent, FileDetailsComponent],
-    template: `
-        <div class="flex h-full w-full overflow-hidden">
-            <div class="w-1/4 min-w-[250px] max-w-[300px] h-full overflow-hidden border-base-300">
-                <app-file-tree (nodeSelected)="handleSelection($event)"></app-file-tree>
-            </div>
-            <div class="flex-1 h-full overflow-auto border-l border-base-300">
-                <app-file-details [file]="selectedFile"></app-file-details>
-            </div>
-        </div>
-    `,
+    imports: [CommonModule, FileTreeComponent, ClassDetailsComponent, MethodDetailsComponent],
+    templateUrl: './project-explorer.component.html'
 })
 export class ProjectExplorerComponent implements OnInit {
     selectedFile: ProjectFile | null = null;
+    selectedNode: FileTreeSelection | null = null;
 
     constructor(private projectService: ProjectService) { }
 
@@ -41,18 +34,17 @@ export class ProjectExplorerComponent implements OnInit {
     }
 
     handleSelection(selection: FileTreeSelection) {
-        console.log('Selected node:', selection);
-        switch (selection.selectedType) {
-            case 'class':
-                this.selectedFile = selection.file;
-                // Show class details
-                // selection.className available
-                break;
-            case 'method':
-                // this.selectedFile = selection.file;
-                // Show method details
-                // selection.className and selection.methodName available
-                break;
-        }
+        // console.log('Selected node:', selection);
+
+        this.selectedFile = selection.file;
+        this.selectedNode = selection;
+    }
+
+    showClassDetails(): boolean {
+        return this.selectedNode?.selectedType === 'class' || this.selectedNode?.selectedType === 'enum';
+    }
+
+    showMethodDetails(): boolean {
+        return this.selectedNode?.selectedType === 'method';
     }
 } 

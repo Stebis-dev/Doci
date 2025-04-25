@@ -1,0 +1,74 @@
+<div
+  class="flex p-4 w-full h-full overflow-x-hidden overflow-y-auto items-start align-middle justify-items-center"
+>
+  @if (file) {
+  <div
+    class="flex flex-col w-full h-full overflow-x-hidden overflow-y-auto items-start align-middle justify-items-center"
+  >
+    <div class="flex flex-row w-full h-full overflow-auto">
+      <div class="flex-1/3 mx-10">
+        <h2 class="text-2xl font-bold mb-4">File: {{ getFileName() }}</h2>
+        <div class="divider"></div>
+        <!-- Existing class details -->
+        @if (showClass()){
+        <h2 class="text-xl font-light mb-2">
+          Class
+          <a class="text-xl font-semibold">
+            {{ getClassName() }}
+          </a>
+        </h2>
+
+        <app-property-list
+          propertyLabel="Properties"
+          [properties]="properties"
+        ></app-property-list>
+        <app-constructor-list
+          constructorLabel="Constructor"
+          [constructors]="constructors"
+        ></app-constructor-list>
+        <app-method-list
+          methodLabel="Methods"
+          [methods]="getMethods()"
+        ></app-method-list>
+        <app-method-list
+          methodLabel="Protected Methods"
+          [methods]="getProtectedMethods()"
+        ></app-method-list>
+        <app-method-list
+          methodLabel="Public Methods"
+          [methods]="getPublicMethods()"
+        ></app-method-list>
+        <app-method-list
+          methodLabel="Private Methods"
+          [methods]="getPrivateMethods()"
+        ></app-method-list>
+        } @if (showEnum()){
+        <h2 class="text-xl font-light mb-2">
+          Enum
+          <a class="text-xl font-semibold">
+            {{ getEnumName() }}
+          </a>
+        </h2>
+        <app-enum-member-list
+          propertyLabel="Members"
+          [members]="getEnumMembers()"
+        ></app-enum-member-list>
+        <div class="my-10"></div>
+        }
+      </div>
+      <div class="flex-1/2 items-center justify-center">
+        <!-- Class Diagram -->
+        @if (mermaidDiagram) {
+        <div class="mb-8">
+          <h3 class="text-xl font-semibold mb-4">Class Diagram</h3>
+          <div
+            class="flex bg-base-200 p-4 rounded-lg align-middle items-center justify-center"
+            [innerHTML]="renderedSVG"
+          ></div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+</div>

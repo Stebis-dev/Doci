@@ -33,13 +33,13 @@ export interface ClassTemporaryDetail extends Details {
     inheritance: string[];
     methods: { name: string }[];
     properties: { name: string }[];
-    constructor: { name: string }[];
+    constructors: { name: string }[];
 }
 
 export interface ClassDetail extends Details {
     modifiers: string[];
     properties: PropertyDetail[];
-    constructor: ConstructorMethodDetail[];
+    constructors: ConstructorMethodDetail[];
     methods: MethodDetail[];
     methodsUsed: MethodsUsedDetail[];
     inheritance: string[]

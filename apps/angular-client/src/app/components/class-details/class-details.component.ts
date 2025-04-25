@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClassDetail, ConstructorMethodDetail, EnumDetail, ExtractorType, MethodDetail, ProjectFile, PropertyDetail } from '@doci/shared';
+import { ClassDetail, ConstructorMethodDetail, EnumDetail, EnumMember, ExtractorType, MethodDetail, ProjectFile, PropertyDetail } from '@doci/shared';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import mermaid from 'mermaid';
 import { MermaidService } from '../../service/mermaid/mermaid.service';
@@ -8,18 +8,20 @@ import { MethodListComponent } from '../method-list/method-list.component';
 import { PropertyListComponent } from '../property-list/property-list.component';
 import { ConstructorListComponent } from '../constructor-list/constructor-list.component';
 import { EnumMemberListComponent } from '../enum-member-list/enum-member-list.component';
+import { FileTreeSelection } from '../file-tree/file-tree.types';
 
 @Component({
-    selector: 'app-file-details',
+    selector: 'app-class-details',
     standalone: true,
     imports: [CommonModule, MethodListComponent, PropertyListComponent, ConstructorListComponent, EnumMemberListComponent],
-    templateUrl: './file-details.component.html',
+    templateUrl: './class-details.component.html',
 })
-export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
+export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
     @Input() file: ProjectFile | null = null;
-    classes?: ClassDetail[] = [];
-    enums?: EnumDetail[] = [];
+    @Input() selectedNode: FileTreeSelection | null = null;
+    classObj: ClassDetail | null = null;
+    enumObj: EnumDetail | null = null;
     constructors?: ConstructorMethodDetail[] = [];
     methods?: MethodDetail[] = [];
     properties?: PropertyDetail[] = [];
@@ -41,7 +43,7 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['file']) {
+        if (changes['file'] || changes['selectedNode']) {
             this.updateFileDetails();
             this.renderMermaidDiagram();
         }
@@ -49,13 +51,20 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
     ngAfterViewInit() {
         this.renderMermaidDiagram();
+        // this.updateFileDetails();
     }
 
     private async renderMermaidDiagram() {
         this.renderedSVG = '';
 
         if (this.file?.details) {
-            this.mermaidDiagram = this.mermaidService.generateClassDiagram(this.file.details);
+            if (this.selectedNode?.selectedType === 'class' && this.classObj) {
+                this.mermaidDiagram = this.mermaidService.generateClassDiagramFromClass(this.classObj)
+            }
+            else if (this.selectedNode?.selectedType === 'enum' && this.enumObj) {
+                this.mermaidDiagram = this.mermaidService.generateClassDiagramFromEnum(this.enumObj)
+            }
+
 
             if (this.mermaidDiagram) {
                 try {
@@ -76,13 +85,20 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
     private updateFileDetails() {
         if (this.file?.details) {
-            this.classes = this.file.details[ExtractorType.Class];
-            if (this.classes && this.classes.length > 0) {
-                this.constructors = this.classes[0].constructor;
-                this.methods = this.classes[0].methods;
-                this.properties = this.classes[0].properties;
+            const classes = this.file.details[ExtractorType.Class];
+            if (this.selectedNode && this.selectedNode.className) {
+                this.classObj = classes?.filter(c => c.name === this.selectedNode?.className)[0] || null;
+                this.methods = this.classObj?.methods || [];
+                this.properties = this.classObj?.properties || [];
+                this.constructors = this.classObj?.constructors || [];
             }
-            this.enums = this.file.details[ExtractorType.Enum];
+
+
+            const enums = this.file.details[ExtractorType.Enum];
+            if (this.selectedNode && this.selectedNode.enumName) {
+                this.enumObj = enums?.filter(c => c.name === this.selectedNode?.enumName)[0] || null;
+            }
+
             this.properties = this.properties || [];
             this.constructors = this.constructors || [];
             this.methods = this.methods || [];
@@ -92,11 +108,11 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     getFileName(): string {
         return this.file?.name || '';
     }
-    showClasses(): boolean {
-        return this.classes !== undefined && this.classes.length > 0;
+    showClass(): boolean {
+        return this.classObj !== undefined && this.selectedNode?.className !== undefined;
     }
-    showEnums(): boolean {
-        return this.enums !== undefined && this.enums.length > 0;
+    showEnum(): boolean {
+        return this.enumObj !== undefined && this.selectedNode?.enumName !== undefined;
     }
     showProperties(): boolean {
         return this.properties !== undefined && this.properties.length > 0;
@@ -106,6 +122,9 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     }
     showMethods(): boolean {
         return this.methods !== undefined && this.methods.length > 0;
+    }
+    getClassName(): string {
+        return this.classObj?.name || '';
     }
 
     getPublicMethods(): MethodDetail[] {
@@ -122,5 +141,13 @@ export class FileDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
     getMethods(): MethodDetail[] {
         return this.methods?.filter(method => !method.modifiers.some(modifier => ['public', 'private', 'protected'].includes(modifier))) || [];
+    }
+
+    getEnumName(): string {
+        return this.enumObj?.name || '';
+    }
+
+    getEnumMembers(): EnumMember[] {
+        return this.enumObj?.members || [];
     }
 }
