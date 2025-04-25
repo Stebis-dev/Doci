@@ -33,8 +33,8 @@ export class ProjectService {
             if (storedProject) {
                 const project = JSON.parse(storedProject) as FlatProject;
                 console.log('Loading stored project:', project);
-                // this.currentProjectSubject.next(project);
-                this.setCurrentProject(project); // remove later
+                this.currentProjectSubject.next(project);
+                // this.setCurrentProject(project); // remove later
             }
         } catch (error) {
             console.error('Error loading stored project:', error);

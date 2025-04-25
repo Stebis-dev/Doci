@@ -9,17 +9,7 @@ import { GraphService, GraphData } from '../../service/graph/graph.service';
     selector: 'app-method-graph',
     standalone: true,
     imports: [CommonModule],
-    template: `
-    <div #container class="graph-container w-full h-full min-h-[200px]"></div>
-  `,
-    styles: [
-        `
-      .graph-container {
-        background: #f8f9fa;
-        border-radius: 4px;
-      }
-    `
-    ]
+    templateUrl: './method-graph.component.html',
 })
 export class MethodGraphComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit {
     @Input() methodDetail: MethodDetail | null = null;
@@ -36,11 +26,9 @@ export class MethodGraphComponent implements OnInit, OnDestroy, OnChanges, After
         // Initialize Sigma
         this.sigma = new Sigma(this.graph, this.container.nativeElement, {
             minCameraRatio: 0.1,
-            maxCameraRatio: 10,
+            maxCameraRatio: 5,
             renderEdgeLabels: true
         });
-
-
     }
 
     ngAfterViewInit() {
@@ -68,7 +56,6 @@ export class MethodGraphComponent implements OnInit, OnDestroy, OnChanges, After
 
         // Clear existing graph data
         this.graph.clear();
-
         // Add nodes to the graph
         graphData.nodes.forEach(node => {
             this.graph.addNode(node.id, {
@@ -76,7 +63,8 @@ export class MethodGraphComponent implements OnInit, OnDestroy, OnChanges, After
                 y: node.y,
                 size: node.size,
                 color: node.color,
-                label: node.label
+                label: node.label,
+                labelColor: "#fff"
             });
         });
 

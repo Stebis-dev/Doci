@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MethodDetail, MethodsUsedDetail } from '@doci/shared';
+import { MethodDetail } from '@doci/shared';
 
 export interface GraphData {
     nodes: Array<{
@@ -32,67 +32,84 @@ export class GraphService {
 
         // Add the main method as the central node
         nodes.push({
-            id: 'main',
+            id: methodDetail.name,
             label: methodDetail.name,
-            size: 15,
+            size: 12,
             color: '#E91E63', // Primary node color
             x: 0,
             y: 0
         });
 
-        // Process usedIn relationships
+        console.log('Method usedIn Detail:', methodDetail.usedIn);
+        // Group usages by class to prevent duplication
         if (methodDetail.usedIn && methodDetail.usedIn.length > 0) {
-            console.log(methodDetail.usedIn);
+            const classGroups = new Map<string, string[]>();
 
-            methodDetail.usedIn.forEach((usage: MethodsUsedDetail, index: number) => {
-                const angle = (2 * Math.PI * index) / methodDetail.usedIn!.length;
-                const radius = 100;
+            // Group methods by their class
+            methodDetail.usedIn.forEach(usage => {
+                if (!usage.methodUsedIn) return;
 
-                // Create node for the class/object that uses this method
-                const classNodeId = `class_${usage.classUsedIn}`;
-                if (!nodes.some(node => node.id === classNodeId)) {
-                    nodes.push({
-                        id: classNodeId,
-                        label: usage.classUsedIn || usage.objectType || 'Unknown Class',
-                        size: 10,
-                        color: '#2196F3', // Class node color
-                        x: Math.cos(angle) * radius,
-                        y: Math.sin(angle) * radius
-                    });
+                const classKey = usage.classUsedIn || 'Unknown Class';
+                if (!classGroups.has(classKey)) {
+                    classGroups.set(classKey, []);
                 }
+                const methodUsedIn = usage.methodUsedIn
+                if (methodUsedIn) {
+                    const uniqueMethods = classGroups.get(classKey);
+                    uniqueMethods?.push(methodUsedIn);
+                    classGroups.set(classKey, Array.from(new Set(uniqueMethods)));
+                }
+            });
+            console.log('Class Groups:', classGroups);
+            // console.log('Method Detail:', methodDetail);
+            // console.log('Method Detail Used In:', methodDetail.usedIn);
 
-                // Create node for the method that uses this method
-                const methodNodeId = `method_${usage.classUsedIn}_${usage.methodUsedIn}`;
-                if (!nodes.some(node => node.id === methodNodeId)) {
+            // Create nodes and edges for each class and its methods
+            Array.from(classGroups.entries()).forEach(([className, usages], classIndex) => {
+                const classAngle = (1 * Math.PI * classIndex) / classGroups.size;
+                const classRadius = 0.25;
+
+                // Create class node
+                nodes.push({
+                    id: className,
+                    label: className,
+                    size: 10,
+                    color: '#2196F3', // Class node color
+                    x: Math.sin(classAngle) * classRadius,
+                    y: - (Math.cos(classAngle) * classRadius),
+                });
+
+                // Connect main method to class
+                edges.push({
+                    id: `edge_${methodDetail.name}_to_${className}`,
+                    source: methodDetail.name,
+                    target: className,
+                    label: 'used in'
+                });
+
+                // Create nodes for each method in the class
+                usages.forEach((usage, methodIndex) => {
+                    const methodAngle = (methodIndex - (usages.length - 1) / 2) * 0.3; // Spread methods in an arc
+                    const methodRadius = classRadius * 0.5;
+
+                    const methodNodeId = `${className}.${usage}`;
                     nodes.push({
                         id: methodNodeId,
-                        label: usage.methodUsedIn || 'Unknown Method',
-                        size: 7,
+                        label: usage || 'Unknown Method',
+                        size: 8,
                         color: '#4CAF50', // Method node color
-                        x: Math.cos(angle) * (radius * 1.5),
-                        y: Math.sin(angle) * (radius * 1.5)
+                        x: (Math.sin(methodAngle) * classRadius),
+                        y: - (Math.cos(methodAngle) * classRadius),
                     });
-                }
-                const classEdgeId = `edge_class_${usage.classUsedIn}`;
-                if (!edges.some(node => node.id === classEdgeId)) {
-                    // Create edges
-                    edges.push({
-                        id: classEdgeId,
-                        source: 'main',
-                        target: classNodeId,
-                        label: 'used in'
-                    });
-                }
 
-                const methodEdgeId = `edge_method_${usage.classUsedIn}_${usage.methodUsedIn}`;
-                if (!edges.some(node => node.id === methodEdgeId)) {
+                    // Connect class to method
                     edges.push({
-                        id: methodEdgeId,
-                        source: classNodeId,
+                        id: `edge_${usage}_to_${className}`,
+                        source: className,
                         target: methodNodeId,
-                        label: 'method'
+                        label: 'contains'
                     });
-                }
+                });
             });
         }
 
