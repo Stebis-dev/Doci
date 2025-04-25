@@ -66,7 +66,7 @@ export class ClassExtractor extends BaseQueryEngine {
                     modifiers: modifiers,
                     inheritance: inheritance,
                     properties: properties,
-                    constructor: constructorsMethods,
+                    constructors: constructorsMethods,
                     methods: methods,
                     startPosition: bodyCapture.node.startPosition as NodePosition,
                     endPosition: bodyCapture.node.endPosition as NodePosition,
@@ -76,7 +76,7 @@ export class ClassExtractor extends BaseQueryEngine {
                 existingClass.modifiers.push(...modifiers);
                 existingClass.inheritance.push(...inheritance);
                 existingClass.properties.push(...properties);
-                existingClass.constructor.push(...constructorsMethods);
+                existingClass.constructors.push(...constructorsMethods);
                 existingClass.methods.push(...methods);
             };
         });

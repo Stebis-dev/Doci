@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ClassDetail, MethodDetail, ExtractedDetails, PropertyDetail, EnumDetail } from '@doci/shared';
+import { ClassDetail, MethodDetail, PropertyDetail, EnumDetail } from '@doci/shared';
 import { ProjectService } from '../project.service';
 
 @Injectable({
@@ -9,19 +9,14 @@ export class MermaidService {
 
     constructor(private readonly projectService: ProjectService) { }
 
-    public generateClassDiagram(details: ExtractedDetails): string {
-        if (!details)
-            return '';
-        if ((!details.classes || details.classes.length === 0)
-            && (!details.enums || details.enums.length === 0))
-            return '';
+    private classDiagramInitial(): string[] {
+        const lines: string[] = [];
+        lines.push('classDiagram');
+        lines.push('direction BT');
+        return lines;
+    }
 
-        const lines: string[] = [
-            'classDiagram',
-            'direction BT',
-        ];
-
-        // Get the current project
+    private populateClassMap(): Map<string, ClassDetail> {
         const currentProject = this.projectService.getCurrentProject();
         const classMap = new Map<string, ClassDetail>();
 
@@ -35,7 +30,11 @@ export class MermaidService {
                 }
             });
         }
+        return classMap;
+    }
 
+    private populateEnumMap(): Map<string, EnumDetail> {
+        const currentProject = this.projectService.getCurrentProject();
         const enumMap = new Map<string, EnumDetail>();
 
         // Populate the enum map for quick lookup
@@ -48,17 +47,36 @@ export class MermaidService {
                 }
             });
         }
+        return enumMap;
+    }
+
+
+    public generateClassDiagramFromClass(classObj: ClassDetail): string {
+        if (!classObj)
+            return '';
+
+        const lines: string[] = this.classDiagramInitial()
+
+        const classMap = this.populateClassMap();
+        const enumMap = this.populateEnumMap();
 
         // Tracks classes and enums that have been processed to avoid duplicates
         const processedObjects = new Set<string>();
 
-        details.classes?.forEach(classDetail => {
-            this.processClassHierarchy(lines, classDetail, classMap, enumMap, processedObjects);
-        });
+        this.processClassHierarchy(lines, classObj, classMap, enumMap, processedObjects);
 
-        details.enums?.forEach(enumDetail => {
-            this.buildEnumClass(lines, enumDetail);
-        });
+        const buildScript = lines.join('\n');
+        console.log({ buildScript });
+        return buildScript;
+    }
+
+    public generateClassDiagramFromEnum(enumObj: EnumDetail): string {
+        if (!enumObj)
+            return '';
+
+        const lines: string[] = this.classDiagramInitial()
+
+        this.buildEnumClass(lines, enumObj);
 
         const buildScript = lines.join('\n');
         console.log({ buildScript });
@@ -128,8 +146,8 @@ export class MermaidService {
         }
 
         // Add constructors
-        if (classDetail.constructor && classDetail.constructor.length > 0) {
-            classDetail.constructor.forEach(ctor => {
+        if (classDetail.constructors && classDetail.constructors.length > 0) {
+            classDetail.constructors.forEach(ctor => {
                 const params = this.formatMethodParameters(ctor.parameters);
                 lines.push(`\t${this.getModifierString(ctor.modifiers)} ${ctor.name}(${params})`);
             });

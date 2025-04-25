@@ -1,11 +1,11 @@
 @if(showMembers()){
 <h3 class="text-xl font-semibold mb-2 my-5">{{ propertyLabel }}</h3>
 <div class="divider m-0"></div>
-<div class="overflow-x-auto w-1/2">
+<div class="overflow-x-auto">
   <table class="table">
     <tbody>
       @for (member of members; track $index) {
-      <tr>
+      <tr class="hover:bg-base-300">
         <td>
           {{ member.member }}
         </td>

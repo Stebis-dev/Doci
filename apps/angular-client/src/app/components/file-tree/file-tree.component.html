@@ -1,0 +1,59 @@
+<div class="h-full overflow-y-auto bg-base-200 p-2 text-xs">
+  @if (treeData.length > 0) {
+  <div class="font-mono">
+    @for (node of treeData; track node.path) {
+    <ng-container
+      *ngTemplateOutlet="treeNode; context: { $implicit: node }"
+    ></ng-container>
+    }
+  </div>
+  } @else {
+  <div class="text-center text-base-content/60 p-4">No project selected</div>
+  }
+</div>
+
+<ng-template #treeNode let-node>
+  <!-- <div [class.ml-4]="node.type !== 'file'"> -->
+  <div>
+    <div
+      class="flex items-center p-1 rounded-lg hover:bg-base-300 focus:bg-base-300 cursor-pointer select-none"
+      [class.file]="node.type === 'file'"
+      [class.directory]="node.type === 'directory'"
+      [class.expanded]="node.isExpanded"
+      (click)="toggleNode(node)"
+      role="button"
+      tabindex="0"
+      (keydown.enter)="toggleNode(node)"
+    >
+      <span class="mr-2 w-6 flex items-center justify-center">
+        @switch (node.type) { @case ('directory') { @if (node.isExpanded) {
+        <app-icon name="Folder2_open" size="15" />
+        } @else {
+        <app-icon name="Folder2" size="15" />
+        } } @case ('file') {
+        <app-icon name="File_earmark" size="15" />
+        } @case ('class') {
+        <app-icon name="Code_square" size="15" />
+        } @case ('enum') {
+        <app-icon name="Code_square" size="15" />
+        } @case ('interface') {
+        <app-icon name="Code_square" size="15" />
+        } @case ('method') {
+        <app-icon name="Braces" size="15" />
+        } }
+      </span>
+
+      <span class="truncate">{{ node.name }}</span>
+    </div>
+
+    @if (node.type !== 'method' && node.isExpanded && node.children) {
+    <div class="border-l border-base-content/20 ml-2">
+      @for (child of node.children; track child.path) {
+      <ng-container
+        *ngTemplateOutlet="treeNode; context: { $implicit: child }"
+      ></ng-container>
+      }
+    </div>
+    }
+  </div>
+</ng-template>

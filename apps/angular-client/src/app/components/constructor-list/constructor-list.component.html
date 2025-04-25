@@ -1,15 +1,15 @@
 @if(showConstructors()){
 <h3 class="text-xl font-semibold mb-2 my-5">Constructors</h3>
 <div class="divider m-0"></div>
-<div class="overflow-x-auto w-1/2">
+<div class="overflow-x-auto">
   <table class="table">
     <tbody>
       @for (constructor of constructors; track $index) {
-      <tr>
+      <tr class="flex hover:bg-base-300">
         @for ( modifier of constructor.modifiers; track $index) {
-        <td>{{ modifier }}</td>
+        <td class="flex-1">{{ modifier }}</td>
         }
-        <td>
+        <td class="flex-1/2">
           {{ constructor.name }}
           {{ '(' }}
           @for ( parameter of constructor.parameters; track $index) {

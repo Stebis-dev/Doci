@@ -55,7 +55,7 @@ export function buildClassDetails(
     constructors: ConstructorMethodDetail[],
     methodsUsed: MethodsUsedDetail[]
 ): ClassDetail[] {
-    return classes.map(({ name, modifiers, inheritance, methods: methodNames, constructor: constructorNames, properties: propertyNames, startPosition, endPosition }) => {
+    return classes.map(({ name, modifiers, inheritance, methods: methodNames, constructors: constructorNames, properties: propertyNames, startPosition, endPosition }) => {
         const methodDetails = findDetails(methods, methodNames, { startPosition, endPosition });
         const constructorDetails = findDetails(constructors, constructorNames, { startPosition, endPosition });
         const propertyDetails = findDetails(properties, propertyNames, { startPosition, endPosition });
@@ -77,7 +77,7 @@ export function buildClassDetails(
             name,
             modifiers,
             inheritance,
-            constructor: constructorDetails,
+            constructors: constructorDetails,
             properties: propertyDetails,
             methods: methodDetails,
             methodsUsed: updatedMethodsUsed,

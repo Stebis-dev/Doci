@@ -1,0 +1,20 @@
+<div class="flex h-full w-full overflow-hidden">
+  <div
+    class="w-1/4 min-w-[250px] max-w-[300px] h-full overflow-hidden border-base-300"
+  >
+    <app-file-tree (nodeSelected)="handleSelection($event)"></app-file-tree>
+  </div>
+  <div class="flex-1 h-full overflow-auto border-l border-base-300">
+    @if(showClassDetails()){
+    <app-class-details
+      [file]="selectedFile"
+      [selectedNode]="selectedNode"
+    ></app-class-details>
+    } @if(showMethodDetails()){
+    <app-method-details
+      [file]="selectedFile"
+      [selectedNode]="selectedNode"
+    ></app-method-details>
+    }
+  </div>
+</div>

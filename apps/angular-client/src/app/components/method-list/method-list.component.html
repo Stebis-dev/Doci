@@ -1,13 +1,13 @@
 @if(showMethods()){
 <h3 class="text-xl font-semibold mb-2 my-5">{{ methodLabel }}</h3>
 <div class="divider m-0"></div>
-<div class="overflow-x-auto w-1/2">
+<div class="overflow-x-auto">
   <table class="table">
     <tbody>
       @for (method of methods; track $index) {
-      <tr>
-        <td>{{ this.getReturnType(method) }}</td>
-        <td>
+      <tr class="flex hover:bg-base-300">
+        <td class="flex-1">{{ this.getReturnType(method) }}</td>
+        <td class="flex-1/2">
           {{ method.name }}
           {{ '(' }}
           @for ( parameter of method.parameters; track $index) {

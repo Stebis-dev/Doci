@@ -1,127 +1,19 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../../service/project.service';
-import { ProjectFile } from '@doci/shared';
-
-interface TreeNode {
-    name: string;
-    path: string;
-    type: 'file' | 'directory';
-    children?: TreeNode[];
-    isExpanded?: boolean;
-    file?: ProjectFile;
-}
+import { ProjectFile, ClassDetail, MethodDetail, EnumDetail } from '@doci/shared';
+import { IconComponent } from '../icon.component';
+import { TreeNode, FileTreeSelection, NodeType } from './file-tree.types';
 
 @Component({
     selector: 'app-file-tree',
     standalone: true,
-    imports: [CommonModule],
-    template: `
-        <div class="file-tree">
-            @if (treeData.length > 0) {
-                <div class="tree-container">
-                    @for (node of treeData; track node.path) {
-                        <ng-container *ngTemplateOutlet="treeNode; context: { $implicit: node }"></ng-container>
-                    }
-                </div>
-            } @else {
-                <div class="no-files">No project selected</div>
-            }
-        </div>
-
-        <ng-template #treeNode let-node>
-            <div class="tree-node">
-                <div class="node-content" 
-                     [class.file]="node.type === 'file'"
-                     [class.directory]="node.type === 'directory'"
-                     [class.expanded]="node.isExpanded"
-                     (click)="toggleNode(node)"
-                     role="button"
-                     tabindex="0"
-                     (keydown.enter)="toggleNode(node)">
-                    <span class="node-icon">
-                        @if (node.type === 'directory') {
-                            {{ node.isExpanded ? '📂' : '📁' }}
-                        } @else {
-                            📄
-                        }
-                    </span>
-                    <span class="node-name">{{ node.name }}</span>
-                </div>
-                @if (node.type === 'directory' && node.isExpanded && node.children) {
-                    <div class="node-children">
-                        @for (child of node.children; track child.path) {
-                            <ng-container *ngTemplateOutlet="treeNode; context: { $implicit: child }"></ng-container>
-                        }
-                    </div>
-                }
-            </div>
-        </ng-template>
-    `,
-    styles: [`
-        .file-tree {
-            padding: 1rem;
-            background: var(--background-color);
-            color: var(--text-color);
-            height: 100%;
-            overflow-y: auto;
-        }
-
-        .tree-container {
-            font-family: monospace;
-        }
-
-        .no-files {
-            color: var(--text-secondary);
-            text-align: center;
-            padding: 1rem;
-        }
-
-        .tree-node {
-            margin-left: 0.5rem;
-        }
-
-        .node-content {
-            display: flex;
-            align-items: center;
-            padding: 0.25rem;
-            cursor: pointer;
-            border-radius: 4px;
-            user-select: none;
-        }
-
-        .node-content:hover {
-            background: var(--hover-color);
-        }
-
-        .node-content:focus {
-            outline: none;
-            background: var(--hover-color);
-        }
-
-        .node-icon {
-            margin-right: 0.5rem;
-            width: 1.5rem;
-        }
-
-        .node-name {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .node-children {
-            border-left: 1px solid var(--border-color);
-        }
-
-        .file {
-            margin-left: 0rem;
-        }
-    `]
+    imports: [CommonModule, IconComponent],
+    templateUrl: './file-tree.component.html'
 })
 export class FileTreeComponent implements OnInit {
     treeData: TreeNode[] = [];
-    @Output() nodeSelected = new EventEmitter<ProjectFile>();
+    @Output() nodeSelected = new EventEmitter<FileTreeSelection>();
 
     constructor(private projectService: ProjectService) { }
 
@@ -145,6 +37,7 @@ export class FileTreeComponent implements OnInit {
             const parts = file.path.split(/[/\\]/);
             const currentLevel = root;
 
+            // Build directory structure
             for (let i = 0; i < parts.length; i++) {
                 const part = parts[i];
                 const currentPath = parts.slice(0, i + 1).join('/');
@@ -155,7 +48,7 @@ export class FileTreeComponent implements OnInit {
                         name: part,
                         path: currentPath,
                         type: isLastPart ? 'file' : 'directory',
-                        children: isLastPart ? undefined : [],
+                        children: isLastPart ? [] : [],
                         isExpanded: false,
                         file: isLastPart ? file : undefined
                     };
@@ -165,6 +58,27 @@ export class FileTreeComponent implements OnInit {
                         currentLevel[parentPath].children?.push(currentLevel[currentPath]);
                     }
                 }
+
+                // If this is a file node, add its classes, enums, and interfaces
+                if (isLastPart && file.details) {
+                    const fileNode = currentLevel[currentPath];
+
+                    // Add classes
+                    if (file.details.classes) {
+                        file.details.classes.forEach(classDetail => {
+                            const classNode = this.createClassNode(classDetail, file, 'class');
+                            fileNode.children?.push(classNode);
+                        });
+                    }
+
+                    // Add enums
+                    if (file.details.enums) {
+                        file.details.enums.forEach(enumDetail => {
+                            const enumNode = this.createEnumNode(enumDetail, file, 'enum');
+                            fileNode.children?.push(enumNode);
+                        });
+                    }
+                }
             }
         }
 
@@ -172,11 +86,81 @@ export class FileTreeComponent implements OnInit {
         return Object.values(root).filter(node => !node.path.includes('/'));
     }
 
+    private createClassNode(detail: ClassDetail, file: ProjectFile, type: 'class' | 'enum' | 'interface'): TreeNode {
+        const classNode: TreeNode = {
+            name: detail.name,
+            path: `${file.path}#${detail.name}`,
+            type: type,
+            children: [],
+            isExpanded: false,
+            file: file,
+            classType: type
+        };
+
+        // Add methods for classes
+        if (type === 'class' && detail.methods) {
+            detail.methods.forEach(method => {
+                const methodNode: TreeNode = {
+                    name: `${method.name}()`,
+                    path: `${classNode.path}#${method.name}`,
+                    type: 'method',
+                    methodDetail: method,
+                    file: file
+                };
+                classNode.children?.push(methodNode);
+            });
+        }
+
+        return classNode;
+    }
+
+    private createEnumNode(detail: EnumDetail, file: ProjectFile, type: 'class' | 'enum' | 'interface'): TreeNode {
+        const classNode: TreeNode = {
+            name: detail.name,
+            path: `${file.path}#${detail.name}`,
+            type: type,
+            children: [],
+            isExpanded: false,
+            file: file,
+            classType: type
+        };
+
+        return classNode;
+    }
+
     toggleNode(node: TreeNode): void {
-        if (node.type === 'directory') {
+        if (node.type === 'method') {
+            // Emit method selection
+            this.nodeSelected.emit({
+                file: node.file!,
+                selectedType: 'method',
+                className: node.path.split('#')[1],
+                methodName: node.name.replace('()', '')
+            });
+        } else if (node.type === 'class' || node.type === 'interface') {
+            // Toggle expansion for class/interface nodes
             node.isExpanded = !node.isExpanded;
-        } else if (node.file) {
-            this.nodeSelected.emit(node.file);
+            // Emit class selection
+            this.nodeSelected.emit({
+                file: node.file!,
+                selectedType: 'class',
+                className: node.name
+            });
+        } else if (node.type === 'enum') {
+            // Toggle expansion for file nodes
+            node.isExpanded = !node.isExpanded;
+            // Emit file selection
+            this.nodeSelected.emit({
+                file: node.file!,
+                selectedType: 'enum',
+                enumName: node.name
+            });
+        } else if (node.type === 'file') {
+            // Toggle expansion for file nodes
+            node.isExpanded = !node.isExpanded;
+        } else if (node.type === 'directory') {
+            // Toggle expansion for directory nodes
+            node.isExpanded = !node.isExpanded;
         }
     }
 } 
