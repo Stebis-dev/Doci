@@ -2,8 +2,6 @@ import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
 import { ExtractorType, MethodDetail, NodePosition, ParameterDetail } from "@doci/shared";
 
-// TODO add detail method parameters (name, type, default value, etc.)
-
 export class MethodExtractor extends BaseQueryEngine {
     type = ExtractorType.Method;
 

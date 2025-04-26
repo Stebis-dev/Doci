@@ -40,6 +40,7 @@ export interface ClassTemporaryDetail extends Details {
     properties: { name: string }[];
     constructors: { name: string }[];
     body: string;
+    comment?: string;
 }
 
 export interface ClassDetail extends Details {

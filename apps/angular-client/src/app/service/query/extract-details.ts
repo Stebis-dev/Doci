@@ -1,6 +1,6 @@
 import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, MethodsUsedDetail, ParameterDetail, Details } from "@doci/shared";
 import { assignParametersToConstructors, assignParametersToMethods, assignCommentsToMethods } from "./build-method-details";
-import { buildClassDetails } from "./build-class-details";
+import { assignCommentsToClasses, buildClassDetails } from "./build-class-details";
 import { Parser, Tree } from "web-tree-sitter";
 import { ClassExtractor } from "./extractor/class.extractor";
 import { MethodExtractor } from "./extractor/method.extractor";
@@ -37,7 +37,7 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
             filePath: file.name,
         };
 
-        const classTempDetails = extractedData[ExtractorType.Class] as ClassTemporaryDetail[];
+        let classTempDetails = extractedData[ExtractorType.Class] as ClassTemporaryDetail[];
         const propertyDetails = extractedData[ExtractorType.Property] as PropertyDetail[];
         let methodDetails = extractedData[ExtractorType.Method] as MethodDetail[];
         const parameterDetails = extractedData[ExtractorType.Parameter] as ParameterDetail[];
@@ -52,8 +52,14 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
         constructorDetails = assignParametersToConstructors(parameterDetails, constructorDetails);
 
         // First assign comments to methods
-        const { updatedMethods, unusedComments } = assignCommentsToMethods(comments, methodDetails);
+        const { updatedMethods } = assignCommentsToMethods(comments, methodDetails, classTempDetails);
         methodDetails = [...updatedMethods];
+
+        const { updatedClasses, leftComments } = assignCommentsToClasses(comments, classTempDetails);
+        classTempDetails = [...updatedClasses];
+
+
+        doc.comment = leftComments.length > 0 ? leftComments.map(comment => comment.name).join('\n') : undefined;
 
         // Assign methods to their respective classes, passing unused comments for class-level assignment
         if (classTempDetails && methodDetails) {
@@ -62,8 +68,7 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
                 propertyDetails,
                 methodDetails,
                 constructorDetails,
-                methodsUsedDetails,
-                unusedComments
+                methodsUsedDetails
             );
             doc[ExtractorType.Class] = classesWithMethods;
         } else if (classTempDetails) {
@@ -77,6 +82,7 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
                 methodsUsed: [],
                 objectsUsed: [],
                 body: cls.body,
+                comment: cls.comment,
                 startPosition: cls.startPosition,
                 endPosition: cls.endPosition
             }));
@@ -90,6 +96,7 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
             doc[ExtractorType.Comments] = extractedData[ExtractorType.Comments];
         }
 
+        // TODO add comments to enums
         if (extractedData[ExtractorType.Enum]) {
             doc[ExtractorType.Enum] = extractedData[ExtractorType.Enum];
         }

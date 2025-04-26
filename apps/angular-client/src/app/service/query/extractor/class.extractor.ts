@@ -15,19 +15,16 @@ export class ClassExtractor extends BaseQueryEngine {
                 (modifier) @class.modifier*
                 name: (identifier) @class.name
                 (base_list (identifier) @class.inheritance)*
-                body: (
-                    declaration_list
-                    (
-                        (property_declaration
-                            name: (identifier) @class.property.name
-                        )*
-                        (constructor_declaration
-                            name: (identifier) @class.constructor
-                        )*
-                        (method_declaration
-                            name: (identifier) @class.method
-                        )
-                    ) 
+                body: (declaration_list
+                    (constructor_declaration
+                        name: (identifier) @class.constructor
+                    )?
+                    (method_declaration
+                        name: (identifier) @class.method
+                    )?
+                    (property_declaration
+                        name: (identifier) @class.property.name
+                    )?
                 ) @class.body
             ) @class
         `;

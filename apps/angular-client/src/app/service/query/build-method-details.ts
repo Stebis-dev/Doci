@@ -1,4 +1,4 @@
-import { ConstructorMethodDetail, MethodDetail, ParameterDetail, Details } from "@doci/shared";
+import { ConstructorMethodDetail, MethodDetail, ParameterDetail, Details, ClassTemporaryDetail } from "@doci/shared";
 
 export function assignParametersToMethods(parameterDetails: ParameterDetail[], methodDetails: MethodDetail[]): MethodDetail[] {
     if (parameterDetails && methodDetails) {
@@ -34,7 +34,7 @@ export function assignParametersToConstructors(parameterDetails: ParameterDetail
     return constructorDetails;
 }
 
-export function assignCommentsToMethods(comments: Details[], methods: MethodDetail[]): { updatedMethods: MethodDetail[], unusedComments: Details[] } {
+export function assignCommentsToMethods(comments: Details[], methods: MethodDetail[], classes: ClassTemporaryDetail[]): { updatedMethods: MethodDetail[], unusedComments: Details[] } {
     if (!comments || !methods || comments.length === 0 || methods.length === 0) {
         return { updatedMethods: methods, unusedComments: comments || [] };
     }
@@ -44,20 +44,25 @@ export function assignCommentsToMethods(comments: Details[], methods: MethodDeta
     const workingMethods = [...methods];
 
     // First, remove all comments that are inside any method body
-    methods.forEach(method => {
-        const insideMethodIndices = workingComments
-            .map((comment, index) => ({
-                index,
-                isInside: comment.startPosition.row > method.startPosition.row &&
-                    comment.endPosition.row < method.endPosition.row
-            }))
-            .filter(item => item.isInside)
-            .map(item => item.index)
-            .sort((a, b) => b - a); // Sort in descending order to remove from end first
+    classes.forEach(classDetail => {
+        methods.forEach(method => {
+            const insideMethodIndices = workingComments
+                .map((comment, index) => ({
+                    index,
+                    isInside: (comment.startPosition.row > method.startPosition.row &&
+                        comment.endPosition.row < method.endPosition.row) ||
+                        (comment.startPosition.row < classDetail.startPosition.row &&
+                            comment.endPosition.row < classDetail.endPosition.row) ||
+                        (comment.startPosition.row > classDetail.startPosition.row &&
+                            comment.endPosition.row > classDetail.endPosition.row),
+                }))
+                .filter(item => item.isInside)
+                .map(item => item.index)
 
-        // Remove comments that are inside methods
-        insideMethodIndices.forEach(index => {
-            workingComments.splice(index, 1);
+            // Remove comments that are inside methods
+            insideMethodIndices.forEach(index => {
+                workingComments.splice(index, 1);
+            });
         });
     });
 
@@ -66,7 +71,6 @@ export function assignCommentsToMethods(comments: Details[], methods: MethodDeta
         // Find methods that start before this comment
         const methodsBeforeComment = workingMethods
             .filter(method => method.startPosition.row > comment.startPosition.row);
-        // .sort((a, b) => b.startPosition.row - a.startPosition.row);
 
         if (methodsBeforeComment.length > 0) {
             const nearestMethod = methodsBeforeComment[0];

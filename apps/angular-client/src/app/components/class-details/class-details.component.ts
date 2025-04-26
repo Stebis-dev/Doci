@@ -150,4 +150,8 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     getEnumMembers(): EnumMember[] {
         return this.enumObj?.members || [];
     }
+
+    getDescription(): string {
+        return this.classObj?.comment || '';
+    }
 }
