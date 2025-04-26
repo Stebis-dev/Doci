@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClassDetail, ExtractorType, MethodDetail, ProjectFile } from '@doci/shared';
+import { ClassDetail, ExtractorType, MethodDetail, ParameterDetail, ProjectFile } from '@doci/shared';
 import { FileTreeSelection } from '../file-tree/file-tree.types';
 import { MethodGraphComponent } from '../method-graph/method-graph.component';
 
@@ -57,6 +57,13 @@ export class MethodDetailsComponent implements OnInit, OnChanges {
         return '';
     }
 
+    getModifiers(): string[] {
+        if (this.method) {
+            return this.method.modifiers || [];
+        }
+        return [];
+    }
+
     getReturnType(): string {
         let propertyType = '';
         if (!this.method) {
@@ -77,7 +84,72 @@ export class MethodDetailsComponent implements OnInit, OnChanges {
 
         return propertyType;
     }
+
+    getFullMethodName(): string {
+        let methodName = '';
+
+        if (!this.method) {
+            return '';
+        }
+        methodName = this.method.name;
+
+        methodName += '(';
+        if (this.method.parameters) {
+            methodName += this.method.parameters.map(param => this.getParameter(param)).join(', ');
+        }
+        methodName += ')';
+        return methodName
+    }
+
+    getParameter(parameter: ParameterDetail): string {
+        let parameterType = '';
+
+        if (parameter.genericName.length > 0)
+            parameterType += parameter.genericName[0] + '<';
+
+        if (parameter.objectType.length > 0)
+            parameterType += parameter.objectType[0];
+
+        if (parameter.genericName.length > 0)
+            parameterType += '>';
+
+        return `${parameterType} ${parameter.varName[0]}`;
+    }
+
     getParameters() {
         return this.method?.parameters;
+    }
+
+    showParameters(): boolean {
+        return this.method?.parameters !== undefined && this.method?.parameters.length > 0;
+    }
+
+    getObjectType(parameter: ParameterDetail): string {
+        let objectType = '';
+        if (!this.method) {
+            return objectType;
+        }
+
+        if (parameter.genericName.length > 0)
+            objectType += parameter.genericName[0] + '<';
+
+        if (parameter.objectType.length > 0)
+            objectType += parameter.objectType[0];
+
+        if (parameter.genericName.length > 0)
+            objectType += '>';
+
+        return objectType;
+    }
+    getVariableName(parameter: ParameterDetail): string {
+        let variableName = '';
+        if (!this.method) {
+            return variableName;
+        }
+
+        if (parameter.varName.length > 0)
+            variableName += parameter.varName[0];
+
+        return variableName;
     }
 }

@@ -5,6 +5,8 @@ export enum ExtractorType {
     Enum = 'enums',
     Constructor = "constructors",
     Property = "properties",
+    Parameter = "parameters",
+    Comments = "comments",
 }
 
 export interface ExtractedDetails {
@@ -12,8 +14,10 @@ export interface ExtractedDetails {
     [ExtractorType.Class]?: ClassDetail[];
     [ExtractorType.Property]?: MethodDetail[];
     [ExtractorType.Method]?: MethodDetail[];
+    [ExtractorType.Parameter]?: MethodDetail[];
     [ExtractorType.Constructor]?: MethodDetail[];
     [ExtractorType.MethodsUsed]?: MethodsUsedDetail[];
+    [ExtractorType.Comments]?: Details[];
     [ExtractorType.Enum]?: EnumDetail[];
 }
 
@@ -44,6 +48,7 @@ export interface ClassDetail extends Details {
     methodsUsed: MethodsUsedDetail[];
     inheritance: string[]
     objectsUsed: string[];
+    comments?: string[];
 }
 
 export interface PropertyDetail extends Details {
@@ -58,9 +63,16 @@ export interface MethodDetail extends Details {
     genericName: string;
     predefinedType: string[];
     objectType: string[];
-    parameters: { name: string; type: string | null }[];
+    parameters: ParameterDetail[];
     body: string;
     usedIn?: MethodsUsedDetail[];
+    comments?: string[];
+}
+
+export interface ParameterDetail extends Details {
+    genericName: string[];
+    varName: string[];
+    objectType: string[];
 }
 
 export interface MethodsUsedDetail extends Details {
@@ -74,7 +86,7 @@ export interface MethodsUsedDetail extends Details {
 export interface ConstructorMethodDetail extends Details {
     modifiers: string[];
     // returnType: string | null;
-    parameters: { name: string; type: string | null }[];
+    parameters: ParameterDetail[];
     body: string;
 }
 
@@ -87,4 +99,3 @@ export interface EnumMember {
     member: string;
     value: string;
 }
-

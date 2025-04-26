@@ -9,6 +9,7 @@ export interface GraphData {
         color: string;
         x: number;
         y: number;
+        type?: 'method' | 'class'; // Add type for icon selection
     }>;
     edges: Array<{
         id: string;
@@ -30,14 +31,15 @@ export class GraphService {
         const nodes: GraphData['nodes'] = [];
         const edges: GraphData['edges'] = [];
 
-        // Add the main method as the central node
+        // Add the main method as the central node at the top
         nodes.push({
             id: methodDetail.name,
             label: methodDetail.name,
             size: 12,
             color: '#E91E63', // Primary node color
             x: 0,
-            y: 0
+            y: 0,
+            type: 'method'
         });
 
         console.log('Method usedIn Detail:', methodDetail.usedIn);
@@ -53,21 +55,26 @@ export class GraphService {
                 if (!classGroups.has(classKey)) {
                     classGroups.set(classKey, []);
                 }
-                const methodUsedIn = usage.methodUsedIn
+                const methodUsedIn = usage.methodUsedIn;
                 if (methodUsedIn) {
                     const uniqueMethods = classGroups.get(classKey);
                     uniqueMethods?.push(methodUsedIn);
                     classGroups.set(classKey, Array.from(new Set(uniqueMethods)));
                 }
             });
+
             console.log('Class Groups:', classGroups);
-            // console.log('Method Detail:', methodDetail);
-            // console.log('Method Detail Used In:', methodDetail.usedIn);
+
+            // Calculate layout parameters
+            const totalClasses = classGroups.size;
+            const classSpacing = 0.4; // Horizontal spacing between classes
+            const verticalSpacing = 0.3; // Vertical spacing between levels
 
             // Create nodes and edges for each class and its methods
             Array.from(classGroups.entries()).forEach(([className, usages], classIndex) => {
-                const classAngle = (1 * Math.PI * classIndex) / classGroups.size;
-                const classRadius = 0.25;
+                // Position class horizontally centered and below main method
+                const classX = (classIndex - (totalClasses - 1) / 2) * classSpacing;
+                const classY = verticalSpacing; // Fixed vertical distance from main method
 
                 // Create class node
                 nodes.push({
@@ -75,8 +82,9 @@ export class GraphService {
                     label: className,
                     size: 10,
                     color: '#2196F3', // Class node color
-                    x: Math.sin(classAngle) * classRadius,
-                    y: - (Math.cos(classAngle) * classRadius),
+                    x: classX,
+                    y: classY,
+                    type: 'class'
                 });
 
                 // Connect main method to class
@@ -89,8 +97,9 @@ export class GraphService {
 
                 // Create nodes for each method in the class
                 usages.forEach((usage, methodIndex) => {
-                    const methodAngle = (methodIndex - (usages.length - 1) / 2) * 0.3; // Spread methods in an arc
-                    const methodRadius = classRadius * 0.5;
+                    // Position methods below their class
+                    const methodX = classX + (methodIndex - (usages.length - 1) / 2) * (classSpacing * 0.5);
+                    const methodY = classY + verticalSpacing;
 
                     const methodNodeId = `${className}.${usage}`;
                     nodes.push({
@@ -98,8 +107,9 @@ export class GraphService {
                         label: usage || 'Unknown Method',
                         size: 8,
                         color: '#4CAF50', // Method node color
-                        x: (Math.sin(methodAngle) * classRadius),
-                        y: - (Math.cos(methodAngle) * classRadius),
+                        x: methodX,
+                        y: methodY,
+                        type: 'method'
                     });
 
                     // Connect class to method

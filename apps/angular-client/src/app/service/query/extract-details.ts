@@ -1,12 +1,15 @@
-import { Parser, Tree } from "web-tree-sitter";
+import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, MethodsUsedDetail, ParameterDetail } from "@doci/shared";
+import { assignParametersToConstructors, assignParametersToMethods } from "./build-method-details";
 import { buildClassDetails } from "./build-class-details";
+import { Parser, Tree } from "web-tree-sitter";
 import { ClassExtractor } from "./extractor/class.extractor";
 import { MethodExtractor } from "./extractor/method.extractor";
 import { EnumExtractor } from "./extractor/enum.extractor";
-import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, MethodsUsedDetail } from "@doci/shared";
 import { ConstructorExtractor } from "./extractor/constructor.extractor";
 import { PropertyExtractor } from "./extractor/property.extractor";
 import { MethodUsageExtractor } from "./extractor/method-usage.extractor";
+import { ParameterExtractor } from "./extractor/parameter.extractor";
+import { CommentsExtractor } from "./extractor/comment.extractor";
 
 export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): ExtractedDetails | null {
     try {
@@ -14,9 +17,11 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
             new ClassExtractor(parser),
             new PropertyExtractor(parser),
             new MethodExtractor(parser),
+            new ParameterExtractor(parser),
             new MethodUsageExtractor(parser),
             new ConstructorExtractor(parser),
             new EnumExtractor(parser),
+            new CommentsExtractor(parser),
         ];
 
         const extractedData: { [key in ExtractorType]?: any } = {};
@@ -34,9 +39,16 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
 
         const classTempDetails = extractedData[ExtractorType.Class] as ClassTemporaryDetail[];
         const propertyDetails = extractedData[ExtractorType.Property] as PropertyDetail[];
-        const methodDetails = extractedData[ExtractorType.Method] as MethodDetail[];
-        const constructorDetails = extractedData[ExtractorType.Constructor] as ConstructorMethodDetail[];
+        let methodDetails = extractedData[ExtractorType.Method] as MethodDetail[];
+        const parameterDetails = extractedData[ExtractorType.Parameter] as ParameterDetail[];
+        let constructorDetails = extractedData[ExtractorType.Constructor] as ConstructorMethodDetail[];
         const methodsUsedDetails = extractedData[ExtractorType.MethodsUsed] as MethodsUsedDetail[];
+
+        // Assign parameters to their respective methods
+        methodDetails = assignParametersToMethods(parameterDetails, methodDetails);
+
+        // Assign parameters to their respective constructors
+        constructorDetails = assignParametersToConstructors(parameterDetails, constructorDetails);
 
         // Assign methods to their respective classes
         if (classTempDetails && methodDetails) {
@@ -57,8 +69,18 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
             }));
         }
 
+        console.log("Extracted data:", extractedData[ExtractorType.Comments]);
+
+        if (extractedData[ExtractorType.Comments]) {
+            doc[ExtractorType.Comments] = extractedData[ExtractorType.Comments];
+        }
+
         // if (extractedData[ExtractorType.Method]) {
         //     doc[ExtractorType.Method] = extractedData[ExtractorType.Method];
+        // }
+
+        // if (extractedData[ExtractorType.Parameter]) {
+        //     doc[ExtractorType.Parameter] = extractedData[ExtractorType.Parameter];
         // }
 
         if (extractedData[ExtractorType.MethodsUsed]) {

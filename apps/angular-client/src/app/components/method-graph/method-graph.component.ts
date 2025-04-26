@@ -23,11 +23,31 @@ export class MethodGraphComponent implements OnInit, OnDestroy, OnChanges, After
     }
 
     ngOnInit() {
-        // Initialize Sigma
+        // Initialize Sigma with custom node renderer
         this.sigma = new Sigma(this.graph, this.container.nativeElement, {
             minCameraRatio: 0.1,
-            maxCameraRatio: 5,
-            renderEdgeLabels: true
+            maxCameraRatio: 10,
+            renderEdgeLabels: true,
+            nodeReducer: (node: any, data: any) => {
+                const res = { ...data };
+
+                // Add icon based on node type
+                if (data.type === 'method') {
+                    res.icon = {
+                        content: '#method-icon',
+                        color: data.color,
+                        scale: 1.2
+                    };
+                } else if (data.type === 'class') {
+                    res.icon = {
+                        content: '#class-icon',
+                        color: data.color,
+                        scale: 1.2
+                    };
+                }
+
+                return res;
+            }
         });
     }
 
@@ -56,6 +76,7 @@ export class MethodGraphComponent implements OnInit, OnDestroy, OnChanges, After
 
         // Clear existing graph data
         this.graph.clear();
+
         // Add nodes to the graph
         graphData.nodes.forEach(node => {
             this.graph.addNode(node.id, {
@@ -63,8 +84,7 @@ export class MethodGraphComponent implements OnInit, OnDestroy, OnChanges, After
                 y: node.y,
                 size: node.size,
                 color: node.color,
-                label: node.label,
-                labelColor: "#fff"
+                label: node.label
             });
         });
 
@@ -75,6 +95,7 @@ export class MethodGraphComponent implements OnInit, OnDestroy, OnChanges, After
                 label: edge.label
             });
         });
+
         if (this.sigma) {
             this.sigma.refresh();
         }

@@ -10,12 +10,7 @@
         <td class="flex-1">{{ modifier }}</td>
         }
         <td class="flex-1/2">
-          {{ constructor.name }}
-          {{ '(' }}
-          @for ( parameter of constructor.parameters; track $index) {
-          {{ parameter.type }} {{ parameter.name }} }
-          <!-- TODO add method for multiple parameters -->
-          {{ ')' }}
+          {{ getConstructorMethodName(constructor) }}
         </td>
       </tr>
       }

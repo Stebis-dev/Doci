@@ -53,7 +53,6 @@ export class TreeSitterService {
             const loadedLanguage = await Language.load(grammarPath);
             if (loadedLanguage) {
                 this.language = loadedLanguage;
-                // console.log('Language loaded:', this.language);
                 this.parser.setLanguage(this.language);
                 console.log(`Language ${language} loaded successfully`);
             } else {
