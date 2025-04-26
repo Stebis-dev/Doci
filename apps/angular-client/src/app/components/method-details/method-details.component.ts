@@ -152,4 +152,11 @@ export class MethodDetailsComponent implements OnInit, OnChanges {
 
         return variableName;
     }
+
+    getDescription(): string {
+        if (this.method) {
+            return this.method.comment || '';
+        }
+        return '';
+    }
 }

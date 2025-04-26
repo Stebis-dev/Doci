@@ -18,12 +18,14 @@ export class CommentsExtractor extends BaseQueryEngine {
             const commentsCaptures = match.captures.find(capture => capture.name === 'comments');
             if (!commentsCaptures) return;
 
+            const commentText = commentsCaptures.node.text.trim().replace('//', '');
+
             const commentsKey = this.getMethodKey(commentsCaptures);
 
             const existingComments = commentMap.get(commentsKey);
             if (!existingComments) {
                 commentMap.set(commentsKey, {
-                    name: commentsCaptures.node.text,
+                    name: commentText,
                     startPosition: commentsCaptures.node.startPosition as NodePosition,
                     endPosition: commentsCaptures.node.endPosition as NodePosition,
                 });
@@ -33,7 +35,7 @@ export class CommentsExtractor extends BaseQueryEngine {
     }
 
     private getMethodKey(capture: any): string {
-        const { text, startPosition, endPosition } = capture.node;
-        return `${text}-${startPosition.row}-${startPosition.column}-${endPosition.row}-${endPosition.column}`;
+        const { text, startPosition } = capture.node;
+        return `${text}-${startPosition.row}-${startPosition.column}`;
     }
 }

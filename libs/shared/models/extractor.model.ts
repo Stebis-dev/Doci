@@ -11,6 +11,7 @@ export enum ExtractorType {
 
 export interface ExtractedDetails {
     filePath: string;
+    comment?: string;
     [ExtractorType.Class]?: ClassDetail[];
     [ExtractorType.Property]?: MethodDetail[];
     [ExtractorType.Method]?: MethodDetail[];
@@ -38,6 +39,7 @@ export interface ClassTemporaryDetail extends Details {
     methods: { name: string }[];
     properties: { name: string }[];
     constructors: { name: string }[];
+    body: string;
 }
 
 export interface ClassDetail extends Details {
@@ -48,7 +50,8 @@ export interface ClassDetail extends Details {
     methodsUsed: MethodsUsedDetail[];
     inheritance: string[]
     objectsUsed: string[];
-    comments?: string[];
+    body: string;
+    comment?: string;
 }
 
 export interface PropertyDetail extends Details {
@@ -66,7 +69,7 @@ export interface MethodDetail extends Details {
     parameters: ParameterDetail[];
     body: string;
     usedIn?: MethodsUsedDetail[];
-    comments?: string[];
+    comment?: string;
 }
 
 export interface ParameterDetail extends Details {

@@ -1,4 +1,4 @@
-import { ConstructorMethodDetail, MethodDetail, ParameterDetail } from "@doci/shared";
+import { ConstructorMethodDetail, MethodDetail, ParameterDetail, Details } from "@doci/shared";
 
 export function assignParametersToMethods(parameterDetails: ParameterDetail[], methodDetails: MethodDetail[]): MethodDetail[] {
     if (parameterDetails && methodDetails) {
@@ -32,4 +32,74 @@ export function assignParametersToConstructors(parameterDetails: ParameterDetail
         });
     }
     return constructorDetails;
+}
+
+export function assignCommentsToMethods(comments: Details[], methods: MethodDetail[]): { updatedMethods: MethodDetail[], unusedComments: Details[] } {
+    if (!comments || !methods || comments.length === 0 || methods.length === 0) {
+        return { updatedMethods: methods, unusedComments: comments || [] };
+    }
+
+    // Create deep copies to avoid modifying originals
+    const workingComments = [...comments];
+    const workingMethods = [...methods];
+
+    // First, remove all comments that are inside any method body
+    methods.forEach(method => {
+        const insideMethodIndices = workingComments
+            .map((comment, index) => ({
+                index,
+                isInside: comment.startPosition.row > method.startPosition.row &&
+                    comment.endPosition.row < method.endPosition.row
+            }))
+            .filter(item => item.isInside)
+            .map(item => item.index)
+            .sort((a, b) => b - a); // Sort in descending order to remove from end first
+
+        // Remove comments that are inside methods
+        insideMethodIndices.forEach(index => {
+            workingComments.splice(index, 1);
+        });
+    });
+
+    // Now assign remaining comments to nearest method above them
+    workingComments.slice().forEach(comment => {
+        // Find methods that start before this comment
+        const methodsBeforeComment = workingMethods
+            .filter(method => method.startPosition.row > comment.startPosition.row);
+        // .sort((a, b) => b.startPosition.row - a.startPosition.row);
+
+        if (methodsBeforeComment.length > 0) {
+            const nearestMethod = methodsBeforeComment[0];
+            const distance = nearestMethod.startPosition.row - comment.startPosition.row;
+
+            // Only assign if comment is within 5 lines of method start
+            if (distance <= 5) {
+                const methodIndex = workingMethods.findIndex(m =>
+                    m.startPosition.row === nearestMethod.startPosition.row &&
+                    m.name === nearestMethod.name
+                );
+
+                if (methodIndex !== -1) {
+                    const existingComment = workingMethods[methodIndex].comment;
+                    workingMethods[methodIndex].comment = existingComment
+                        ? `${existingComment}\n${comment.name}`
+                        : comment.name;
+
+                    // Remove from working comments
+                    const commentIndex = workingComments.findIndex(c =>
+                        c.startPosition.row === comment.startPosition.row &&
+                        c.startPosition.column === comment.startPosition.column
+                    );
+                    if (commentIndex !== -1) {
+                        workingComments.splice(commentIndex, 1);
+                    }
+                }
+            }
+        }
+    });
+
+    return {
+        updatedMethods: workingMethods,
+        unusedComments: workingComments
+    };
 }

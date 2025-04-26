@@ -3,7 +3,6 @@ import { BaseQueryEngine } from "./base-query.engine";
 import { ExtractorType, MethodDetail, NodePosition, ParameterDetail } from "@doci/shared";
 
 // TODO add detail method parameters (name, type, default value, etc.)
-// TODO parse comments that are before the methods and properties
 
 export class MethodExtractor extends BaseQueryEngine {
     type = ExtractorType.Method;

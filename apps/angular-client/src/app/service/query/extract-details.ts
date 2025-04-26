@@ -1,5 +1,5 @@
-import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, MethodsUsedDetail, ParameterDetail } from "@doci/shared";
-import { assignParametersToConstructors, assignParametersToMethods } from "./build-method-details";
+import { ExtractedDetails, ExtractorType, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, MethodsUsedDetail, ParameterDetail, Details } from "@doci/shared";
+import { assignParametersToConstructors, assignParametersToMethods, assignCommentsToMethods } from "./build-method-details";
 import { buildClassDetails } from "./build-class-details";
 import { Parser, Tree } from "web-tree-sitter";
 import { ClassExtractor } from "./extractor/class.extractor";
@@ -43,6 +43,7 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
         const parameterDetails = extractedData[ExtractorType.Parameter] as ParameterDetail[];
         let constructorDetails = extractedData[ExtractorType.Constructor] as ConstructorMethodDetail[];
         const methodsUsedDetails = extractedData[ExtractorType.MethodsUsed] as MethodsUsedDetail[];
+        const comments = extractedData[ExtractorType.Comments] as Details[];
 
         // Assign parameters to their respective methods
         methodDetails = assignParametersToMethods(parameterDetails, methodDetails);
@@ -50,9 +51,20 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
         // Assign parameters to their respective constructors
         constructorDetails = assignParametersToConstructors(parameterDetails, constructorDetails);
 
-        // Assign methods to their respective classes
+        // First assign comments to methods
+        const { updatedMethods, unusedComments } = assignCommentsToMethods(comments, methodDetails);
+        methodDetails = [...updatedMethods];
+
+        // Assign methods to their respective classes, passing unused comments for class-level assignment
         if (classTempDetails && methodDetails) {
-            const classesWithMethods = buildClassDetails(classTempDetails, propertyDetails, methodDetails, constructorDetails, methodsUsedDetails);
+            const classesWithMethods = buildClassDetails(
+                classTempDetails,
+                propertyDetails,
+                methodDetails,
+                constructorDetails,
+                methodsUsedDetails,
+                unusedComments
+            );
             doc[ExtractorType.Class] = classesWithMethods;
         } else if (classTempDetails) {
             doc[ExtractorType.Class] = classTempDetails.map(cls => ({
@@ -64,36 +76,19 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
                 methods: [],
                 methodsUsed: [],
                 objectsUsed: [],
+                body: cls.body,
                 startPosition: cls.startPosition,
                 endPosition: cls.endPosition
             }));
         }
 
-        console.log("Extracted data:", extractedData[ExtractorType.Comments]);
-
-        if (extractedData[ExtractorType.Comments]) {
-            doc[ExtractorType.Comments] = extractedData[ExtractorType.Comments];
-        }
-
-        // if (extractedData[ExtractorType.Method]) {
-        //     doc[ExtractorType.Method] = extractedData[ExtractorType.Method];
-        // }
-
-        // if (extractedData[ExtractorType.Parameter]) {
-        //     doc[ExtractorType.Parameter] = extractedData[ExtractorType.Parameter];
-        // }
-
         if (extractedData[ExtractorType.MethodsUsed]) {
             doc[ExtractorType.MethodsUsed] = extractedData[ExtractorType.MethodsUsed];
         }
 
-        // if (extractedData[ExtractorType.Constructor]) {
-        //     doc[ExtractorType.Constructor] = extractedData[ExtractorType.Constructor];
-        // }
-
-        // if (extractedData[ExtractorType.Property]) {
-        //     doc[ExtractorType.Property] = extractedData[ExtractorType.Property];
-        // }
+        if (extractedData[ExtractorType.Comments]) {
+            doc[ExtractorType.Comments] = extractedData[ExtractorType.Comments];
+        }
 
         if (extractedData[ExtractorType.Enum]) {
             doc[ExtractorType.Enum] = extractedData[ExtractorType.Enum];

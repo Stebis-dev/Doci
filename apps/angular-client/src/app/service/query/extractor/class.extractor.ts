@@ -18,18 +18,18 @@ export class ClassExtractor extends BaseQueryEngine {
                 body: (
                     declaration_list
                     (
+                        (property_declaration
+                            name: (identifier) @class.property.name
+                        )*
                         (constructor_declaration
                             name: (identifier) @class.constructor
                         )*
                         (method_declaration
                             name: (identifier) @class.method
-                        )*
-                        (property_declaration
-                            name: (identifier) @class.property.name
-                        )*
-                    ) @class.body*
-                )
-            )
+                        )
+                    ) 
+                ) @class.body
+            ) @class
         `;
         const matches = this.runQuery(tree, query);
 
@@ -39,7 +39,9 @@ export class ClassExtractor extends BaseQueryEngine {
             const nameCapture = match.captures.find(capture => capture.name === 'class.name');
             if (!nameCapture) return;
 
-            const bodyCapture = match.captures.find(capture => capture.name === 'class.body');
+            const classCapture = match.captures.filter(capture => capture.name === 'class');
+
+            const bodyCapture = match.captures.filter(capture => capture.name === 'class.body');
 
             const modifierCaptures = match.captures.filter(capture => capture.name === 'class.modifier');
             const modifiers = modifierCaptures.map(mod => mod.node.text) as string[];
@@ -68,8 +70,9 @@ export class ClassExtractor extends BaseQueryEngine {
                     properties: properties,
                     constructors: constructorsMethods,
                     methods: methods,
-                    startPosition: bodyCapture.node.startPosition as NodePosition,
-                    endPosition: bodyCapture.node.endPosition as NodePosition,
+                    body: bodyCapture[0].node.text,
+                    startPosition: classCapture[0].node.startPosition as NodePosition,
+                    endPosition: classCapture[0].node.endPosition as NodePosition,
                 });
             }
             else {
