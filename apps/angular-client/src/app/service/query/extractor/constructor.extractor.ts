@@ -1,6 +1,6 @@
 import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { ConstructorMethodDetail, ExtractorType, NodePosition } from "@doci/shared";
+import { ConstructorMethodDetail, ExtractorType, NodePosition, ParameterDetail } from "@doci/shared";
 
 export class ConstructorExtractor extends BaseQueryEngine {
     type = ExtractorType.Constructor;
@@ -10,10 +10,10 @@ export class ConstructorExtractor extends BaseQueryEngine {
             (constructor_declaration
                 (modifier)* @constructor.modifiers
                 name: (identifier) @constructor.name
-                body: (block) @constructor.body
                 parameters: (
                     parameter_list (parameter) @constructor.parameter)*
-            )
+                body: (block) @constructor.body
+            ) @constructor.constructor
         `;
 
         const matches = this.runQuery(tree, query);
@@ -22,51 +22,49 @@ export class ConstructorExtractor extends BaseQueryEngine {
 
         matches.forEach((match: { captures: any[]; }) => {
             const nameCapture = match.captures.find(capture => capture.name === 'constructor.name');
-            const bodyCapture = match.captures.find(capture => capture.name === 'constructor.body');
-            const parameterCaptures = match.captures.filter(capture => capture.name === 'constructor.parameter');
-            const modifierCaptures = match.captures.filter(capture => capture.name === 'constructor.modifiers');
-            // const returnTypeCaptures = match.captures.filter(capture => capture.name === 'constructor.return' || capture.name === 'constructor.returnType');
-
             if (!nameCapture) return;
 
-            const methodKey = this.getMethodKey(nameCapture);
-            const modifiers = modifierCaptures.map(mod => mod.node.text);
-            // const returnType = returnTypeCaptures.length > 0 ? returnTypeCaptures[0].node.text : null;
+            const bodyCapture = match.captures.find(capture => capture.name === 'constructor.body');
 
-            // Extract parameter details
-            const parameters = parameterCaptures.map(param => {
-                const paramText = param.node.text;
-                // Simple parsing of parameter text to extract name and type
-                // Format is typically "type name" or just "name"
-                const parts = paramText.trim().split(/\s+/);
-                if (parts.length > 1) {
-                    return {
-                        name: parts[parts.length - 1],
-                        type: parts.slice(0, -1).join(' ')
-                    };
-                } else {
-                    return {
-                        name: parts[0],
-                        type: null
-                    };
-                }
+            const modifierCaptures = match.captures.filter(capture => capture.name === 'constructor.modifiers');
+            const modifiers = modifierCaptures.map(mod => mod.node.text);
+
+            const parameterCaptures = match.captures.filter(capture => capture.name === 'constructor.parameter');
+            const fullParameter = parameterCaptures.map(param => param.node.text) as string[];
+
+            const parameters = fullParameter.map(param => {
+                return {
+                    name: param,
+                    genericName: [],
+                    varName: [],
+                    objectType: [],
+                    startPosition: parameterCaptures[0].node.startPosition,
+                    endPosition: parameterCaptures[0].node.endPosition
+                } as ParameterDetail;
             });
 
-            if (methodMap.has(methodKey)) {
-                const existingMethod = methodMap.get(methodKey);
+            const constructorKey = this.getMethodKey(nameCapture);
 
-                if (!existingMethod) return;
-
-                // existingMethod.parameters.push(...parameters);
-            } else {
-                methodMap.set(methodKey, {
+            const existingConstructor = methodMap.get(constructorKey);
+            if (!existingConstructor) {
+                methodMap.set(constructorKey, {
                     name: nameCapture.node.text,
                     modifiers: modifiers,
-                    // returnType: returnType,
                     parameters: parameters,
                     body: bodyCapture?.node.text ?? '',
                     startPosition: nameCapture.node.startPosition as NodePosition,
                     endPosition: nameCapture.node.endPosition as NodePosition,
+                });
+            }
+            else {
+                parameters.forEach(param => {
+                    if (!existingConstructor.parameters.some(existingParam =>
+                        existingParam.name === param.name &&
+                        existingParam.startPosition.row === param.startPosition.row &&
+                        existingParam.startPosition.column === param.startPosition.column
+                    )) {
+                        existingConstructor.parameters.push(param);
+                    }
                 });
             }
         });

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MethodDetail } from '@doci/shared';
+import { MethodDetail, ParameterDetail } from '@doci/shared';
 
 @Component({
     selector: 'app-method-list',
@@ -32,6 +32,36 @@ export class MethodListComponent {
             propertyType += '>';
 
         return propertyType;
+    }
+    getMethodName(method: MethodDetail): string {
+        let methodName = '';
+
+        if (!method) {
+            return '';
+        }
+        methodName = method.name;
+
+        methodName += '(';
+        if (method.parameters) {
+            methodName += method.parameters.map(param => this.getParameter(param)).join(', ');
+        }
+        methodName += ')';
+        return methodName
+    }
+
+    getParameter(parameter: ParameterDetail): string {
+        let parameterType = '';
+
+        if (parameter.genericName.length > 0)
+            parameterType += parameter.genericName[0] + '<';
+
+        if (parameter.objectType.length > 0)
+            parameterType += parameter.objectType[0];
+
+        if (parameter.genericName.length > 0)
+            parameterType += '>';
+
+        return `${parameterType} ${parameter.varName[0]}`;
     }
 
 } 

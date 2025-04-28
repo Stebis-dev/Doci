@@ -1,5 +1,5 @@
 <div
-  class="flex p-4 w-full h-full overflow-x-hidden overflow-y-auto items-start align-middle justify-items-center"
+  class="flex p-4 pr-0 w-full h-full overflow-x-hidden overflow-y-auto items-start align-middle justify-items-center"
 >
   @if (file) {
   <div
@@ -17,6 +17,7 @@
             {{ getClassName() }}
           </a>
         </h2>
+        <h4 class="text-l mb-2 my-5">{{ getDescription() }}</h4>
 
         <app-property-list
           propertyLabel="Properties"

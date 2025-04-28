@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ClassDetail, MethodDetail, PropertyDetail, EnumDetail } from '@doci/shared';
+import { ClassDetail, MethodDetail, PropertyDetail, EnumDetail, ParameterDetail } from '@doci/shared';
 import { ProjectService } from '../project.service';
 
 @Injectable({
@@ -66,7 +66,7 @@ export class MermaidService {
         this.processClassHierarchy(lines, classObj, classMap, enumMap, processedObjects);
 
         const buildScript = lines.join('\n');
-        console.log({ buildScript });
+        // console.log({ buildScript });
         return buildScript;
     }
 
@@ -235,7 +235,6 @@ export class MermaidService {
     }
 
     private getAnnotations(annotations: string[]): string {
-        // console.log(annotations);
         for (const anno of annotations) {
             switch (anno) {
                 case 'abstract':
@@ -250,15 +249,18 @@ export class MermaidService {
         return declaration;
     }
 
-    private formatMethodParameters(parameters: { name: string; type: string | null }[]): string {
+    private formatMethodParameters(parameters: ParameterDetail[]): string {
         if (!parameters || parameters.length === 0) {
             return '';
         }
 
         return parameters
             .map(param => {
-                if (param.type) {
-                    return `${param.name}: ${param.type}`;
+                if (param.objectType) {
+                    return `${param.varName}: ${param.objectType}`;
+                }
+                if (param.genericName) {
+                    return `${param.varName}: ${param.genericName}<${param.objectType}>`;
                 }
                 return param.name;
             })

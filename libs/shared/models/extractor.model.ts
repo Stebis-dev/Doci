@@ -5,15 +5,20 @@ export enum ExtractorType {
     Enum = 'enums',
     Constructor = "constructors",
     Property = "properties",
+    Parameter = "parameters",
+    Comments = "comments",
 }
 
 export interface ExtractedDetails {
     filePath: string;
+    comment?: string;
     [ExtractorType.Class]?: ClassDetail[];
     [ExtractorType.Property]?: MethodDetail[];
     [ExtractorType.Method]?: MethodDetail[];
+    [ExtractorType.Parameter]?: MethodDetail[];
     [ExtractorType.Constructor]?: MethodDetail[];
     [ExtractorType.MethodsUsed]?: MethodsUsedDetail[];
+    [ExtractorType.Comments]?: Details[];
     [ExtractorType.Enum]?: EnumDetail[];
 }
 
@@ -29,14 +34,18 @@ export interface NodePosition {
 }
 
 export interface ClassTemporaryDetail extends Details {
+    uuid: string;
     modifiers: string[];
     inheritance: string[];
     methods: { name: string }[];
     properties: { name: string }[];
     constructors: { name: string }[];
+    body: string;
+    comment?: string;
 }
 
 export interface ClassDetail extends Details {
+    uuid: string;
     modifiers: string[];
     properties: PropertyDetail[];
     constructors: ConstructorMethodDetail[];
@@ -44,6 +53,8 @@ export interface ClassDetail extends Details {
     methodsUsed: MethodsUsedDetail[];
     inheritance: string[]
     objectsUsed: string[];
+    body: string;
+    comment?: string;
 }
 
 export interface PropertyDetail extends Details {
@@ -54,13 +65,21 @@ export interface PropertyDetail extends Details {
 }
 
 export interface MethodDetail extends Details {
+    uuid: string;
     modifiers: string[];
     genericName: string;
     predefinedType: string[];
     objectType: string[];
-    parameters: { name: string; type: string | null }[];
+    parameters: ParameterDetail[];
     body: string;
     usedIn?: MethodsUsedDetail[];
+    comment?: string;
+}
+
+export interface ParameterDetail extends Details {
+    genericName: string[];
+    varName: string[];
+    objectType: string[];
 }
 
 export interface MethodsUsedDetail extends Details {
@@ -74,7 +93,7 @@ export interface MethodsUsedDetail extends Details {
 export interface ConstructorMethodDetail extends Details {
     modifiers: string[];
     // returnType: string | null;
-    parameters: { name: string; type: string | null }[];
+    parameters: ParameterDetail[];
     body: string;
 }
 
@@ -87,4 +106,3 @@ export interface EnumMember {
     member: string;
     value: string;
 }
-

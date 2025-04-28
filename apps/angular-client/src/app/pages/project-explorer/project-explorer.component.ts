@@ -34,7 +34,7 @@ export class ProjectExplorerComponent implements OnInit {
     }
 
     handleSelection(selection: FileTreeSelection) {
-        // console.log('Selected node:', selection);
+        console.log('Selected file:', selection.file);
 
         this.selectedFile = selection.file;
         this.selectedNode = selection;

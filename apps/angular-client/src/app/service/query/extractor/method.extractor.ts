@@ -1,9 +1,7 @@
 import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { ExtractorType, MethodDetail, NodePosition } from "@doci/shared";
-
-// TODO add detail method parameters (name, type, default value, etc.)
-// TODO parse comments that are before the methods and properties
+import { ExtractorType, MethodDetail, NodePosition, ParameterDetail } from "@doci/shared";
+import { generateUUID } from "../../../utils/utils";
 
 export class MethodExtractor extends BaseQueryEngine {
     type = ExtractorType.Method;
@@ -19,9 +17,9 @@ export class MethodExtractor extends BaseQueryEngine {
                 returns: (generic_name (type_argument_list (identifier) @method.identifier.type))*
                 name: (identifier) @method.name
                 parameters: (
-                    parameter_list (parameter) @method.parameter)* 
+                    parameter_list (parameter) @method.parameter)*
                 body: (block) @method.body
-            )
+            ) @method.method
         `;
 
         const matches = this.runQuery(tree, query);
@@ -32,13 +30,13 @@ export class MethodExtractor extends BaseQueryEngine {
             const nameCapture = match.captures.find(capture => capture.name === 'method.name');
             if (!nameCapture) return;
 
+            const methodCapture = match.captures.filter(capture => capture.name === 'method.method');
+
             const bodyCapture = match.captures.filter(capture => capture.name === 'method.body');
             const body = bodyCapture.map(mod => mod.node.text)[0] as string;
 
             const modifierCaptures = match.captures.filter(capture => capture.name === 'method.modifiers');
             const modifiers = modifierCaptures.map(mod => mod.node.text);
-
-            const parameterCaptures = match.captures.filter(capture => capture.name === 'method.parameter');
 
             const identifierTypeCaptures = match.captures.filter(capture => capture.name === 'method.identifier.type');
             const objectType = identifierTypeCaptures.map(type => type.node.text) as string[];
@@ -49,30 +47,26 @@ export class MethodExtractor extends BaseQueryEngine {
             const genericNameCaptures = match.captures.filter(capture => capture.name === 'method.genericName');
             const genericName = genericNameCaptures.map(type => type.node.text)[0] as string;
 
-            const methodKey = this.getMethodKey(nameCapture);
+            const parameterCaptures = match.captures.filter(capture => capture.name === 'method.parameter');
+            const fullParameter = parameterCaptures.map(type => type.node.text) as string[];
 
-            // Extract parameter details
-            const parameters = parameterCaptures.map(param => {
-                const paramText = param.node.text;
-                // Simple parsing of parameter text to extract name and type
-                // Format is typically "type name" or just "name"
-                const parts = paramText.trim().split(/\s+/);
-                if (parts.length > 1) {
-                    return {
-                        name: parts[parts.length - 1],
-                        type: parts.slice(0, -1).join(' ')
-                    };
-                } else {
-                    return {
-                        name: parts[0],
-                        type: null
-                    };
-                }
+            const parameters = fullParameter.map(param => {
+                return {
+                    name: param,
+                    genericName: [],
+                    varName: [],
+                    objectType: [],
+                    startPosition: parameterCaptures[0].node.startPosition,
+                    endPosition: parameterCaptures[0].node.endPosition
+                } as ParameterDetail;
             });
+
+            const methodKey = this.getMethodKey(nameCapture);
 
             const existingMethod = methodMap.get(methodKey);
             if (!existingMethod) {
                 methodMap.set(methodKey, {
+                    uuid: generateUUID('METHOD', nameCapture.node.text),
                     name: nameCapture.node.text,
                     modifiers: modifiers,
                     objectType: objectType,
@@ -80,14 +74,24 @@ export class MethodExtractor extends BaseQueryEngine {
                     genericName: genericName,
                     parameters: parameters,
                     body: body ?? '',
-                    startPosition: bodyCapture[0].node.startPosition as NodePosition,
-                    endPosition: bodyCapture[0].node.endPosition as NodePosition,
+                    startPosition: methodCapture[0].node.startPosition as NodePosition,
+                    endPosition: methodCapture[0].node.endPosition as NodePosition,
                 });
             } else {
                 existingMethod.predefinedType.push(...predefinedType);
                 existingMethod.predefinedType = Array.from(new Set(existingMethod.predefinedType));
                 existingMethod.objectType.push(...objectType);
                 existingMethod.objectType = Array.from(new Set(existingMethod.objectType));
+
+                parameters.forEach(param => {
+                    if (!existingMethod.parameters.some(existingParam =>
+                        existingParam.name === param.name &&
+                        existingParam.startPosition.row === param.startPosition.row &&
+                        existingParam.startPosition.column === param.startPosition.column
+                    )) {
+                        existingMethod.parameters.push(param);
+                    }
+                });
             }
         });
         return Array.from(methodMap.values());

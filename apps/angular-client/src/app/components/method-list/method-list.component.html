@@ -8,13 +8,7 @@
       <tr class="flex hover:bg-base-300">
         <td class="flex-1">{{ this.getReturnType(method) }}</td>
         <td class="flex-1/2">
-          {{ method.name }}
-          {{ '(' }}
-          @for ( parameter of method.parameters; track $index) {
-          {{ parameter.type }} {{ parameter.name }} }
-          {{ ')' }}
-
-          <!-- TODO add method for multiple parameters -->
+          {{ getMethodName(method) }}
         </td>
       </tr>
       }
