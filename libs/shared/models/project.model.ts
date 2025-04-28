@@ -11,6 +11,7 @@ export interface FlatProject {
 }
 
 export interface ProjectFile {
+    uuid?: string;
     name: string;
     path: string;
     content?: string;

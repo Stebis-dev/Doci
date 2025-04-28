@@ -1,4 +1,5 @@
 import { ClassDetail, MethodDetail, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, NodePosition, MethodsUsedDetail, Details } from "@doci/shared";
+import { generateUUID } from "../../utils/utils";
 
 function findDetails<T extends { name: string; startPosition: NodePosition; endPosition: NodePosition }>(
     items: T[],
@@ -127,10 +128,11 @@ export function buildClassDetails(
 ): ClassDetail[] {
     // First assign comments to classes if available
 
-    return classes.map(({ name, modifiers, inheritance, methods: methodNames, constructors: constructorNames, properties: propertyNames, body, comment, startPosition, endPosition }) => {
+    return classes.map(({ uuid, name, modifiers, inheritance, methods: methodNames, constructors: constructorNames, properties: propertyNames, body, comment, startPosition, endPosition }) => {
         const methodDetails = findDetails(methods, methodNames, { startPosition, endPosition });
         const constructorDetails = findDetails(constructors, constructorNames, { startPosition, endPosition });
         const propertyDetails = findDetails(properties, propertyNames, { startPosition, endPosition });
+        methodDetails.map(method => method.uuid = generateUUID(uuid, method.uuid));
 
         // First map methods used with properties to get objectType
         let updatedMethodsUsed = mapMethodsUsedWithProperties(methodsUsed, propertyDetails);
@@ -146,6 +148,7 @@ export function buildClassDetails(
         objectsUsed = Array.from(new Set(objectsUsed));
 
         return {
+            uuid,
             name,
             modifiers,
             inheritance,

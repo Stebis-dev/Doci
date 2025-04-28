@@ -1,9 +1,8 @@
 import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
 import { ClassTemporaryDetail, ExtractorType, NodePosition } from "@doci/shared";
+import { generateUUID } from "../../../utils/utils";
 
-// TODO add class properties (name, type, default value, etc.)
-// TODO parse comments that are before the class
 // TODO get OOP details (inheritance, interfaces, etc.)
 
 export class ClassExtractor extends BaseQueryEngine {
@@ -14,7 +13,7 @@ export class ClassExtractor extends BaseQueryEngine {
             (class_declaration
                 (modifier) @class.modifier*
                 name: (identifier) @class.name
-                (base_list (identifier) @class.inheritance)*
+                (base_list (identifier) @class.inheritance)?
                 body: (declaration_list
                     (constructor_declaration
                         name: (identifier) @class.constructor
@@ -61,6 +60,7 @@ export class ClassExtractor extends BaseQueryEngine {
             const existingClass = classMap.get(classKey);
             if (!existingClass) {
                 classMap.set(classKey, {
+                    uuid: generateUUID('CLASS', nameCapture.node.text),
                     name: nameCapture.node.text,
                     modifiers: modifiers,
                     inheritance: inheritance,
@@ -74,7 +74,8 @@ export class ClassExtractor extends BaseQueryEngine {
             }
             else {
                 existingClass.modifiers.push(...modifiers);
-                existingClass.inheritance.push(...inheritance);
+                existingClass.modifiers = Array.from(new Set(existingClass.modifiers));
+                // existingClass.inheritance.push(...inheritance);
                 existingClass.properties.push(...properties);
                 existingClass.constructors.push(...constructorsMethods);
                 existingClass.methods.push(...methods);

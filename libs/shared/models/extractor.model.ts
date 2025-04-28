@@ -34,6 +34,7 @@ export interface NodePosition {
 }
 
 export interface ClassTemporaryDetail extends Details {
+    uuid: string;
     modifiers: string[];
     inheritance: string[];
     methods: { name: string }[];
@@ -44,6 +45,7 @@ export interface ClassTemporaryDetail extends Details {
 }
 
 export interface ClassDetail extends Details {
+    uuid: string;
     modifiers: string[];
     properties: PropertyDetail[];
     constructors: ConstructorMethodDetail[];
@@ -63,6 +65,7 @@ export interface PropertyDetail extends Details {
 }
 
 export interface MethodDetail extends Details {
+    uuid: string;
     modifiers: string[];
     genericName: string;
     predefinedType: string[];

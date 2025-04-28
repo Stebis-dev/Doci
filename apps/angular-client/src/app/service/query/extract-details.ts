@@ -10,6 +10,7 @@ import { PropertyExtractor } from "./extractor/property.extractor";
 import { MethodUsageExtractor } from "./extractor/method-usage.extractor";
 import { ParameterExtractor } from "./extractor/parameter.extractor";
 import { CommentsExtractor } from "./extractor/comment.extractor";
+import { generateUUID } from "../../utils/utils";
 
 export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): ExtractedDetails | null {
     try {
@@ -45,6 +46,8 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
         const methodsUsedDetails = extractedData[ExtractorType.MethodsUsed] as MethodsUsedDetail[];
         const comments = extractedData[ExtractorType.Comments] as Details[];
 
+        classTempDetails.map(cls => cls.uuid = generateUUID(file.uuid as string, cls.uuid));
+
         // Assign parameters to their respective methods
         methodDetails = assignParametersToMethods(parameterDetails, methodDetails);
 
@@ -73,6 +76,7 @@ export function extractDetails(file: ProjectFile, AST: Tree, parser: Parser): Ex
             doc[ExtractorType.Class] = classesWithMethods;
         } else if (classTempDetails) {
             doc[ExtractorType.Class] = classTempDetails.map(cls => ({
+                uuid: cls.uuid,
                 name: cls.name,
                 modifiers: cls.modifiers,
                 inheritance: cls.inheritance,

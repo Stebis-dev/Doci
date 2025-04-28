@@ -7,6 +7,7 @@ import { extractDetails } from './query/extract-details';
 import { Tree } from 'web-tree-sitter';
 import { resolveInheritance } from './query/inheritance-resolver';
 import { resolveMethodUsages } from './query/method-usages-resolve';
+import { generateUUID } from '../utils/utils';
 
 const STORED_PROJECT_KEY = 'doci_current_project';
 
@@ -92,11 +93,13 @@ export class ProjectService {
                 project.files.map(async (file) => {
                     if (file.content && file.type) {
                         try {
+                            const uuid = generateUUID('FILE', file.name);
                             await this.treeSitterService.setLanguage(file.type);
                             const ast = await this.treeSitterService.parse(file.content);
                             const details = extractDetails(file, ast as Tree, this.treeSitterService.getParser());
                             return {
                                 ...file,
+                                uuid: uuid,
                                 AST: ast || undefined,
                                 details: details || undefined
                             };

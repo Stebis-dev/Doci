@@ -1,6 +1,7 @@
 import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
 import { ExtractorType, MethodDetail, NodePosition, ParameterDetail } from "@doci/shared";
+import { generateUUID } from "../../../utils/utils";
 
 export class MethodExtractor extends BaseQueryEngine {
     type = ExtractorType.Method;
@@ -65,6 +66,7 @@ export class MethodExtractor extends BaseQueryEngine {
             const existingMethod = methodMap.get(methodKey);
             if (!existingMethod) {
                 methodMap.set(methodKey, {
+                    uuid: generateUUID('METHOD', nameCapture.node.text),
                     name: nameCapture.node.text,
                     modifiers: modifiers,
                     objectType: objectType,
