@@ -45,7 +45,7 @@ jobs:
       #   run: npx nx affected -t lint
 
       - name: Build angular-client app
-        run: npx nx build angular-client --configuration=production --base-href /${{ github.event.repository.name }}/
+        run: npx nx build angular-client --configuration=production --base-href
 
       - name: Create 404.html
         run: cp build/apps/angular-client/index.html build/apps/angular-client/404.html
