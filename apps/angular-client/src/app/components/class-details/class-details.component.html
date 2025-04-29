@@ -23,8 +23,8 @@
               [description]="getDescription()"
               [entityUuid]="getClassUuid()"
               [entityName]="getClassName()"
-              (save)="onSaveDescription()"
-              (cancel)="onCancelDescriptionEdit()"
+              (saveDescription)="onSaveDescription($event)"
+              (cancelEdit)="onCancelDescriptionEdit()"
             >
             </app-description>
           </div>
