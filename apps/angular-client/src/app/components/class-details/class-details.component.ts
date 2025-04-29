@@ -9,12 +9,19 @@ import { PropertyListComponent } from '../property-list/property-list.component'
 import { ConstructorListComponent } from '../constructor-list/constructor-list.component';
 import { EnumMemberListComponent } from '../enum-member-list/enum-member-list.component';
 import { FileTreeSelection } from '../file-tree/file-tree.types';
-import { ButtonComponent } from '../generate-button/button.component';
+import { DescriptionComponent } from '../description/description.component';
 
 @Component({
     selector: 'app-class-details',
     standalone: true,
-    imports: [CommonModule, MethodListComponent, PropertyListComponent, ConstructorListComponent, EnumMemberListComponent, ButtonComponent],
+    imports: [
+        CommonModule,
+        MethodListComponent,
+        PropertyListComponent,
+        ConstructorListComponent,
+        EnumMemberListComponent,
+        DescriptionComponent
+    ],
     templateUrl: './class-details.component.html',
 })
 export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
@@ -29,13 +36,14 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     properties?: PropertyDetail[] = [];
 
     generatedDescription: string | null = null;
+    isEditingDescription = false;
 
     mermaidDiagram = '';
     renderedSVG: SafeHtml = ''
 
     constructor(
-        private mermaidService: MermaidService,
-        private sanitizer: DomSanitizer) { }
+        private readonly mermaidService: MermaidService,
+        private readonly sanitizer: DomSanitizer) { }
 
     ngOnInit() {
         this.updateFileDetails();
@@ -97,7 +105,6 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
                 this.properties = this.classObj?.properties || [];
                 this.constructors = this.classObj?.constructors || [];
             }
-
 
             const enums = this.file.details[ExtractorType.Enum];
             if (this.selectedNode && this.selectedNode.enumName) {
@@ -167,5 +174,19 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     onDescriptionGenerated(description: string): void {
         this.generatedDescription = description;
         console.log('Description generated:', description);
+    }
+
+    onSaveDescription(description?: string): void {
+        this.isEditingDescription = false;
+        console.log(description);
+
+        if (description && this.classObj) {
+            this.classObj.comment = description;
+            this.generatedDescription = description;
+        }
+    }
+
+    onCancelDescriptionEdit(): void {
+        this.isEditingDescription = false;
     }
 }
