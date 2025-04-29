@@ -212,7 +212,7 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
             currentProject.files[fileIndex].details![ExtractorType.Class]![classIndex].comment = this.classObj!.comment;
 
             // Update the project in the service
-            this.projectService.setCurrentProject(currentProject);
+            this.projectService.updateCurrentProject(currentProject);
         }
     }
 

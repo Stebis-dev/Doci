@@ -76,6 +76,14 @@ export class ProjectService {
         this.saveProjectToStorage(projectWithMethodUsages);
     }
 
+    public async updateCurrentProject(project: FlatProject): Promise<void> {
+
+        console.log('Setting current project:', project);
+
+        this.currentProjectSubject.next(project);
+        this.saveProjectToStorage(project);
+    }
+
     public clearStoredProject(): void {
         try {
             localStorage.removeItem(STORED_PROJECT_KEY);
