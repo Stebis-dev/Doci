@@ -17,7 +17,19 @@
             {{ getClassName() }}
           </a>
         </h2>
+        <div class="w-full flex flex-row justify-between mb-2 my-5">
+          <h3 class="text-xl font-semibold">Description</h3>
+          <app-generate-comments-button
+            [entityUuid]="getClassUuid()"
+            (description)="onDescriptionGenerated($event)"
+          />
+        </div>
         <h4 class="text-l mb-2 my-5">{{ getDescription() }}</h4>
+        <textarea
+          class="w-full textarea textarea-ghost"
+          [placeholder]="getDescription()"
+          >{{ generatedDescription }}</textarea
+        >
 
         <app-property-list
           propertyLabel="Properties"

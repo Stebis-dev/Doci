@@ -9,22 +9,27 @@ import { PropertyListComponent } from '../property-list/property-list.component'
 import { ConstructorListComponent } from '../constructor-list/constructor-list.component';
 import { EnumMemberListComponent } from '../enum-member-list/enum-member-list.component';
 import { FileTreeSelection } from '../file-tree/file-tree.types';
+import { ButtonComponent } from '../generate-button/button.component';
 
 @Component({
     selector: 'app-class-details',
     standalone: true,
-    imports: [CommonModule, MethodListComponent, PropertyListComponent, ConstructorListComponent, EnumMemberListComponent],
+    imports: [CommonModule, MethodListComponent, PropertyListComponent, ConstructorListComponent, EnumMemberListComponent, ButtonComponent],
     templateUrl: './class-details.component.html',
 })
 export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
     @Input() file: ProjectFile | null = null;
     @Input() selectedNode: FileTreeSelection | null = null;
+
     classObj: ClassDetail | null = null;
     enumObj: EnumDetail | null = null;
     constructors?: ConstructorMethodDetail[] = [];
     methods?: MethodDetail[] = [];
     properties?: PropertyDetail[] = [];
+
+    generatedDescription: string | null = null;
+
     mermaidDiagram = '';
     renderedSVG: SafeHtml = ''
 
@@ -153,5 +158,14 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
     getDescription(): string {
         return this.classObj?.comment || '';
+    }
+
+    getClassUuid(): string {
+        return this.classObj?.uuid || '';
+    }
+
+    onDescriptionGenerated(description: string): void {
+        this.generatedDescription = description;
+        console.log('Description generated:', description);
     }
 }

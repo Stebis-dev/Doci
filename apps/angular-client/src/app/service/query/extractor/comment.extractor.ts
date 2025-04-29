@@ -21,8 +21,10 @@ export class CommentsExtractor extends BaseQueryEngine {
             const commentText = commentsCaptures.node.text.trim().replace(/^\/{2,}/, '');
             const formattedCommentText = commentText
                 .replace(/<summary>/g, '')
-                .replace(/<\/summary>/g, '');
+                .replace(/<\/summary>/g, '')
+                .trim();
 
+            if (formattedCommentText.length === 0) return;
             const commentsKey = this.getMethodKey(commentsCaptures);
 
             const existingComments = commentMap.get(commentsKey);
