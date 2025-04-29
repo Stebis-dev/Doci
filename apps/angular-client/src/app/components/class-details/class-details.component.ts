@@ -9,28 +9,43 @@ import { PropertyListComponent } from '../property-list/property-list.component'
 import { ConstructorListComponent } from '../constructor-list/constructor-list.component';
 import { EnumMemberListComponent } from '../enum-member-list/enum-member-list.component';
 import { FileTreeSelection } from '../file-tree/file-tree.types';
+import { DescriptionComponent } from '../description/description.component';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
     selector: 'app-class-details',
     standalone: true,
-    imports: [CommonModule, MethodListComponent, PropertyListComponent, ConstructorListComponent, EnumMemberListComponent],
+    imports: [
+        CommonModule,
+        MethodListComponent,
+        PropertyListComponent,
+        ConstructorListComponent,
+        EnumMemberListComponent,
+        DescriptionComponent
+    ],
     templateUrl: './class-details.component.html',
 })
 export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
     @Input() file: ProjectFile | null = null;
     @Input() selectedNode: FileTreeSelection | null = null;
+
     classObj: ClassDetail | null = null;
     enumObj: EnumDetail | null = null;
     constructors?: ConstructorMethodDetail[] = [];
     methods?: MethodDetail[] = [];
     properties?: PropertyDetail[] = [];
+
+    generatedDescription: string | null = null;
+    isEditingDescription = false;
+
     mermaidDiagram = '';
     renderedSVG: SafeHtml = ''
 
     constructor(
-        private mermaidService: MermaidService,
-        private sanitizer: DomSanitizer) { }
+        private readonly mermaidService: MermaidService,
+        private readonly sanitizer: DomSanitizer,
+        private readonly projectService: ProjectService) { }
 
     ngOnInit() {
         this.updateFileDetails();
@@ -93,7 +108,6 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
                 this.constructors = this.classObj?.constructors || [];
             }
 
-
             const enums = this.file.details[ExtractorType.Enum];
             if (this.selectedNode && this.selectedNode.enumName) {
                 this.enumObj = enums?.filter(c => c.name === this.selectedNode?.enumName)[0] || null;
@@ -153,5 +167,56 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
     getDescription(): string {
         return this.classObj?.comment || '';
+    }
+
+    getClassUuid(): string {
+        return this.classObj?.uuid || '';
+    }
+
+    onDescriptionGenerated(description: string): void {
+        this.generatedDescription = description;
+        console.log('Description generated:', description);
+    }
+
+    onSaveDescription(description?: string): void {
+        this.isEditingDescription = false;
+        console.log('Saving description:', description);
+
+        if (description && this.classObj) {
+            // Update the class object's comment
+            this.classObj.comment = description;
+            this.generatedDescription = description;
+
+            // Update the class in the current project
+            this.updateClassInProject();
+        }
+    }
+
+    private updateClassInProject(): void {
+        if (!this.classObj || !this.file) return;
+
+        const currentProject = this.projectService.getCurrentProject();
+        if (!currentProject) return;
+
+        // Find the file in the current project
+        const fileIndex = currentProject.files.findIndex(f => f.uuid === this.file?.uuid);
+        if (fileIndex === -1) return;
+
+        // Find the class in the file
+        const classIndex = currentProject.files[fileIndex].details?.[ExtractorType.Class]?.findIndex(
+            c => c.uuid === this.classObj?.uuid
+        );
+
+        if (classIndex !== undefined && classIndex !== -1) {
+            // Update the class comment
+            currentProject.files[fileIndex].details![ExtractorType.Class]![classIndex].comment = this.classObj!.comment;
+
+            // Update the project in the service
+            this.projectService.setCurrentProject(currentProject);
+        }
+    }
+
+    onCancelDescriptionEdit(): void {
+        this.isEditingDescription = false;
     }
 }

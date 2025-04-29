@@ -7,7 +7,11 @@ export const ENVIRONMENT = {
     /**
      * GitHub OAuth configuration
      */
-    azureFunctionUrl: 'https://dociwsg.azurewebsites.net/api/githubTokenExchange',
+    azureFunction: {
+        baseUrl: 'https://dociwsg.azurewebsites.net/api',
+        tokenExchange: '/githubTokenExchange',
+        generateDescription: '/generateCodeDocumentation',
+    },
     github: {
         electronClientId: 'Ov23liB7fwzCeuRerMNu',
         webClientId: 'Ov23ligReddkTeQ2gdzi',

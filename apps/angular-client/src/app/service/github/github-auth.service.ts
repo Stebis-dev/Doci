@@ -20,7 +20,7 @@ export class GitHubAuthService {
     private readonly clientId = ENVIRONMENT.github.webClientId;
     private readonly scopes = ENVIRONMENT.github.scopes;
     private readonly tokenStorageKey = 'github_auth_token';
-    private readonly azureFunctionUrl = ENVIRONMENT.azureFunctionUrl;
+    private readonly azureFunctionUrl = ENVIRONMENT.azureFunction.baseUrl + ENVIRONMENT.azureFunction.tokenExchange;
 
     private readonly isProduction = window.location.hostname !== 'localhost' &&
         window.location.hostname !== '127.0.0.1';

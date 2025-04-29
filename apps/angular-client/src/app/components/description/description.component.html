@@ -1,0 +1,50 @@
+<div class="w-full">
+  <!-- Description Header with Actions -->
+  <div class="flex justify-between items-center mb-2">
+    <h3 class="text-xl font-semibold">Description</h3>
+    <div class="flex gap-2">
+      <!-- Generate Button -->
+      @if (entityUuid && isEditing) {
+      <app-generate-comments-button
+        [entityUuid]="entityUuid"
+        (description)="onDescriptionGenerated($event)"
+      />
+      }
+
+      <!-- Add/Edit Button -->
+      @if (!isEditing) {
+      <button class="btn btn-sm btn-outline" (click)="onEdit()">
+        {{ getButtonText() }}
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Description Content -->
+  @if (isEditing) {
+  <!-- Edit Mode -->
+  <div class="w-full">
+    <textarea
+      class="w-full textarea textarea-bordered min-h-[100px] mb-2"
+      [(ngModel)]="editedDescription"
+      placeholder="Enter description..."
+    ></textarea>
+
+    <div class="flex justify-end gap-2">
+      <button class="btn btn-sm btn-ghost" (click)="onCancel()">Cancel</button>
+      <button class="btn btn-sm btn-outline" (click)="onSave()">Save</button>
+    </div>
+  </div>
+  } @else {
+  <!-- View Mode -->
+  <div class="w-full">
+    @if (hasDescription()) {
+    <p class="text-base whitespace-pre-line">{{ description }}</p>
+    } @else {
+    <p class="text-base text-gray-500 italic">
+      No description available for this {{ entityName }}.
+    </p>
+    }
+  </div>
+  }
+</div>

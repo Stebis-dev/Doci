@@ -11,38 +11,49 @@
         <div class="divider"></div>
         <!-- Existing class details -->
         @if (showClass()){
-        <h2 class="text-xl font-light mb-2">
-          Class
-          <a class="text-xl font-semibold">
-            {{ getClassName() }}
-          </a>
-        </h2>
-        <h4 class="text-l mb-2 my-5">{{ getDescription() }}</h4>
+        <div class="flex flex-col p-4">
+          <div class="flex flex-col gap-2">
+            <h2 class="text-2xl font-light mb-2">
+              Class
+              <a class="text-2xl font-semibold">
+                {{ getClassName() }}
+              </a>
+            </h2>
+            <app-description
+              [description]="getDescription()"
+              [entityUuid]="getClassUuid()"
+              [entityName]="getClassName()"
+              (saveDescription)="onSaveDescription($event)"
+              (cancelEdit)="onCancelDescriptionEdit()"
+            >
+            </app-description>
+          </div>
 
-        <app-property-list
-          propertyLabel="Properties"
-          [properties]="properties"
-        ></app-property-list>
-        <app-constructor-list
-          constructorLabel="Constructor"
-          [constructors]="constructors"
-        ></app-constructor-list>
-        <app-method-list
-          methodLabel="Methods"
-          [methods]="getMethods()"
-        ></app-method-list>
-        <app-method-list
-          methodLabel="Protected Methods"
-          [methods]="getProtectedMethods()"
-        ></app-method-list>
-        <app-method-list
-          methodLabel="Public Methods"
-          [methods]="getPublicMethods()"
-        ></app-method-list>
-        <app-method-list
-          methodLabel="Private Methods"
-          [methods]="getPrivateMethods()"
-        ></app-method-list>
+          <app-property-list
+            propertyLabel="Properties"
+            [properties]="properties"
+          ></app-property-list>
+          <app-constructor-list
+            constructorLabel="Constructor"
+            [constructors]="constructors"
+          ></app-constructor-list>
+          <app-method-list
+            methodLabel="Methods"
+            [methods]="getMethods()"
+          ></app-method-list>
+          <app-method-list
+            methodLabel="Protected Methods"
+            [methods]="getProtectedMethods()"
+          ></app-method-list>
+          <app-method-list
+            methodLabel="Public Methods"
+            [methods]="getPublicMethods()"
+          ></app-method-list>
+          <app-method-list
+            methodLabel="Private Methods"
+            [methods]="getPrivateMethods()"
+          ></app-method-list>
+        </div>
         } @if (showEnum()){
         <h2 class="text-xl font-light mb-2">
           Enum

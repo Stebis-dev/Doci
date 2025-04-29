@@ -1,0 +1,9 @@
+<div class="tooltip tooltip-top" data-tip="Generate Description">
+  <button class="btn btn-sm btn-outline" (click)="generateDescription()">
+    @if (!isLoading()) {
+    <app-icon name="Sparkle" size="15"></app-icon>
+    } @else {
+    <span class="loading loading-spinner loading-sm"></span>
+    }
+  </button>
+</div>
