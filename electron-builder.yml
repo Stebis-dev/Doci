@@ -32,6 +32,7 @@ mac:
 
 # Windows configuration
 win:
+  icon: icon.png
   target:
     - target: nsis
       arch:

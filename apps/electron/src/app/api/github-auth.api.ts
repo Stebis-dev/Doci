@@ -8,7 +8,7 @@ import { ENVIRONMENT, GitHubAuthCredentials } from '@doci/shared';
 export default class GitHubAuthAPI {
     private static readonly clientId = ENVIRONMENT.github.electronClientId;
     private static readonly scopes = ENVIRONMENT.github.scopes;
-    private static readonly azureFunctionUrl = ENVIRONMENT.azureFunctionUrl;
+    private static readonly tokenExchange = ENVIRONMENT.azureFunction.tokenExchange;
 
     static registerIpcHandlers(): void {
         if (App.isDevelopmentMode()) {
@@ -98,7 +98,7 @@ export default class GitHubAuthAPI {
     private static exchangeCodeForToken(code: string): Promise<GitHubAuthCredentials> {
         return new Promise((resolve, reject) => {
             // Call Azure Function instead of GitHub directly
-            const azureFunctionUrl = `${this.azureFunctionUrl}?code=${code}&environment=electron`;
+            const azureFunctionUrl = `${this.tokenExchange}?code=${code}&environment=electron`;
 
             console.log('Calling Azure Function for token exchange:', azureFunctionUrl);
 
