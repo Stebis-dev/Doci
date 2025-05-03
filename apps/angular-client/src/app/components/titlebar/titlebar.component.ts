@@ -9,6 +9,7 @@ import { FlatProject } from '@doci/shared';
 import { GitHubAuthService } from '../../service/github/github-auth.service';
 import { GitHubService } from '../../service/github/github.service';
 import { GitHubRepoModalComponent } from '../github-repo-modal/github-repo-modal.component';
+import { ThemeService } from '../../service/theme.service';
 
 interface MenuItem {
   label: string;
@@ -33,13 +34,15 @@ export class TitleBarComponent implements OnInit {
   projectName: string | null = null;
   menuItems: MenuItem[] = [];
   showGitHubRepoModal = false;
+  currentTheme: 'light' | 'dark' = 'light';
 
   constructor(
     private platformService: PlatformService,
     private electronService: ElectronService,
     private projectService: ProjectService,
     private githubAuthService: GitHubAuthService,
-    private githubService: GitHubService
+    private githubService: GitHubService,
+    private themeService: ThemeService
   ) {
     if (this.platformService.isElectron) {
       this.isElectron = true;
@@ -62,6 +65,9 @@ export class TitleBarComponent implements OnInit {
     })
 
     this.updateMenuItems();
+    this.themeService.currentTheme$.subscribe(theme => {
+      this.currentTheme = theme;
+    });
   }
 
   updateMenuItems(): void {
@@ -110,7 +116,23 @@ export class TitleBarComponent implements OnInit {
         isShown: true,
         isDisabled: false
       },
+      {
+        label: 'View',
+        submenu: [
+          {
+            label: 'Toggle Theme',
+            action: () => this.toggleApplicationTheme(),
+            isShown: true,
+            isDisabled: false
+          },
+        ],
+        isShown: true,
+        isDisabled: false
+      },
     ];
+  }
+  toggleApplicationTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   async selectLocalProject(): Promise<void> {
