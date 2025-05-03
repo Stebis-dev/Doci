@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+type MermaidTheme = 'default' | 'base' | 'dark' | 'forest' | 'neutral' | 'null';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -23,6 +25,10 @@ export class ThemeService {
         this._currentTheme.next(newTheme);
         this.applyTheme(newTheme);
         localStorage.setItem(this.THEME_KEY, newTheme);
+    }
+
+    getMermaidTheme(): MermaidTheme {
+        return this._currentTheme.value === 'dark' ? 'dark' : 'neutral';
     }
 
     private applyTheme(theme: 'light' | 'dark'): void {
