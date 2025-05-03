@@ -52,7 +52,7 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
         this.renderMermaidDiagram();
         mermaid.initialize({
             startOnLoad: true,
-            theme: 'dark',
+            theme: 'neutral',
             securityLevel: 'loose',
         });
     }

@@ -1,6 +1,4 @@
 @import 'tailwindcss';
-@plugin "daisyui";
-
-/* input[type="file"][webkitdirectory] {
-  display: none;
-} */
+@plugin "daisyui" {
+  themes: light --default;
+}
