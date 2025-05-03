@@ -11,6 +11,7 @@ import { EnumMemberListComponent } from '../enum-member-list/enum-member-list.co
 import { FileTreeSelection } from '../file-tree/file-tree.types';
 import { DescriptionComponent } from '../description/description.component';
 import { ProjectService } from '../../service/project.service';
+import { ThemeService } from '../../service/theme.service';
 
 @Component({
     selector: 'app-class-details',
@@ -45,15 +46,27 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     constructor(
         private readonly mermaidService: MermaidService,
         private readonly sanitizer: DomSanitizer,
-        private readonly projectService: ProjectService) { }
+        private readonly projectService: ProjectService,
+        private readonly themeService: ThemeService
+    ) { }
 
     ngOnInit() {
         this.updateFileDetails();
         this.renderMermaidDiagram();
         mermaid.initialize({
             startOnLoad: true,
-            theme: 'dark',
+            theme: this.themeService.getMermaidTheme(),
             securityLevel: 'loose',
+        });
+
+        // Subscribe to theme changes
+        this.themeService.currentTheme$.subscribe(() => {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: this.themeService.getMermaidTheme(),
+                securityLevel: 'loose',
+            });
+            this.renderMermaidDiagram();
         });
     }
 
