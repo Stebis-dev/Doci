@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ClassDetail, ExtractorType, MethodDetail, ParameterDetail, ProjectFile } from '@doci/shared';
 import { FileTreeSelection } from '../file-tree/file-tree.types';
 import { MethodGraphComponent } from '../method-graph/method-graph.component';
+import { DescriptionComponent } from '../description/description.component';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
     selector: 'app-method-details',
     standalone: true,
-    imports: [CommonModule, MethodGraphComponent],
+    imports: [CommonModule, MethodGraphComponent, DescriptionComponent],
     templateUrl: './method-details.component.html',
 })
 export class MethodDetailsComponent implements OnInit, OnChanges {
@@ -18,7 +20,7 @@ export class MethodDetailsComponent implements OnInit, OnChanges {
     classDetail: ClassDetail | null = null;
     method: MethodDetail | null = null;
 
-    constructor() {
+    constructor(private readonly projectService: ProjectService) {
         //
     }
 
@@ -158,5 +160,54 @@ export class MethodDetailsComponent implements OnInit, OnChanges {
             return this.method.comment || '';
         }
         return '';
+    }
+
+    getMethodUuid(): string {
+        return this.method?.uuid || '';
+    }
+
+    onSaveDescription(description?: string): void {
+        if (description && this.method) {
+            // Update the method's comment
+            this.method.comment = description;
+
+            // Update the method in the current project
+            this.updateMethodInProject();
+        }
+    }
+
+    onCancelDescriptionEdit(): void {
+        // No additional cleanup needed for method descriptions
+    }
+
+    private updateMethodInProject(): void {
+        if (!this.method || !this.file || !this.classDetail) return;
+
+        const currentProject = this.projectService.getCurrentProject();
+        if (!currentProject) return;
+
+        // Find the file in the current project
+        const fileIndex = currentProject.files.findIndex(f => f.uuid === this.file?.uuid);
+        if (fileIndex === -1) return;
+
+        // Find the class in the file
+        const classIndex = currentProject.files[fileIndex].details?.[ExtractorType.Class]?.findIndex(
+            c => c.uuid === this.classDetail?.uuid
+        );
+
+        if (classIndex !== undefined && classIndex !== -1) {
+            // Find the method in the class
+            const methodIndex = currentProject.files[fileIndex].details![ExtractorType.Class]![classIndex].methods.findIndex(
+                m => m.uuid === this.method?.uuid
+            );
+
+            if (methodIndex !== -1) {
+                // Update the method comment
+                currentProject.files[fileIndex].details![ExtractorType.Class]![classIndex].methods[methodIndex].comment = this.method!.comment;
+
+                // Update the project in the service
+                this.projectService.updateCurrentProject(currentProject);
+            }
+        }
     }
 }
