@@ -1,0 +1,109 @@
+<!-- Modal container -->
+<div
+  class="modal modal-open"
+  (click)="closeModal()"
+  (keydown.enter)="closeModal()"
+  (keydown.escape)="closeModal()"
+  tabindex="0"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modal-title"
+>
+  <div
+    class="modal-box w-11/12 max-w-2xl bg-base-100"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    tabindex="0"
+  >
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 id="modal-title" class="text-xl font-bold">
+        Select GitHub Repository
+      </h2>
+      <button
+        class="btn btn-circle btn-ghost"
+        (click)="closeModal()"
+        (keydown.enter)="closeModal()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Search box -->
+    <div class="form-control mb-4">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="filterRepos()"
+        placeholder="Search repositories..."
+        class="input input-bordered w-full"
+      />
+    </div>
+
+    <!-- Repository list -->
+    <div class="overflow-y-auto max-h-[60vh]">
+      <!-- Loading state for initial load -->
+      <div *ngIf="isLoading && !repos.length" class="flex justify-center p-4">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+
+      <!-- Error message -->
+      <div *ngIf="error" class="alert alert-error mb-4">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <span>{{ error }}</span>
+      </div>
+
+      <!-- Repository items -->
+      <div
+        *ngFor="let repo of filteredRepos"
+        class="card bg-base-200 shadow-sm hover:shadow-md transition-shadow mb-3 cursor-pointer"
+        (click)="selectRepository(repo)"
+        (keydown.enter)="selectRepository(repo)"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="'Select repository ' + repo.name"
+      >
+        <div class="card-body p-4">
+          <h3 class="card-title text-lg">{{ repo.name }}</h3>
+          <p class="text-sm opacity-70">
+            {{ repo.description || 'No description available' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import progress -->
+    <div *ngIf="isImporting" class="mt-4">
+      <div class="flex items-center gap-2 mb-2">
+        <span>Importing repository...</span>
+      </div>
+      <progress class="progress progress-primary w-full"></progress>
+    </div>
+  </div>
+</div>
