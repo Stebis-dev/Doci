@@ -9,31 +9,47 @@ import { importProjectBrowser } from '../utils/browserProjectImporter';
 })
 export class FileSystemService {
     constructor(
-        private platformService: PlatformService,
-        private electronService: ElectronService,
+        private readonly platformService: PlatformService,
+        private readonly electronService: ElectronService,
     ) { }
 
+    // Protected method for easier testing
+    protected isDirectoryPickerSupported(): boolean {
+        return 'showDirectoryPicker' in window && typeof window.showDirectoryPicker === 'function';
+    }
+
     async openDirectoryPicker(): Promise<FlatProject | null> {
-
-        if (this.platformService.isElectron) {
-            const projectPath = await this.electronService.openDirectoryDialog() ?? null;
-
-            if (projectPath) {
-                return this.electronService.importProject(projectPath);
-            } else {
-                console.error('No project path selected or cancelled');
-                return null;
+        try {
+            if (this.platformService.isElectron) {
+                return this.handleElectronPicker();
             }
-        }
-        else if ('showDirectoryPicker' in window) {
-            try {
-                return importProjectBrowser();
-            } catch (err) {
-                console.error('Directory selection was cancelled or failed:', err);
-                return null;
+            else if (this.isDirectoryPickerSupported()) {
+                return this.handleBrowserPicker();
             }
-        }
 
-        return null;
+            console.error('No directory picker available for this platform');
+            return null;
+        } catch (err) {
+            console.error('Directory picker operation failed:', err);
+            return null;
+        }
+    }
+
+    private async handleElectronPicker(): Promise<FlatProject | null> {
+        const projectPath = await this.electronService.openDirectoryDialog() ?? null;
+        if (!projectPath) {
+            console.error('No project path selected or cancelled');
+            return null;
+        }
+        return this.electronService.importProject(projectPath);
+    }
+
+    private async handleBrowserPicker(): Promise<FlatProject | null> {
+        try {
+            return await importProjectBrowser();
+        } catch (err) {
+            console.error('Directory selection was cancelled or failed:', err);
+            return null;
+        }
     }
 }
