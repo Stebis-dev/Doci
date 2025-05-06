@@ -40,14 +40,4 @@ jobs:
       - name: Run Tests with Coverage
         run: npx nx test angular-client --coverage
 
-      # Report coverage to GitHub
-      - name: Report Coverage
-        uses: ArtiomTr/jest-coverage-report-action@v2
-        with:
-          coverage-file: ./coverage/apps/angular-client/coverage-final.json
-          base-coverage-file: ./coverage/apps/angular-client/coverage-final.json
-          output: report-markdown
-          annotations: failed-tests
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
       # - run: npx nx affected -t lint test build e2e
