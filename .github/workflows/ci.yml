@@ -35,4 +35,19 @@ jobs:
       # - run: npx nx-cloud record -- echo Hello World
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       # When you enable task distribution, run the e2e-ci task instead of e2e
-      - run: npx nx affected -t lint test build e2e
+
+      # Run tests with coverage
+      - name: Run Tests with Coverage
+        run: npx nx test angular-client --coverage
+
+      # Report coverage to GitHub
+      - name: Report Coverage
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          coverage-file: ./coverage/apps/angular-client/coverage-final.json
+          base-coverage-file: ./coverage/apps/angular-client/coverage-final.json
+          output: report-markdown
+          annotations: failed-tests
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # - run: npx nx affected -t lint test build e2e
