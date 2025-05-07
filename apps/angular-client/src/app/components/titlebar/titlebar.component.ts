@@ -35,6 +35,7 @@ export class TitleBarComponent implements OnInit {
   menuItems: MenuItem[] = [];
   showGitHubRepoModal = false;
   currentTheme: 'light' | 'dark' = 'light';
+  isLoading = false;
 
   constructor(
     private platformService: PlatformService,
@@ -57,7 +58,13 @@ export class TitleBarComponent implements OnInit {
   ngOnInit(): void {
     this.projectService.currentProject$.subscribe((project: FlatProject | null) => {
       this.projectName = project ? project.name + '/' : null;
+      this.isLoading = false;
     });
+
+    this.projectService.isLoading$.subscribe((loading: boolean) => {
+      this.isLoading = loading;
+    });
+
     this.githubAuthService.isAuthenticated$.subscribe((isAuthenticated: boolean) => {
       this.isGitHubAuthenticated = isAuthenticated;
       console.log("isAuthenticated", isAuthenticated)

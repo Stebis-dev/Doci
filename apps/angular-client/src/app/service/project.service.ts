@@ -18,14 +18,16 @@ const STORED_PROJECT_KEY = 'doci_current_project';
 export class ProjectService {
 
     private readonly currentProjectSubject = new BehaviorSubject<FlatProject | null>(null);
+    private readonly isLoadingSubject = new BehaviorSubject<boolean>(false);
 
     public currentProject$ = this.currentProjectSubject.asObservable();
+    public isLoading$ = this.isLoadingSubject.asObservable();
 
     constructor(
         private readonly fileSystemService: FileSystemService,
         private readonly treeSitterService: TreeSitterService
     ) {
-        this.loadStoredProject();
+        // this.loadStoredProject();
     }
 
     private async loadStoredProject(): Promise<void> {
@@ -63,17 +65,22 @@ export class ProjectService {
     }
 
     public async setCurrentProject(project: FlatProject): Promise<void> {
-        // Convert files to AST
-        const projectWithAST = await this.convertFilesToAST(project);
-        const resolvedProject = resolveInheritance(projectWithAST);
+        this.isLoadingSubject.next(true);
+        try {
+            // Convert files to AST
+            const projectWithAST = await this.convertFilesToAST(project);
+            const resolvedProject = resolveInheritance(projectWithAST);
 
-        // Resolve method usage relationships
-        const projectWithMethodUsages = resolveMethodUsages(resolvedProject);
+            // Resolve method usage relationships
+            const projectWithMethodUsages = resolveMethodUsages(resolvedProject);
 
-        console.log('Setting current project:', projectWithMethodUsages);
+            console.log('Setting current project:', projectWithMethodUsages);
 
-        this.currentProjectSubject.next(projectWithMethodUsages);
-        this.saveProjectToStorage(projectWithMethodUsages);
+            this.currentProjectSubject.next(projectWithMethodUsages);
+            this.saveProjectToStorage(projectWithMethodUsages);
+        } finally {
+            this.isLoadingSubject.next(false);
+        }
     }
 
     public async updateCurrentProject(project: FlatProject): Promise<void> {
