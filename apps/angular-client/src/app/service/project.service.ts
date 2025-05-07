@@ -27,7 +27,7 @@ export class ProjectService {
         private readonly fileSystemService: FileSystemService,
         private readonly treeSitterService: TreeSitterService
     ) {
-        // this.loadStoredProject();
+        this.loadStoredProject();
     }
 
     private async loadStoredProject(): Promise<void> {
@@ -36,8 +36,8 @@ export class ProjectService {
             if (storedProject) {
                 const project = JSON.parse(storedProject) as FlatProject;
                 console.log('Loading stored project:', project);
-                // this.currentProjectSubject.next(project);
-                this.setCurrentProject(project); // remove later
+                this.currentProjectSubject.next(project);
+                // this.setCurrentProject(project); // remove later
             }
         } catch (error) {
             console.error('Error loading stored project:', error);
@@ -108,13 +108,13 @@ export class ProjectService {
                 project.files.map(async (file) => {
                     if (file.content && file.type) {
                         try {
-                            const uuid = generateUUID('FILE', file.name);
+                            console.log('Parsing file:', file.name);
+                            file.uuid = generateUUID('FILE', file.name);
                             await this.treeSitterService.setLanguage(file.type);
                             const ast = await this.treeSitterService.parse(file.content);
                             const details = extractDetails(file, ast as Tree, this.treeSitterService.getParser());
                             return {
                                 ...file,
-                                uuid: uuid,
                                 AST: ast || undefined,
                                 details: details || undefined
                             };
