@@ -27,7 +27,7 @@ export class ProjectService {
         private readonly fileSystemService: FileSystemService,
         private readonly treeSitterService: TreeSitterService
     ) {
-        this.loadStoredProject();
+        // this.loadStoredProject();
     }
 
     private async loadStoredProject(): Promise<void> {
