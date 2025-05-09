@@ -38,6 +38,12 @@ jobs:
 
       # Run tests with coverage
       - name: Run Tests with Coverage
-        run: npx nx test angular-client --coverage
+        run: npm run cli_coverage
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: ./coverage/apps/angular-client/
 
       # - run: npx nx affected -t lint test build e2e
