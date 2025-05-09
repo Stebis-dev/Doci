@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { GitHubAuthService } from './github-auth.service';
-import { PlatformService } from '../platform.service';
-import { ElectronService } from '../electron.service';
+import { GitHubAuthService } from '../github-auth.service';
+import { PlatformService } from '../../platform.service';
+import { ElectronService } from '../../electron.service';
 import { ENVIRONMENT, GitHubAuthResponse } from '@doci/shared';
 
 jest.mock('@doci/shared', () => ({
