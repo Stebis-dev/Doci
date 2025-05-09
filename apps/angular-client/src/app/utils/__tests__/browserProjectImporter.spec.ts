@@ -1,4 +1,4 @@
-import { FILE_SIZE_LIMIT, FlatProject, IGNORED_PATTERNS, PARSABLE_EXTENSIONS, ProjectFile } from '@doci/shared';
+import { FILE_SIZE_LIMIT } from '@doci/shared';
 import { importProjectBrowser } from '../browserProjectImporter';
 
 describe('browserProjectImporter', () => {
@@ -41,7 +41,7 @@ describe('browserProjectImporter', () => {
 
     it('should successfully import a project', async () => {
         const mockFiles = [
-            ['test.ts', createMockFile('test.ts')] as [string, FileSystemHandle],
+            ['test.cs', createMockFile('test.cs')] as [string, FileSystemHandle],
             ['test.cs', createMockFile('test.cs')] as [string, FileSystemHandle]
         ];
 
@@ -59,13 +59,13 @@ describe('browserProjectImporter', () => {
 
     it('should handle nested directories', async () => {
         const nestedFiles = [
-            ['nested.ts', createMockFile('nested.ts')] as [string, FileSystemHandle]
+            ['nested.cs', createMockFile('nested.cs')] as [string, FileSystemHandle]
         ];
         const mockNestedDir = createMockDirectory('src', nestedFiles);
 
         const rootEntries = [
             ['src', mockNestedDir] as [string, FileSystemHandle],
-            ['root.ts', createMockFile('root.ts')] as [string, FileSystemHandle]
+            ['root.cs', createMockFile('root.cs')] as [string, FileSystemHandle]
         ];
         const mockRoot = createMockDirectory('test-project', rootEntries);
         mockShowDirectoryPicker.mockResolvedValue(mockRoot);
@@ -74,18 +74,18 @@ describe('browserProjectImporter', () => {
 
         expect(result).not.toBeNull();
         expect(result?.files).toHaveLength(2);
-        expect(result?.files[0].path).toContain('src/nested.ts');
+        expect(result?.files[0].path).toContain('src/nested.cs');
     });
 
     it('should skip ignored directories', async () => {
         const nodeModulesFiles = [
-            ['package.ts', createMockFile('package.ts')] as [string, FileSystemHandle]
+            ['package.cs', createMockFile('package.cs')] as [string, FileSystemHandle]
         ];
         const mockNodeModules = createMockDirectory('node_modules', nodeModulesFiles);
 
         const rootEntries = [
             ['node_modules', mockNodeModules] as [string, FileSystemHandle],
-            ['root.ts', createMockFile('root.ts')] as [string, FileSystemHandle]
+            ['root.cs', createMockFile('root.cs')] as [string, FileSystemHandle]
         ];
         const mockRoot = createMockDirectory('test-project', rootEntries);
         mockShowDirectoryPicker.mockResolvedValue(mockRoot);
@@ -94,13 +94,13 @@ describe('browserProjectImporter', () => {
 
         expect(result).not.toBeNull();
         expect(result?.files).toHaveLength(1);
-        expect(result?.files[0].name).toBe('root.ts');
+        expect(result?.files[0].name).toBe('root.cs');
     });
 
     it('should handle large files', async () => {
         const mockFiles = [
-            ['large.ts', createMockFile('large.ts', FILE_SIZE_LIMIT + 1)] as [string, FileSystemHandle],
-            ['small.ts', createMockFile('small.ts', FILE_SIZE_LIMIT - 1)] as [string, FileSystemHandle]
+            ['large.cs', createMockFile('large.cs', FILE_SIZE_LIMIT + 1)] as [string, FileSystemHandle],
+            ['small.cs', createMockFile('small.cs', FILE_SIZE_LIMIT - 1)] as [string, FileSystemHandle]
         ];
 
         const mockRoot = createMockDirectory('test-project', mockFiles);
@@ -116,7 +116,7 @@ describe('browserProjectImporter', () => {
 
     it('should skip non-parsable file extensions', async () => {
         const mockFiles = [
-            ['test.ts', createMockFile('test.ts')] as [string, FileSystemHandle],
+            ['test.cs', createMockFile('test.cs')] as [string, FileSystemHandle],
             ['test.jpg', createMockFile('test.jpg')] as [string, FileSystemHandle],
             ['test.unknown', createMockFile('test.unknown')] as [string, FileSystemHandle]
         ];
@@ -129,7 +129,7 @@ describe('browserProjectImporter', () => {
         expect(result).not.toBeNull();
         expect(result?.totalFiles).toBe(3);
         expect(result?.parsableFiles).toBe(1);
-        expect(result?.files[0].type).toBe('ts');
+        expect(result?.files[0].type).toBe('cs');
     });
 
     it('should handle directory picker cancellation', async () => {
@@ -142,9 +142,9 @@ describe('browserProjectImporter', () => {
 
     it('should handle file read errors', async () => {
         const mockFiles = [
-            ['test.ts', {
+            ['test.cs', {
                 kind: 'file' as const,
-                name: 'test.ts',
+                name: 'test.cs',
                 getFile: jest.fn().mockRejectedValue(new Error('Read error')),
                 createWritable: jest.fn(),
                 isSameEntry: jest.fn()
@@ -161,7 +161,7 @@ describe('browserProjectImporter', () => {
 
     it('should set correct file metadata', async () => {
         const mockFiles = [
-            ['test.ts', createMockFile('test.ts')] as [string, FileSystemHandle]
+            ['test.cs', createMockFile('test.cs')] as [string, FileSystemHandle]
         ];
 
         const mockRoot = createMockDirectory('test-project', mockFiles);
@@ -170,9 +170,9 @@ describe('browserProjectImporter', () => {
         const result = await importProjectBrowser();
 
         expect(result?.files[0]).toMatchObject({
-            name: 'test.ts',
-            path: 'test-project/test.ts',
-            type: 'ts',
+            name: 'test.cs',
+            path: 'test-project/test.cs',
+            type: 'cs',
             content: mockFileContent
         });
     });

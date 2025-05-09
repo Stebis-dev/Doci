@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { GitHubImporterService } from './github-importer.service';
-import { GitHubAuthService } from './github-auth.service';
+import { GitHubImporterService } from '../github-importer.service';
+import { GitHubAuthService } from '../github-auth.service';
 import { BehaviorSubject } from 'rxjs';
 import { Octokit } from '@octokit/rest';
 import { Base64 } from 'js-base64';
@@ -161,8 +161,8 @@ describe('GitHubImporterService', () => {
 
         it('should handle non-base64 encoded content', (done) => {
             const mockFiles = [{
-                name: 'file.ts',
-                path: 'file.ts',
+                name: 'file.cs',
+                path: 'file.cs',
                 type: 'file',
                 size: 100
             }];
@@ -173,11 +173,15 @@ describe('GitHubImporterService', () => {
                     data: {
                         content: 'not-base64',
                         encoding: 'other',
-                        size: 100
+                        size: 100,
+                        name: 'file.cs',
+                        path: 'file.cs',
+                        type: 'file'
                     }
                 }));
 
             service.importRepository(mockOwner, mockRepo).subscribe(project => {
+                expect(project.files.length).toBe(1);
                 expect(project.files[0].content).toBeUndefined();
                 done();
             });
@@ -201,8 +205,8 @@ describe('GitHubImporterService', () => {
 
         it('should handle single file response', (done) => {
             const mockFile = {
-                name: 'file.ts',
-                path: 'file.ts',
+                name: 'file.cs',
+                path: 'file.cs',
                 type: 'file',
                 size: 100
             };
@@ -216,7 +220,10 @@ describe('GitHubImporterService', () => {
                     data: {
                         content: base64Content,
                         encoding: 'base64',
-                        size: 100
+                        size: 100,
+                        name: 'file.cs',
+                        path: 'file.cs',
+                        type: 'file'
                     }
                 }));
 
