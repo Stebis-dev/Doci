@@ -52,7 +52,7 @@ jobs:
 
       - name: Build electron app
         run: |
-          npx nx build electron --configuration=production
+          npx nx build electron --configuration=production --verbose
 
       - name: Create electron main js wrapper
         run: |
