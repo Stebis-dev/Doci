@@ -16,11 +16,9 @@ export class MethodGraphComponent implements OnInit, OnDestroy, OnChanges, After
     @ViewChild('container', { static: true }) container!: ElementRef;
 
     private sigma: Sigma | null = null;
-    private graph: Graph;
+    private graph: Graph = new Graph();
 
-    constructor(private graphService: GraphService) {
-        this.graph = new Graph();
-    }
+    constructor(private graphService: GraphService) { }
 
     ngOnInit() {
         // Initialize Sigma with custom node renderer
