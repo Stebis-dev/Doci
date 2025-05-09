@@ -53,6 +53,9 @@ jobs:
       - name: Build electron app
         run: |
           npx nx build electron --configuration=production
+
+      - name: Create electron main js wrapper
+        run: |
           echo "const Main = require('./electron/main.js');" >> build/apps/electron/index.js
 
       - name: Debug electron directory structure
