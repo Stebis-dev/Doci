@@ -1,6 +1,6 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { ElectronService } from './electron.service';
-import { PlatformService } from './platform.service';
+import { ElectronService } from '../electron.service';
+import { PlatformService } from '../platform.service';
 import { NgZone, EventEmitter } from '@angular/core';
 import { FlatProject, GitHubAuthCredentials, GitHubAuthResponse } from '@doci/shared';
 
