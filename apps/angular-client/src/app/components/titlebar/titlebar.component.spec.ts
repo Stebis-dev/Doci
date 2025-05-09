@@ -35,12 +35,14 @@ describe('TitleBarComponent', () => {
     let currentProject$: BehaviorSubject<any>;
     let isAuthenticated$: BehaviorSubject<boolean>;
     let currentTheme$: BehaviorSubject<'light' | 'dark'>;
+    let isLoading$: BehaviorSubject<boolean>;
 
     beforeEach(async () => {
         isMaximized$ = new BehaviorSubject<boolean>(false);
         currentProject$ = new BehaviorSubject<any>(null);
         isAuthenticated$ = new BehaviorSubject<boolean>(false);
         currentTheme$ = new BehaviorSubject<'light' | 'dark'>('light');
+        isLoading$ = new BehaviorSubject<boolean>(false);
 
         electronService = {
             minimize: jest.fn(),
@@ -55,6 +57,7 @@ describe('TitleBarComponent', () => {
 
         projectService = {
             currentProject$,
+            isLoading$,
             selectLocalProject: jest.fn()
         };
 
@@ -128,6 +131,14 @@ describe('TitleBarComponent', () => {
 
             currentTheme$.next('light');
             expect(component.currentTheme).toBe('light');
+        });
+
+        it('should update loading state when project service loading state changes', () => {
+            isLoading$.next(true);
+            expect(component.isLoading).toBe(true);
+
+            isLoading$.next(false);
+            expect(component.isLoading).toBe(false);
         });
     });
 

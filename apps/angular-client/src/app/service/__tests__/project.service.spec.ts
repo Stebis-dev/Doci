@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { ProjectService } from './project.service';
-import { FileSystemService } from './fileSystem.service';
-import { TreeSitterService } from './tree-sitter/tree-sitter.service';
+import { ProjectService } from '../project.service';
+import { FileSystemService } from '../fileSystem.service';
+import { TreeSitterService } from '../tree-sitter/tree-sitter.service';
 import { FlatProject } from '@doci/shared';
 import { Tree } from 'web-tree-sitter';
 
