@@ -72,11 +72,29 @@
         <!-- Class Diagram -->
         @if (mermaidDiagram) {
         <div class="mb-8">
-          <h3 class="text-xl font-semibold mb-4">Class Diagram</h3>
-          <div
-            class="flex bg-base-200 p-4 rounded-lg align-middle items-center justify-center"
-            [innerHTML]="renderedSVG"
-          ></div>
+          <div class="flex flex-col gap-2">
+            <div class="flex justify-between gap-2">
+              <h3 class="text-xl font-semibold mb-4">Class Diagram</h3>
+
+              <button class="btn btn-sm" (click)="resetZoom()">
+                <i class="fas fa-sync"></i> Reset View
+              </button>
+            </div>
+            <div
+              class="diagram-wrapper overflow-hidden relative bg-base-200"
+              (wheel)="onMouseWheel($event)"
+              (mousedown)="onMouseDown($event)"
+              (mousemove)="onMouseMove($event)"
+              (mouseup)="onMouseUp($event)"
+              (mouseleave)="onMouseLeave($event)"
+              (contextmenu)="onContextMenu($event)"
+            >
+              <div
+                class="mermaid-diagram-container flex p-4 rounded-lg align-middle items-center justify-center origin-center transition-transform duration-200"
+                [innerHTML]="renderedSVG"
+              ></div>
+            </div>
+          </div>
         </div>
         }
       </div>

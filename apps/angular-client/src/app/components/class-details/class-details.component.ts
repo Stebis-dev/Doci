@@ -43,6 +43,17 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
     mermaidDiagram = '';
     renderedSVG: SafeHtml = ''
 
+    zoomLevel = 1;
+    minZoom = 0.5;
+    maxZoom = 2;
+    zoomStep = 0.1;
+
+    isDragging = false;
+    startX = 0;
+    startY = 0;
+    translateX = 0;
+    translateY = 0;
+
     constructor(
         private readonly mermaidService: MermaidService,
         private readonly sanitizer: DomSanitizer,
@@ -79,7 +90,7 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
     ngAfterViewInit() {
         this.renderMermaidDiagram();
-        // this.updateFileDetails();
+        this.updateZoom();
     }
 
     private async renderMermaidDiagram() {
@@ -231,5 +242,99 @@ export class ClassDetailsComponent implements OnInit, OnChanges, AfterViewInit {
 
     onCancelDescriptionEdit(): void {
         this.isEditingDescription = false;
+    }
+
+    onMouseWheel(event: WheelEvent) {
+        event.preventDefault();
+        const delta = event.deltaY > 0 ? -this.zoomStep : this.zoomStep;
+        const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoomLevel + delta));
+
+        if (newZoom !== this.zoomLevel) {
+            this.zoomLevel = newZoom;
+            this.updateZoom();
+        }
+    }
+
+    onMouseDown(event: MouseEvent) {
+        if (event.button === 2) { // Right click
+            event.preventDefault(); // Prevent context menu
+            this.isDragging = true;
+            this.startX = event.clientX - this.translateX;
+            this.startY = event.clientY - this.translateY;
+            const diagramContainer = document.querySelector('.mermaid-diagram-container');
+            if (diagramContainer) {
+                (diagramContainer as HTMLElement).style.cursor = 'grab';
+                (diagramContainer as HTMLElement).classList.remove('transition-transform');
+            }
+        } else if (event.button === 0) { // Left click
+            event.preventDefault(); // Prevent context menu
+            const diagramContainer = document.querySelector('.mermaid-diagram-container');
+            if (diagramContainer) {
+                (diagramContainer as HTMLElement).style.cursor = 'context-menu';
+            }
+        }
+    }
+
+    onMouseMove(event: MouseEvent) {
+        if (this.isDragging) {
+            event.preventDefault(); // Prevent context menu during drag
+            requestAnimationFrame(() => {
+                this.translateX = event.clientX - this.startX;
+                this.translateY = event.clientY - this.startY;
+                this.updatePan();
+            });
+        }
+    }
+
+    onMouseUp(event: MouseEvent) {
+        event.preventDefault(); // Prevent context menu
+        if (event.button === 2) { // Right click
+            this.isDragging = false;
+            const diagramContainer = document.querySelector('.mermaid-diagram-container');
+            if (diagramContainer) {
+                (diagramContainer as HTMLElement).classList.add('transition-transform');
+            }
+        }
+        const diagramContainer = document.querySelector('.mermaid-diagram-container');
+        if (diagramContainer) {
+            (diagramContainer as HTMLElement).style.cursor = 'default';
+        }
+    }
+
+    onMouseLeave(event: MouseEvent) {
+        event.preventDefault(); // Prevent context menu
+        this.isDragging = false;
+        const diagramContainer = document.querySelector('.mermaid-diagram-container');
+        if (diagramContainer) {
+            (diagramContainer as HTMLElement).style.cursor = 'default';
+            (diagramContainer as HTMLElement).classList.add('transition-transform');
+        }
+    }
+
+    onContextMenu(event: MouseEvent) {
+        event.preventDefault(); // Always prevent context menu in the diagram area
+    }
+
+    private updatePan() {
+        const diagramContainer = document.querySelector('.mermaid-diagram-container');
+        if (diagramContainer) {
+            (diagramContainer as HTMLElement).style.transform =
+                `translate3d(${this.translateX}px, ${this.translateY}px, 0) scale(${this.zoomLevel})`;
+        }
+    }
+
+    private updateZoom() {
+        const diagramContainer = document.querySelector('.mermaid-diagram-container');
+        if (diagramContainer) {
+            (diagramContainer as HTMLElement).style.transform =
+                `translate3d(${this.translateX}px, ${this.translateY}px, 0) scale(${this.zoomLevel})`;
+        }
+    }
+
+    resetZoom() {
+        this.zoomLevel = 1;
+        this.translateX = 0;
+        this.translateY = 0;
+        this.updateZoom();
     }
 }
