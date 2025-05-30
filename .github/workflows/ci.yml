@@ -38,6 +38,6 @@ jobs:
 
       # Run tests with coverage
       - name: Run Tests with Coverage
-        run: npx nx test angular-client --coverage
+        run: npm run cli_coverage
 
       # - run: npx nx affected -t lint test build e2e

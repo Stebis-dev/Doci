@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { GitHubService } from './github.service';
-import { GitHubAuthService } from './github-auth.service';
+import { GitHubService } from '../github.service';
+import { GitHubAuthService } from '../github-auth.service';
 import { of, throwError } from 'rxjs';
 import { ENVIRONMENT, GitHubRepo } from '@doci/shared';
 
