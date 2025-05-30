@@ -1,0 +1,41 @@
+image: node:20
+
+stages:
+  - test
+  - deploy
+
+test:
+  stage: test
+  only:
+    - main
+    changes:
+      - apps/angular-client/**
+  script:
+    - npm i --save false
+    - npx nx test angular-client --watch=false --browsers=ChromeHeadless --coverage
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+
+pages:
+  stage: deploy
+  only:
+    - main
+    changes:
+      - apps/angular-client/**
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+  script:
+    - npm i --save false
+    - npx nx build angular-client --configuration=production --base-href /
+    - cp build/apps/angular-client/index.html build/apps/angular-client/404.html
+  artifacts:
+    paths:
+      - build/apps/angular-client
+    expire_in: 1 week
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/ 
