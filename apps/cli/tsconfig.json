@@ -1,13 +1,17 @@
 {
   "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    }
-  ],
   "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "allowImportingTsExtensions": false,
+    "target": "ES2022",
+    "strict": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true
-  }
+  },
+  "include": ["src"]
 }

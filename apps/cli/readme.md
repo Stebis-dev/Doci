@@ -4,9 +4,4 @@ this tools main objective is to parse given repository and generate structured m
 
 CLI framework "[commander.js](https://www.npmjs.com/package/commander)"
 
-```mermaid
-
-
-
-
-```
+packaging with "[Bum](https://bun.com/)"

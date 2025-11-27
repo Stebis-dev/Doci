@@ -1,0 +1,28 @@
+{
+    "name": "@doci/cli",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "dev": "tsx src/index.ts",
+        "build:win": "bun build --compile --outfile=release/doci-cli-win.exe src/index.ts",
+        "build:linux": "bun build --compile --outfile=release/doci-cli-linux src/index.ts",
+        "build:mac": "bun build --compile --outfile=release/doci-cli-macos src/index.ts"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "devDependencies": {
+        "tsdown": "^0.16.6",
+        "typescript": "^5.6.0"
+    },
+    "dependencies": {
+        "commander": "^14.0.2",
+        "tsx": "^4.20.6"
+    }
+}

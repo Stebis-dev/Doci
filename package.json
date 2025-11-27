@@ -4,6 +4,7 @@
   "license": "MIT",
   "description": "Code documentation tool",
   "author": "Gediminas Šeibokas",
+  "packageManager": "pnpm@10.23.0+sha256.a1cdd7b468386a9d78a081da05d6049d7e598db62a299db92df21a7062a4b183",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "test_setup": "powershell ./clone-repos.ps1",
@@ -96,6 +97,7 @@
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
+    "turbo": "^2.6.1",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.19.0",
     "web-streams-polyfill": "^4.1.0"

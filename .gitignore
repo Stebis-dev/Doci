@@ -5,6 +5,7 @@ dist
 build
 tmp
 out-tsc
+release
 
 # dependencies
 node_modules
@@ -45,6 +46,7 @@ Thumbs.db
 .nx/workspace-data
 
 .angular
+.turbo
 
 # Environment variables
 .env

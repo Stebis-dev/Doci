@@ -1,0 +1,41 @@
+name: Build CLI Binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build executable for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build CLI
+        working-directory: apps/cli
+        run: |
+          pnpm run generate:version
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            bun build --compile --outfile=release/doci-cli-win.exe src/index.ts
+          elif [ "${{ matrix.os }}" == "macos-latest" ]; then
+            bun build --compile --outfile=release/doci-cli-macos src/index.ts
+          else
+            bun build --compile --outfile=release/doci-cli-linux src/index.ts
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: doci-cli-${{ matrix.os }}
+          path: packages/cli/release/*
