@@ -1,4 +1,4 @@
-import { logger } from "./logger";
+import { createLogger } from "apps/cli/src/logger";
 
 export class CliError extends Error {
     constructor(message: string, public details?: unknown) {
@@ -20,6 +20,8 @@ export const wrap =
 
 // Central error handler
 export const handleError = (error: unknown) => {
+    const logger = createLogger("ERROR");
+
     if (error instanceof CliError) {
         logger.error(error.message, error.details);
     } else if (error instanceof Error) {

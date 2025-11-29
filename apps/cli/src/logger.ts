@@ -28,4 +28,4 @@ export class Logger {
     }
 }
 
-export const logger = new Logger("cli");
+export const createLogger = (namespace: string) => new Logger(namespace);

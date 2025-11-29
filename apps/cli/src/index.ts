@@ -1,7 +1,6 @@
 import { Command } from 'commander';
 import scanCommand from './commands/scan/index.js';
-import { CLI_TOOL_DESCRIPTION, CLI_TOOL_NAME } from 'apps/cli/src/constants.js';
-import { CLI_VERSION } from 'apps/cli/src/configuration.js';
+import { CLI_TOOL_DESCRIPTION, CLI_TOOL_NAME, CLI_VERSION } from 'apps/cli/src/constants.js';
 
 const program = new Command();
 program
