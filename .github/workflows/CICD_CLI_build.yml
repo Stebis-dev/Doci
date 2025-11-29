@@ -2,10 +2,11 @@ name: Build CLI Binaries
 
 on:
   push:
-    tags:
-      - 'v*'
+    # tags: // TODO enable on release
+    #   - 'v*'
     paths:
       - 'apps/cli/**'
+  workflow_dispatch:
 
 jobs:
   build:
