@@ -1,8 +1,7 @@
 import { DEFAULT_IGNORED_FILES, DEFAULT_IGNORED_FOLDERS } from 'apps/cli/src/commands/scan/scan.constants';
-import { CliError } from 'apps/cli/src/error-handler';
+import { CliError } from 'apps/cli/src/shared/ErrorHandler';
 import * as fs from 'fs';
 import * as path from 'path';
-
 
 export abstract class DirectoryTraverser {
     private static _gitignoreFiles: string[] = [];
@@ -18,13 +17,6 @@ export abstract class DirectoryTraverser {
     private static _files: string[] = [];
     public static get files(): string[] {
         return this._files;
-    }
-
-    public static validateDirectoryEntry(dir: string): void {
-        // validate directory
-        if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
-            throw new CliError('Invalid directory', dir);
-        }
     }
 
     public static findGitignoreFiles(d: string): string[] {
@@ -51,20 +43,24 @@ export abstract class DirectoryTraverser {
         return this._ignorePatterns;
     }
 
-    // ignore folders and files that match patterns
-    // scan .gitignore files for patterns to ignore
-    public static traverseDirectory(d: string): void {
-        for (const name of fs.readdirSync(d)) {
+    /** 
+    * @description Traverse a directory and collect files, ignoring specified patterns
+    * @param dir - Directory to traverse
+    */
+    public static traverseDirectory(dir: string): void {
+        for (const name of fs.readdirSync(dir)) {
             if (this._ignorePatterns.includes(name)) {
                 continue;
             }
 
-            const full = path.join(d, name);
-            this._files.push(full);
+            const full = path.join(dir, name);
             const stat = fs.statSync(full);
 
             if (stat.isDirectory()) {
                 this.traverseDirectory(full);
+            }
+            else {
+                this._files.push(full);
             }
         }
     };

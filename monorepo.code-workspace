@@ -5,6 +5,10 @@
       "path": "."
     },
     {
+      "name": "CICD",
+      "path": "./.github/workflows"
+    },
+    {
       "name": "doci-cli-tool",
       "path": "apps/cli/src"
     }
@@ -23,7 +27,11 @@
     "javascript.preferences.importModuleSpecifier": "non-relative",
 
     // Turn on ESLint for the whole workspace if you use it
-    "eslint.workingDirectories": [{ "mode": "auto" }]
+    "eslint.workingDirectories": [
+      {
+        "mode": "auto"
+      }
+    ]
   },
   "launch": {
     "version": "0.2.0",

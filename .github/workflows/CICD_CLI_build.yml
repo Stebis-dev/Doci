@@ -23,12 +23,11 @@ jobs:
         uses: oven-sh/setup-bun@v1
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build CLI
         working-directory: apps/cli
         run: |
-          pnpm run generate:version
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
             bun build --compile --outfile=release/doci-cli-win.exe src/index.ts
           elif [ "${{ matrix.os }}" == "macos-latest" ]; then
