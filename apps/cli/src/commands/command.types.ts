@@ -1,3 +1,4 @@
 export enum command {
-    SCAN = 'Scan'
+    SCAN = 'Scan',
+    SHOW = 'Show'
 }
