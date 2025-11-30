@@ -22,6 +22,13 @@ jobs:
       - name: Install Bun
         uses: oven-sh/setup-bun@v1
 
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - name: Install PNPM
+        run: npm install -g pnpm
+
       - name: Install Dependencies
         run: pnpm install
 
