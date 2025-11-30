@@ -20,12 +20,14 @@ export abstract class Utils {
     /**
      * @description Validate if a given path is a valid directory
      * @param dir - The directory path to validate
+     * @returns True if the path is a valid directory, false otherwise
      */
-    static validateDirectoryEntry(dir: string): void {
-        // validate directory
+    static validateDirectoryEntry(dir: string): boolean {
         if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
-            throw new CliError('Invalid directory', dir);
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -98,5 +100,20 @@ export abstract class Utils {
      */
     static writeFileSync(filePath: string, data: string, encoding: BufferEncoding = 'utf8'): void {
         fs.writeFileSync(filePath, data, { encoding });
+    }
+    static dirname(moduleUrl: string): string {
+        return path.dirname(moduleUrl);
+    }
+
+    static join(...paths: string[]): string {
+        return path.join(...paths);
+    }
+
+    static resolve(...paths: string[]): string {
+        return path.resolve(...paths);
+    }
+
+    static mkdirSync(path: string, options?: fs.MakeDirectoryOptions): void {
+        fs.mkdirSync(path, options);
     }
 }

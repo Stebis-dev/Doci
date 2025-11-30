@@ -9,6 +9,20 @@ export class MetadataFile {
         this._defaultMetadataPath = path;
     }
 
+    private static getExecutableDirectory(): string {
+        if ((process as any).pkg) {
+            // Running as packaged .exe
+            return Utils.dirname(process.execPath);
+        }
+
+        // Development mode (Node.js)
+        return Utils.join(process.cwd(), './temp');
+    }
+
+    public static getDefaultMetadataPath(): string {
+        return Utils.join(this.getExecutableDirectory(), this._defaultMetadataPath);
+    }
+
     /**
      * @description Check if given path is valid, if not returns default metadata file path
      * @param path - Path to the metadata file
@@ -17,7 +31,7 @@ export class MetadataFile {
     private static checkPath(path: string | null): string {
         let metadataFilePath = path;
         if (!metadataFilePath || !Utils.validateFileExistence(metadataFilePath)) {
-            metadataFilePath = this._defaultMetadataPath;
+            metadataFilePath = this.getDefaultMetadataPath();
         }
 
         return metadataFilePath;
@@ -37,6 +51,11 @@ export class MetadataFile {
     static write(path: string | null, metadata: Metadata): string {
         const metadataFilePath = this.checkPath(path);
         let output: string;
+
+        // create directory if it doesn't exist
+        if (!Utils.validateDirectoryEntry(Utils.dirname(metadataFilePath))) {
+            Utils.mkdirSync(Utils.dirname(metadataFilePath), { recursive: true });
+        }
 
         output = JSON.stringify(metadata, null, 2);
         Utils.writeFileSync(metadataFilePath, output, 'utf8');

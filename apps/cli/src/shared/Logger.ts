@@ -8,7 +8,12 @@ export class Logger {
         return `[${timestamp}] [${this.namespace}] [${level.toUpperCase()}] ${message}`;
     }
 
-    info(message: string) {
+    info(message: string | any) {
+        if (typeof message !== "string") {
+            console.log(message);
+            return;
+        }
+
         console.log(this.format("info", message));
     }
 

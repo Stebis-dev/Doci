@@ -6,6 +6,7 @@ import { command } from 'apps/cli/src/commands/command.types';
 import { PopulateMetadata } from 'apps/cli/src/commands/scan/PopulateMetadata';
 import { Utils } from 'apps/cli/src/shared/Utils';
 import { MetadataFile } from 'apps/cli/src/shared/MetadataFile';
+import { helpOptions, requiredOptions } from 'apps/cli/src/commands/command.constants';
 
 // scans a directory and lists all files
 export default function scanCommand(program: Command) {
@@ -14,22 +15,24 @@ export default function scanCommand(program: Command) {
     program
         .command(SCAN_COMMAND_NAME)
         .description(SCAN_COMMAND_DESCRIPTION)
-        .helpOption('-h, --help', 'display help for command')
-        .option("-d, --dir <path>", "directory to scan")
-        .argument('[string]')
-        .action((str, options) => scanAction(str, options, logger));
+        .helpOption(helpOptions.HELP, 'display help for command')
+        .option(requiredOptions.DIRECTORY, "directory to scan")
+        .action((options) => scanAction(options, logger));
 }
 
-function scanAction(str: string, options: any, logger: Logger) {
+function scanAction(options: any, logger: Logger) {
     logger.info('Executing scan command');
 
-    if (!str) {
+    const dir = options.dir as string | null;
+    if (!dir) {
         logger.info('No directory specified for scan command, current directory will be used.');
     }
 
-    const entryDirectory = str ?? process.cwd();
-    // TODO if doesn't exist directory, should show simple message and exit, no stack traverseDirectory
-    Utils.validateDirectoryEntry(entryDirectory);
+    const entryDirectory = dir ?? process.cwd();
+    if (!Utils.validateDirectoryEntry(entryDirectory)) {
+        logger.error(`Invalid directory: ${entryDirectory}`);
+        return;
+    }
 
     logger.info(`Searching for .gitignore files in: ${entryDirectory}`);
     DirectoryTraverser.findGitignoreFiles(entryDirectory);

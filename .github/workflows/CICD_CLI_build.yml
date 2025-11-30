@@ -32,17 +32,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile
 
-      # - name: Build CLI
-      #   working-directory: apps/cli
-      #   run: |
-      #     if [ "${{ matrix.os }}" == "windows-latest" ]; then
-      #       bun build --compile --outfile=release/doci-cli-win.exe src/index.ts
-      #     elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-      #       bun build --compile --outfile=release/doci-cli-macos src/index.ts
-      #     else
-      #       bun build --compile --outfile=release/doci-cli-linux src/index.ts
-      #     fi
-
       - name: Build CLI (Windows)
         if: matrix.os == 'windows-latest'
         working-directory: apps/cli
