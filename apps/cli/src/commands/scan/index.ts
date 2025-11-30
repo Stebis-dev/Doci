@@ -23,7 +23,7 @@ export default function scanCommand(program: Command) {
 function scanAction(options: any, logger: Logger) {
     logger.info('Executing scan command');
 
-    const dir = options.dir as string | null;
+    const dir = options.dir as string | null; // TODO add full path
     if (!dir) {
         logger.info('No directory specified for scan command, current directory will be used.');
     }

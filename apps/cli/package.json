@@ -10,6 +10,7 @@
     ],
     "scripts": {
         "dev": "tsx src/index.ts",
+        "dev_extract": "tsx src/index.ts -- extract",
         "build:win": "bun build --compile --outfile=release/doci-cli-win.exe src/index.ts",
         "build:linux": "bun build --compile --outfile=release/doci-cli-linux src/index.ts",
         "build:mac": "bun build --compile --outfile=release/doci-cli-macos src/index.ts"
@@ -23,6 +24,9 @@
     },
     "dependencies": {
         "commander": "^14.0.2",
+        "web-tree-sitter": "^0.25.0",
+        "tree-sitter-javascript": "^0.23.1",
+        "tree-sitter-typescript": "^0.23.2",
         "tsx": "^4.20.6"
     }
 }

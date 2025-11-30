@@ -43,6 +43,7 @@ export abstract class DirectoryTraverser {
         return this._ignorePatterns;
     }
 
+    // TODO fix maximum call stack exceeded error
     /** 
     * @description Traverse a directory and collect files, ignoring specified patterns
     * @param dir - Directory to traverse

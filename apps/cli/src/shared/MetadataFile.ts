@@ -16,7 +16,7 @@ export class MetadataFile {
         }
 
         // Development mode (Node.js)
-        return Utils.join(process.cwd(), './temp');
+        return Utils.join(process.cwd());
     }
 
     public static getDefaultMetadataPath(): string {

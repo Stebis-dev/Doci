@@ -1,8 +1,8 @@
 interface Metadata {
     projects: ProjectMetadata[];
-    files: FileMetadata[];
     totalProjects: number;
     scannedAt: Date;
+    files: FileMetadata[];
 }
 
 interface ProjectMetadata {
