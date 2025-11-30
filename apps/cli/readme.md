@@ -6,6 +6,8 @@ CLI framework: [commander.js](https://www.npmjs.com/package/commander)
 
 Packager: [Bun](https://bun.sh/) (used for fast bundling and packaging; builds are produced in `release/`)
 
+quick test :0
+
 ## Features
 
 - Parse repository tree to identify projects, packages, and modules
