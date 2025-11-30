@@ -47,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: doci-cli-${{ matrix.os }}
-          path: packages/cli/release/*
+          path: apps/cli/release/*
