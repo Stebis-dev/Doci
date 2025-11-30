@@ -10,7 +10,7 @@
     },
     {
       "name": "doci-cli-tool",
-      "path": "apps/cli/src"
+      "path": "apps/cli"
     }
   ],
   "settings": {
