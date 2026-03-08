@@ -12,11 +12,11 @@ export enum ExtractorType {
 export interface ExtractedDetails {
     filePath: string;
     comment?: string;
-    [ExtractorType.Class]?: ClassDetail[];
-    [ExtractorType.Property]?: MethodDetail[];
+    [ExtractorType.Class]?: ClassTemporaryDetail[];
+    [ExtractorType.Property]?: PropertyDetail[];
     [ExtractorType.Method]?: MethodDetail[];
-    [ExtractorType.Parameter]?: MethodDetail[];
-    [ExtractorType.Constructor]?: MethodDetail[];
+    [ExtractorType.Parameter]?: ParameterDetail[];
+    [ExtractorType.Constructor]?: ConstructorMethodDetail[];
     [ExtractorType.MethodsUsed]?: MethodsUsedDetail[];
     [ExtractorType.Comments]?: Details[];
     [ExtractorType.Enum]?: EnumDetail[];

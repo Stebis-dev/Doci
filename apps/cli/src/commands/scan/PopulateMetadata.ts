@@ -2,14 +2,12 @@ import path from "path";
 import { randomUUID } from "crypto";
 import { Utils } from "utils";
 import { SCHEMA_VERSION } from "commands/scan/scan.constants";
+import type { ExtractedDetails } from "controllers/extract.types";
 
 export abstract class PopulateMetadata {
 
     /**
      * @description Populate overall metadata structure
-     * @param projectMetadata - Array of {@link ProjectMetadata} objects
-     * @param fileMetadata - Array of {@link FileMetadata} objects
-     * @returns {@link Metadata} object
      */
     static populateMetadata(projectMetadata: ProjectMetadata[], fileMetadata: FileMetadata[]): Metadata {
         const counts: ScanCounts = {
@@ -32,44 +30,35 @@ export abstract class PopulateMetadata {
 
     /**
      * @description Populate metadata for a directory
-     * @param directoryPath - Absolute path to the scanned directory
-     * @param files - Array of {@link FileMetadata} objects belonging to this directory
-     * @returns {@link ProjectMetadata} object
      */
     public static populateDirectoryMetadata(
         directoryPath: string,
         files: FileMetadata[],
     ): ProjectMetadata {
-        const id = randomUUID();
-        const name = path.basename(directoryPath);
-        const rootPath = directoryPath;
-        const totalFiles = files.length;
-        const fileIds: string[] = files.map(file => file.id);
-        const createdAt = Utils.getFileCreationDate(directoryPath).toISOString();
-        const modifiedAt = Utils.getFileModificationDate(directoryPath).toISOString();
-
         return {
-            id,
-            name,
-            rootPath,
-            totalFiles,
-            fileIds,
-            createdAt,
-            modifiedAt,
+            id: randomUUID(),
+            name: path.basename(directoryPath),
+            rootPath: directoryPath,
+            totalFiles: files.length,
+            fileIds: files.map(f => f.id),
+            createdAt: Utils.getFileCreationDate(directoryPath).toISOString(),
+            modifiedAt: Utils.getFileModificationDate(directoryPath).toISOString(),
         };
     }
 
     /**
      * @description Populate metadata for a list of files
-     * @param files - Array of absolute file paths
-     * @returns Array of {@link FileMetadata} objects
+     * @param files      - Absolute file paths
+     * @param symbolsMap - Optional map of filePath → ExtractedDetails from the orchestrator.
+     *                     When provided, the status/error/symbols fields are overridden
+     *                     with the extraction outcome.
      */
     public static populateFileMetadata(
-        files: string[]
+        files: string[],
+        symbolsMap?: Map<string, { symbols: ExtractedDetails | null; status: 'processed' | 'skipped' | 'failed'; error: string | null }>,
     ): FileMetadata[] {
         return files.map((file) => {
             const id = randomUUID();
-            const filePath = file;
             const fileName = path.basename(file);
             const extension = Utils.extFromPath(file);
             const language = Utils.languageForExt(extension);
@@ -82,17 +71,24 @@ export abstract class PopulateMetadata {
             let error: string | null = null;
 
             try {
-                createdAt = Utils.getFileCreationDate(filePath).toISOString();
-                modifiedAt = Utils.getFileModificationDate(filePath).toISOString();
-                sizeBytes = Utils.getFileSizeBytes(filePath);
+                createdAt = Utils.getFileCreationDate(file).toISOString();
+                modifiedAt = Utils.getFileModificationDate(file).toISOString();
+                sizeBytes = Utils.getFileSizeBytes(file);
             } catch (err) {
                 status = 'failed';
                 error = err instanceof Error ? err.message : String(err);
             }
 
+            // If extraction was run, override status/error/symbols with its outcome
+            const extraction = symbolsMap?.get(file);
+            if (extraction) {
+                status = extraction.status;
+                error = extraction.error;
+            }
+
             return {
                 id,
-                filePath,
+                filePath: file,
                 fileName,
                 extension,
                 mimeType,
@@ -102,6 +98,7 @@ export abstract class PopulateMetadata {
                 modifiedAt,
                 status,
                 error,
+                symbols: extraction?.symbols ?? null,
             };
         });
     }

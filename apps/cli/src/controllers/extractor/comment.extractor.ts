@@ -1,44 +1,37 @@
-// import { Tree } from "web-tree-sitter";
-// import { BaseQueryEngine } from "./base-query.engine";
-// import { Details, ExtractorType, NodePosition } from "@doci/shared";
+﻿import { Tree } from "web-tree-sitter";
+import { BaseQueryEngine } from "./base-query.engine";
+import { Details, ExtractorType, NodePosition } from "controllers/extract.types";
 
-// export class CommentsExtractor extends BaseQueryEngine {
-//     extract(tree: Tree): Details[] | [] {
-//         const query = `
-//             (comment) @comments
-//         `;
+export class CommentsExtractor extends BaseQueryEngine {
+    extract(tree: Tree): Details[] {
+        const query = `(comment) @comments`;
+        const matches = this.runQuery(tree, query) as { captures: any[] }[];
+        const map = new Map<string, Details>();
 
-//         const matches = this.runQuery(tree, query);
+        for (const match of matches) {
+            const capture = match.captures.find(c => c.name === 'comments');
+            if (!capture) continue;
 
-//         const commentMap = new Map<string, Details>();
+            // Strip comment markers and surrounding whitespace
+            const raw = capture.node.text.trim();
+            const clean = raw
+                .replace(/^\/\*+/, '').replace(/\*+\/$/, '')   // /* ... */
+                .replace(/^\/\/+/, '')                          // // ...
+                .replace(/<\/?summary>/g, '')
+                .trim();
 
-//         matches.forEach((match: { captures: any[]; }) => {
-//             const commentsCaptures = match.captures.find(capture => capture.name === 'comments');
-//             if (!commentsCaptures) return;
+            if (!clean) continue;
 
-//             const commentText = commentsCaptures.node.text.trim().replace(/^\/{2,}/, '');
-//             const formattedCommentText = commentText
-//                 .replace(/<summary>/g, '')
-//                 .replace(/<\/summary>/g, '')
-//                 .trim();
+            const key = `${capture.node.startPosition.row}-${capture.node.startPosition.column}`;
+            if (map.has(key)) continue;
 
-//             if (formattedCommentText.length === 0) return;
-//             const commentsKey = this.getMethodKey(commentsCaptures);
+            map.set(key, {
+                name: clean,
+                startPosition: capture.node.startPosition as NodePosition,
+                endPosition:   capture.node.endPosition   as NodePosition,
+            });
+        }
 
-//             const existingComments = commentMap.get(commentsKey);
-//             if (!existingComments) {
-//                 commentMap.set(commentsKey, {
-//                     name: formattedCommentText,
-//                     startPosition: commentsCaptures.node.startPosition as NodePosition,
-//                     endPosition: commentsCaptures.node.endPosition as NodePosition,
-//                 });
-//             }
-//         });
-//         return Array.from(commentMap.values());
-//     }
-
-//     private getMethodKey(capture: any): string {
-//         const { text, startPosition } = capture.node;
-//         return `${text}-${startPosition.row}-${startPosition.column}`;
-//     }
-// }
+        return Array.from(map.values());
+    }
+}

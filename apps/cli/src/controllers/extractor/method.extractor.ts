@@ -1,102 +1,91 @@
-// import { Tree } from "web-tree-sitter";
-// import { BaseQueryEngine } from "./base-query.engine";
-// import { ExtractorType, MethodDetail, NodePosition, ParameterDetail } from "@doci/shared";
+﻿import { Tree } from "web-tree-sitter";
+import { BaseQueryEngine } from "./base-query.engine";
+import { ExtractorType, MethodDetail, NodePosition, ParameterDetail } from "controllers/extract.types";
+import { randomUUID } from "crypto";
 
-// export class MethodExtractor extends BaseQueryEngine {
+/**
+ * Extracts methods (class methods + standalone function declarations)
+ * using the TypeScript/JavaScript tree-sitter grammar.
+ * Constructor methods are excluded — use ConstructorExtractor for those.
+ */
+export class MethodExtractor extends BaseQueryEngine {
+    extract(tree: Tree): MethodDetail[] {
+        const methodMap = new Map<string, MethodDetail>();
 
-//     extract(tree: Tree): MethodDetail[] | [] {
-//         const query = `
-//             (method_declaration
-//                 (modifier)* @method.modifiers
-//                 returns: (identifier) @method.identifier.type*
-//                 returns: (predefined_type) @method.predefinedType.type*
-//                 returns: (generic_name (identifier) @method.genericName)*
-//                 returns: (generic_name (type_argument_list (predefined_type) @method.predefinedType.type))*
-//                 returns: (generic_name (type_argument_list (identifier) @method.identifier.type))*
-//                 name: (identifier) @method.name
-//                 parameters: (
-//                     parameter_list (parameter) @method.parameter)*
-//                 body: (block) @method.body
-//             ) @method.method
-//         `;
+        // Class methods
+        const classMethodQuery = `
+            (method_definition
+                name: (property_identifier) @method.name
+                parameters: (formal_parameters) @method.params
+                body: (statement_block) @method.body
+            ) @method
+        `;
 
-//         const matches = this.runQuery(tree, query);
+        // Standalone function declarations
+        const funcDeclQuery = `
+            (function_declaration
+                name: (identifier) @method.name
+                parameters: (formal_parameters) @method.params
+                body: (statement_block) @method.body
+            ) @method
+        `;
 
-//         const methodMap = new Map<string, MethodDetail>();
+        for (const queryStr of [classMethodQuery, funcDeclQuery]) {
+            const matches = this.runQuery(tree, queryStr) as { captures: any[] }[];
 
-//         matches.forEach((match: { captures: any[]; }) => {
-//             const nameCapture = match.captures.find(capture => capture.name === 'method.name');
-//             if (!nameCapture) return;
+            for (const match of matches) {
+                const nameCapture   = match.captures.find(c => c.name === 'method.name');
+                const methodCapture = match.captures.find(c => c.name === 'method');
+                const bodyCapture   = match.captures.find(c => c.name === 'method.body');
+                const paramsCapture = match.captures.find(c => c.name === 'method.params');
+                if (!nameCapture) continue;
 
-//             const methodCapture = match.captures.filter(capture => capture.name === 'method.method');
+                // Skip constructors — handled by ConstructorExtractor
+                if (nameCapture.node.text === 'constructor') continue;
 
-//             const bodyCapture = match.captures.filter(capture => capture.name === 'method.body');
-//             const body = bodyCapture.map(mod => mod.node.text)[0] as string;
+                const key = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
+                if (methodMap.has(key)) continue;
 
-//             const modifierCaptures = match.captures.filter(capture => capture.name === 'method.modifiers');
-//             const modifiers = modifierCaptures.map(mod => mod.node.text);
+                const parameters = parseParameters(paramsCapture?.node);
 
-//             const identifierTypeCaptures = match.captures.filter(capture => capture.name === 'method.identifier.type');
-//             const objectType = identifierTypeCaptures.map(type => type.node.text) as string[];
+                methodMap.set(key, {
+                    uuid: randomUUID(),
+                    name: nameCapture.node.text,
+                    modifiers: [],
+                    genericName: '',
+                    predefinedType: [],
+                    objectType: [],
+                    parameters,
+                    body: bodyCapture?.node.text ?? '',
+                    startPosition: (methodCapture?.node.startPosition ?? nameCapture.node.startPosition) as NodePosition,
+                    endPosition:   (methodCapture?.node.endPosition   ?? nameCapture.node.endPosition)   as NodePosition,
+                });
+            }
+        }
 
-//             const predefinedTypeCaptures = match.captures.filter(capture => capture.name === 'method.predefinedType.type');
-//             const predefinedType = predefinedTypeCaptures.map(type => type.node.text) as string[];
+        return Array.from(methodMap.values());
+    }
+}
 
-//             const genericNameCaptures = match.captures.filter(capture => capture.name === 'method.genericName');
-//             const genericName = genericNameCaptures.map(type => type.node.text)[0] as string;
+/** Extract parameter names from a formal_parameters node. */
+function parseParameters(paramsNode: any): ParameterDetail[] {
+    if (!paramsNode) return [];
+    const results: ParameterDetail[] = [];
 
-//             const parameterCaptures = match.captures.filter(capture => capture.name === 'method.parameter');
-//             const fullParameter = parameterCaptures.map(type => type.node.text) as string[];
+    for (const child of (paramsNode.children ?? [])) {
+        if (child.type === 'identifier' || child.type === 'required_parameter' || child.type === 'optional_parameter') {
+            const nameNode = child.type === 'identifier' ? child : child.childForFieldName?.('pattern') ?? child.firstChild;
+            if (!nameNode) continue;
+            results.push({
+                name: nameNode.text,
+                varName: [nameNode.text],
+                genericName: [],
+                objectType: [],
+                startPosition: { row: child.startPosition.row, column: child.startPosition.column },
+                endPosition:   { row: child.endPosition.row,   column: child.endPosition.column },
+            });
+        }
+    }
 
-//             const parameters = fullParameter.map(param => {
-//                 return {
-//                     name: param,
-//                     genericName: [],
-//                     varName: [],
-//                     objectType: [],
-//                     startPosition: parameterCaptures[0].node.startPosition,
-//                     endPosition: parameterCaptures[0].node.endPosition
-//                 } as ParameterDetail;
-//             });
-
-//             const methodKey = this.getMethodKey(nameCapture);
-
-//             const existingMethod = methodMap.get(methodKey);
-//             if (!existingMethod) {
-//                 methodMap.set(methodKey, {
-//                     uuid: 'METHOD',
-//                     name: nameCapture.node.text,
-//                     modifiers: modifiers,
-//                     objectType: objectType,
-//                     predefinedType: predefinedType,
-//                     genericName: genericName,
-//                     parameters: parameters,
-//                     body: body ?? '',
-//                     startPosition: methodCapture[0].node.startPosition as NodePosition,
-//                     endPosition: methodCapture[0].node.endPosition as NodePosition,
-//                 });
-//             } else {
-//                 existingMethod.predefinedType.push(...predefinedType);
-//                 existingMethod.predefinedType = Array.from(new Set(existingMethod.predefinedType));
-//                 existingMethod.objectType.push(...objectType);
-//                 existingMethod.objectType = Array.from(new Set(existingMethod.objectType));
-
-//                 parameters.forEach(param => {
-//                     if (!existingMethod.parameters.some(existingParam =>
-//                         existingParam.name === param.name &&
-//                         existingParam.startPosition.row === param.startPosition.row &&
-//                         existingParam.startPosition.column === param.startPosition.column
-//                     )) {
-//                         existingMethod.parameters.push(param);
-//                     }
-//                 });
-//             }
-//         });
-//         return Array.from(methodMap.values());
-//     }
-
-//     private getMethodKey(capture: any): string {
-//         const { text, startPosition } = capture.node;
-//         return `${text}-${startPosition.row}-${startPosition.column}`;
-//     }
-// }
+    return results;
+}

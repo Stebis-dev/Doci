@@ -1,74 +1,45 @@
-// import { Tree } from "web-tree-sitter";
-// import { BaseQueryEngine } from "./base-query.engine";
-// import { ExtractorType, NodePosition, PropertyDetail } from "@doci/shared";
+﻿import { Tree } from "web-tree-sitter";
+import { BaseQueryEngine } from "./base-query.engine";
+import { ExtractorType, NodePosition, PropertyDetail } from "controllers/extract.types";
 
-// export class PropertyExtractor extends BaseQueryEngine {
-//     type = ExtractorType.Property;
+export class PropertyExtractor extends BaseQueryEngine {
+    extract(tree: Tree): PropertyDetail[] {
+        // TypeScript class fields: public/private/protected/readonly field definitions
+        const query = `
+            (public_field_definition
+                name: (property_identifier) @property.name
+            ) @property
+        `;
 
-//     extract(tree: Tree): PropertyDetail[] | [] {
-//         // const query = `
-//         //     (property_declaration
-//         //         (modifier) @property.modifier
-//         //         type: (identifier) @property.type*
-//         //         type: (predefined_type) @property.type*
-//         //         type: (generic_name) @property.type*
-//         //         name: (identifier) @property.name
-//         //     )
-//         // `;
-//         const query = `
-//             (property_declaration
-//                 (modifier) @property.modifier
-//                 type: (identifier) @property.identifier.type*
-//                 type: (predefined_type) @property.predefinedType.type*
-//                 type: (generic_name (identifier) @property.genericName)*
-//                 type: (generic_name (type_argument_list (predefined_type) @property.predefinedType.type))*
-//                 type: (generic_name (type_argument_list (identifier) @property.identifier.type))*
-//                 name: (identifier) @property.name
-//             )
-//         `;
-//         const matches = this.runQuery(tree, query);
+        const matches = this.runQuery(tree, query) as { captures: any[] }[];
+        const map = new Map<string, PropertyDetail>();
 
-//         const propertyMap = new Map<string, PropertyDetail>();
+        for (const match of matches) {
+            const nameCapture = match.captures.find(c => c.name === 'property.name');
+            const propCapture = match.captures.find(c => c.name === 'property');
+            if (!nameCapture) continue;
 
-//         matches.forEach((match: { captures: any[]; }) => {
-//             const nameCapture = match.captures.find(capture => capture.name === 'property.name');
-//             if (!nameCapture) return;
+            const key = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
+            if (map.has(key)) continue;
 
-//             const modifierCaptures = match.captures.filter(capture => capture.name === 'property.modifier');
-//             const modifiers = Array.from(new Set(modifierCaptures.map(mod => mod.node.text))) as string[];
+            // Collect accessibility modifier from parent node text
+            const fullText: string = propCapture?.node.text ?? '';
+            const modifiers: string[] = [];
+            for (const mod of ['public', 'private', 'protected', 'readonly', 'static', 'abstract', 'override']) {
+                if (fullText.startsWith(mod) || fullText.includes(` ${mod} `)) modifiers.push(mod);
+            }
 
-//             const identifierTypeCaptures = match.captures.filter(capture => capture.name === 'property.identifier.type');
-//             const objectType = identifierTypeCaptures.map(type => type.node.text) as string[];
+            map.set(key, {
+                name: nameCapture.node.text,
+                modifiers,
+                genericName: '',
+                predefinedType: [],
+                objectType: [],
+                startPosition: (propCapture?.node.startPosition ?? nameCapture.node.startPosition) as NodePosition,
+                endPosition:   (propCapture?.node.endPosition   ?? nameCapture.node.endPosition)   as NodePosition,
+            });
+        }
 
-//             const predefinedTypeCaptures = match.captures.filter(capture => capture.name === 'property.predefinedType.type');
-//             const predefinedType = predefinedTypeCaptures.map(type => type.node.text) as string[];
-
-//             const genericNameCaptures = match.captures.filter(capture => capture.name === 'property.genericName');
-//             const genericName = genericNameCaptures.map(type => type.node.text)[0] as string;
-
-//             // Extract constructor parameters
-//             const propertyKey = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
-
-//             const existingClass = propertyMap.get(propertyKey);
-//             if (!existingClass) {
-//                 propertyMap.set(propertyKey, {
-//                     name: nameCapture.node.text,
-//                     modifiers: modifiers,
-//                     genericName: genericName,
-//                     predefinedType: predefinedType,
-//                     objectType: objectType,
-//                     startPosition: nameCapture.node.startPosition as NodePosition,
-//                     endPosition: nameCapture.node.endPosition as NodePosition,
-//                 });
-//             }
-//             else {
-//                 // existingClass.modifiers.push(...modifiers);
-//                 existingClass.predefinedType.push(...predefinedType);
-//                 existingClass.objectType.push(...objectType);
-
-//             };
-//         });
-
-//         return Array.from(propertyMap.values());
-//     }
-// }
+        return Array.from(map.values());
+    }
+}

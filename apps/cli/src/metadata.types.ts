@@ -64,4 +64,11 @@ interface FileMetadata {
     status: FileStatus;
     /** @description Human-readable reason when status is skipped or failed */
     error: string | null;
+    /**
+     * @description Semantic symbols extracted from this file.
+     * Populated when --depth is 'symbols' or 'full'.
+     * Runtime type is ExtractedDetails from controllers/extract.types.ts.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    symbols?: any;
 }

@@ -1,33 +1,48 @@
-import { getLanguage } from "controllers/parser.types";
-import { Language, Parser as TreeSitterParser, Tree } from "web-tree-sitter";
+import { getLanguage, isLanguageSupported } from "controllers/parser.types";
+import { Parser as TreeSitterParser, Tree } from "web-tree-sitter";
 
-
+/**
+ * Wraps web-tree-sitter's Parser.
+ * `TreeSitterParser.init()` is called once per process (tracked via the static
+ * flag) so multiple `Parser` instances share the same WASM initialisation.
+ */
 export class Parser {
-    protected parser: TreeSitterParser | null = null;
-    constructor() {
-        console.log('TreeSitterParser instance created');
+    private _parser: TreeSitterParser | null = null;
+    private static _wasmInitialized = false;
+
+    /** Return the raw web-tree-sitter Parser (needed by BaseQueryEngine). */
+    get treeParser(): TreeSitterParser | null {
+        return this._parser;
     }
 
     async initialize(): Promise<void> {
-        // Initialize the parser
-        await TreeSitterParser.init({
-            // locateFile(path: string) {
-            //     // Bun-compiled exe does NOT have paths like ./ or import.meta.url
-            //     // So we force a relative lookup next to the executable
+        if (!Parser._wasmInitialized) {
+            await TreeSitterParser.init();
+            Parser._wasmInitialized = true;
+        }
+        this._parser = new TreeSitterParser();
+    }
 
-            //     return `./${path}`;
-            // }
-        });
+    /**
+     * Load the WASM grammar for the given language and set it on the parser.
+     * @param language - Case-insensitive language name as returned by LANGUAGE_MAP
+     *                   (e.g. "TypeScript", "JavaScript").
+     */
+    async setLanguage(language: string): Promise<void> {
+        if (!this._parser) {
+            throw new Error('Parser not initialised. Call initialize() first.');
+        }
+        const lang = await getLanguage(language);
+        this._parser.setLanguage(lang);
+    }
 
-        this.parser = new TreeSitterParser();
-        // this.parser.setLanguage(await getLanguage(language));
+    /** Returns true if this parser currently has a language loaded. */
+    get hasLanguage(): boolean {
+        return this._parser?.language != null;
     }
 
     parse(code: string): Tree | null {
-        if (!this.parser) {
-            return null;
-        }
-
-        return this.parser.parse(code);
+        if (!this._parser) return null;
+        return this._parser.parse(code);
     }
 }

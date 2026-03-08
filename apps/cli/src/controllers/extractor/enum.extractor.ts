@@ -1,60 +1,55 @@
-// import { Tree } from "web-tree-sitter";
-// import { BaseQueryEngine } from "./base-query.engine";
-// import { EnumDetail, EnumMember, ExtractorType, NodePosition } from "@doci/shared";
+﻿import { Tree } from "web-tree-sitter";
+import { BaseQueryEngine } from "./base-query.engine";
+import { EnumDetail, EnumMember, ExtractorType, NodePosition } from "controllers/extract.types";
 
-// export class EnumExtractor extends BaseQueryEngine {
-//     extract(tree: Tree): EnumDetail[] | [] {
-//         const query = `
-//             (enum_declaration
-//                 (modifier) @enum.modifier
-//                 name: (identifier) @enum.name
-//                 body: (enum_member_declaration_list
-//                     (enum_member_declaration
-//                     (attribute_list (attribute) @enum.member.value)*
-//                     name: (identifier) @enum.member.name)
-//                 )
-//             )
-//         `;
+export class EnumExtractor extends BaseQueryEngine {
+    extract(tree: Tree): EnumDetail[] {
+        // TypeScript enum declaration
+        const query = `
+            (enum_declaration
+                name: (identifier) @enum.name
+                body: (enum_body) @enum.body
+            ) @enum
+        `;
 
-//         const matches = this.runQuery(tree, query);
+        const matches = this.runQuery(tree, query) as { captures: any[] }[];
+        const map = new Map<string, EnumDetail>();
 
-//         const enumMap = new Map<string, EnumDetail>();
+        for (const match of matches) {
+            const nameCapture = match.captures.find(c => c.name === 'enum.name');
+            const enumCapture = match.captures.find(c => c.name === 'enum');
+            const bodyCapture = match.captures.find(c => c.name === 'enum.body');
+            if (!nameCapture) continue;
 
-//         matches.forEach((match: { captures: any[]; }) => {
-//             const nameCapture = match.captures.find(capture => capture.name === 'enum.name');
-//             if (!nameCapture) return;
+            const key = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}`;
+            if (map.has(key)) continue;
 
-//             const modifierCaptures = match.captures.filter(capture => capture.name === 'enum.modifier');
-//             const modifiers = modifierCaptures.map(mod => mod.node.text) as string[];
+            // Collect enum members from the body
+            const members: EnumMember[] = [];
+            if (bodyCapture) {
+                for (const child of bodyCapture.node.children) {
+                    if (child.type === 'property_identifier' || child.type === 'identifier') {
+                        members.push({ member: child.text, value: '' });
+                    } else if (child.type === 'enum_assignment') {
+                        const memberNameNode = child.childForFieldName?.('name') ?? child.firstChild;
+                        const memberValueNode = child.childForFieldName?.('value') ?? child.lastChild;
+                        members.push({
+                            member: memberNameNode?.text ?? child.text,
+                            value: memberValueNode?.text ?? '',
+                        });
+                    }
+                }
+            }
 
-//             const memberCaptures = match.captures.filter(capture => capture.name === 'enum.member.name');
-//             const members = memberCaptures.map(member => member.node.text) as string[];
+            map.set(key, {
+                name: nameCapture.node.text,
+                modifiers: [],
+                members,
+                startPosition: (enumCapture?.node.startPosition ?? nameCapture.node.startPosition) as NodePosition,
+                endPosition:   (enumCapture?.node.endPosition   ?? nameCapture.node.endPosition)   as NodePosition,
+            });
+        }
 
-//             const valueCaptures = match.captures.filter(capture => capture.name === 'enum.member.value');
-//             const values = valueCaptures.map(value => value.node.text) as string[];
-
-//             const enumMember: EnumMember = {
-//                 member: members[0],
-//                 value: values[0],
-//             };
-
-//             const enumKey = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
-
-//             const existingEnum = enumMap.get(enumKey);
-//             if (!existingEnum) {
-//                 enumMap.set(enumKey, {
-//                     name: nameCapture.node.text,
-//                     modifiers: modifiers,
-//                     members: [enumMember],
-//                     startPosition: nameCapture.node.startPosition as NodePosition,
-//                     endPosition: nameCapture.node.endPosition as NodePosition,
-//                 });
-//             }
-//             else {
-//                 existingEnum.members.push(enumMember);
-//             }
-//         });
-
-//         return Array.from(enumMap.values());
-//     }
-// }
+        return Array.from(map.values());
+    }
+}
