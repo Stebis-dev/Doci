@@ -28,9 +28,9 @@ export class ClassExtractor extends BaseQueryEngine {
         const classMap = new Map<string, ClassTemporaryDetail>();
 
         for (const match of matches as { captures: any[] }[]) {
-            const nameCapture  = match.captures.find(c => c.name === 'class.name');
+            const nameCapture = match.captures.find(c => c.name === 'class.name');
             const classCapture = match.captures.find(c => c.name === 'class');
-            const bodyCapture  = match.captures.find(c => c.name === 'class.body');
+            const bodyCapture = match.captures.find(c => c.name === 'class.body');
             if (!nameCapture) continue;
 
             const key = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
@@ -63,7 +63,7 @@ export class ClassExtractor extends BaseQueryEngine {
                 constructors,
                 body: bodyCapture?.node.text ?? '',
                 startPosition: (classCapture?.node.startPosition ?? nameCapture.node.startPosition) as NodePosition,
-                endPosition:   (classCapture?.node.endPosition   ?? nameCapture.node.endPosition)   as NodePosition,
+                endPosition: (classCapture?.node.endPosition ?? nameCapture.node.endPosition) as NodePosition,
             });
         }
 

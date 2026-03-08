@@ -7,10 +7,10 @@ import { existsSync } from "fs";
  * it ships.  Both keys are lowercase so callers must normalise before lookup.
  */
 export const LanguageWasmMap: Record<string, { package: string; wasm: string }> = {
-    javascript:  { package: 'tree-sitter-javascript',  wasm: 'tree-sitter-javascript.wasm' },
-    javascriptx: { package: 'tree-sitter-javascript',  wasm: 'tree-sitter-javascript.wasm' },
-    typescript:  { package: 'tree-sitter-typescript',  wasm: 'tree-sitter-typescript.wasm' },
-    typescriptx: { package: 'tree-sitter-typescript',  wasm: 'tree-sitter-tsx.wasm'        },
+    javascript: { package: 'tree-sitter-javascript', wasm: 'tree-sitter-javascript.wasm' },
+    javascriptx: { package: 'tree-sitter-javascript', wasm: 'tree-sitter-javascript.wasm' },
+    typescript: { package: 'tree-sitter-typescript', wasm: 'tree-sitter-typescript.wasm' },
+    typescriptx: { package: 'tree-sitter-typescript', wasm: 'tree-sitter-tsx.wasm' },
 };
 
 /** @deprecated Use LanguageWasmMap */

@@ -30,12 +30,12 @@ export function extractDetails(
     const result: ExtractedDetails = { filePath };
 
     const extractors = [
-        { type: ExtractorType.Class,       instance: new ClassExtractor(parser, ExtractorType.Class) },
-        { type: ExtractorType.Property,    instance: new PropertyExtractor(parser, ExtractorType.Property) },
-        { type: ExtractorType.Method,      instance: new MethodExtractor(parser, ExtractorType.Method) },
+        { type: ExtractorType.Class, instance: new ClassExtractor(parser, ExtractorType.Class) },
+        { type: ExtractorType.Property, instance: new PropertyExtractor(parser, ExtractorType.Property) },
+        { type: ExtractorType.Method, instance: new MethodExtractor(parser, ExtractorType.Method) },
         { type: ExtractorType.Constructor, instance: new ConstructorExtractor(parser, ExtractorType.Constructor) },
-        { type: ExtractorType.Enum,        instance: new EnumExtractor(parser, ExtractorType.Enum) },
-        { type: ExtractorType.Parameter,   instance: new ParameterExtractor(parser, ExtractorType.Parameter) },
+        { type: ExtractorType.Enum, instance: new EnumExtractor(parser, ExtractorType.Enum) },
+        { type: ExtractorType.Parameter, instance: new ParameterExtractor(parser, ExtractorType.Parameter) },
         ...(depth === ScanDepth.FULL
             ? [{ type: ExtractorType.Comments, instance: new CommentsExtractor(parser, ExtractorType.Comments) }]
             : []),
