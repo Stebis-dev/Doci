@@ -1,5 +1,5 @@
-import { ExtractorType } from "apps/cli/src/controllers/extract.types";
-import { createLogger, Logger } from "apps/cli/src/shared/Logger";
+import { ExtractorType } from "controllers/extract.types";
+import { createLogger, Logger } from "utils";
 import { Parser, Tree, Query } from "web-tree-sitter";
 
 export abstract class BaseQueryEngine {

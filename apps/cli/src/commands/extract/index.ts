@@ -1,12 +1,10 @@
 import { Command } from 'commander';
-import { createLogger, Logger } from 'apps/cli/src/shared/Logger';
-import { command } from 'apps/cli/src/commands/command.types';
-import { helpOptions, optionalOptions } from 'apps/cli/src/commands/command.constants';
-import { EXTRACT_COMMAND_DESCRIPTION, EXTRACT_COMMAND_NAME } from 'apps/cli/src/commands/extract/extract.constants';
-import { MetadataFile } from 'apps/cli/src/shared/MetadataFile';
-import { TreeSitterParser } from 'apps/cli/src/controllers/Parser';
-import { Utils } from 'apps/cli/src/shared/Utils';
-import { isLanguageSupported } from 'apps/cli/src/controllers/parser.types';
+import { createLogger, Logger } from 'utils';
+import { command } from 'commands/command.types';
+import { helpOptions, optionalOptions } from 'commands/command.constants';
+import { EXTRACT_COMMAND_DESCRIPTION, EXTRACT_COMMAND_NAME } from 'commands/extract/extract.constants';
+import { MetadataFile } from 'utils/MetadataFile';
+import { Parser } from 'controllers/Parser';
 
 export default function extractCommand(program: Command) {
     const logger = createLogger(command.EXTRACT);
@@ -37,24 +35,27 @@ async function extractAction(options: any, logger: Logger) {
         }
         categorizedFileMetadata[file.language].push(file);
     }
+
+    const parser = new Parser();
+    await parser.initialize();
+
     // console.log('Categorized File Metadata:', categorizedFileMetadata);
     // setup parser for each language and extract details
-    for (const language in categorizedFileMetadata) {
-        if (!isLanguageSupported(language))
-            continue;
 
-        logger.info(`Extracting details for language: ${language}`);
-        const files = categorizedFileMetadata[language];
-        const parser = new TreeSitterParser();
-        await parser.initialize(language);
+    // for (const language in categorizedFileMetadata) {
+    //     if (!isLanguageSupported(language))
+    //         continue;
 
-        for (const file of files) {
-            const filePath = file.filePath;
-            const fileContent = Utils.readFileSync(filePath);
-            const ast = parser.parse(fileContent);
-            console.log(ast);
-        }
-    }
+    //     logger.info(`Extracting details for language: ${language}`);
+    //     const files = categorizedFileMetadata[language];
+
+    //     // for (const file of files) {
+    //     //     const filePath = file.filePath;
+    //     //     const fileContent = Utils.readFileSync(filePath);
+    //     //     const ast = parser.parse(fileContent);
+    //     //     // console.log(ast);
+    //     // }
+    // }
 
     logger.info('Extract command completed successfully.');
 }

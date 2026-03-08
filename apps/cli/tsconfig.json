@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "moduleResolution": "bundler",
+    "baseUrl": "./src",
     "module": "ESNext",
     "allowImportingTsExtensions": false,
     "target": "ES2022",
@@ -9,7 +10,10 @@
     "sourceMap": true,
     "inlineSources": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@doci/shared": ["../../libs/shared"]
+    }
   },
   "include": ["src"]
 }

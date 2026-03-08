@@ -1,9 +1,8 @@
 import { Command } from 'commander';
-import { createLogger, Logger } from 'apps/cli/src/shared/Logger';
-import { command } from 'apps/cli/src/commands/command.types';
-import { MetadataFile } from 'apps/cli/src/shared/MetadataFile';
-import { SHOW_COMMAND_DESCRIPTION, SHOW_COMMAND_NAME } from 'apps/cli/src/commands/show/show.constants';
-import { helpOptions, requiredOptions } from 'apps/cli/src/commands/command.constants';
+import { createLogger, Logger, MetadataFile } from 'utils';
+import { command } from 'commands/command.types';
+import { SHOW_COMMAND_DESCRIPTION, SHOW_COMMAND_NAME } from 'commands/show/show.constants';
+import { helpOptions, requiredOptions } from 'commands/command.constants';
 
 // show metadata command
 export default function showCommand(program: Command) {

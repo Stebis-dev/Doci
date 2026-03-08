@@ -1,16 +1,26 @@
-import { getLanguage } from "apps/cli/src/controllers/parser.types";
-import { Language, Parser, Tree } from "web-tree-sitter";
+import { getLanguage } from "controllers/parser.types";
+import { Language, Parser as TreeSitterParser, Tree } from "web-tree-sitter";
 
 
-export class TreeSitterParser {
-    protected parser: Parser | null = null;
+export class Parser {
+    protected parser: TreeSitterParser | null = null;
+    constructor() {
+        console.log('TreeSitterParser instance created');
+    }
 
-    async initialize(language: string): Promise<void> {
+    async initialize(): Promise<void> {
         // Initialize the parser
-        await Parser.init();
+        await TreeSitterParser.init({
+            // locateFile(path: string) {
+            //     // Bun-compiled exe does NOT have paths like ./ or import.meta.url
+            //     // So we force a relative lookup next to the executable
 
-        this.parser = new Parser();
-        this.parser.setLanguage(getLanguage(language));
+            //     return `./${path}`;
+            // }
+        });
+
+        this.parser = new TreeSitterParser();
+        // this.parser.setLanguage(await getLanguage(language));
     }
 
     parse(code: string): Tree | null {

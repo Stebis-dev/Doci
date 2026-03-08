@@ -54,3 +54,4 @@ Thumbs.db
 .env.local
 .env.development
 .env.production
+apps/cli/package-lock.json

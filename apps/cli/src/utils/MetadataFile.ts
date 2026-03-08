@@ -1,5 +1,4 @@
-import { CliError } from "apps/cli/src/shared/ErrorHandler";
-import { Utils } from "apps/cli/src/shared/Utils";
+import { CliError, Utils } from "utils";
 
 export class MetadataFile {
     // Placeholder for MetadataFile class implementation
@@ -48,16 +47,24 @@ export class MetadataFile {
         return JSON.parse(raw);
     }
 
+    /**
+     * Resolve the write path — uses the provided path as-is if given,
+     * otherwise falls back to the default metadata.json location.
+     * Unlike {@link checkPath}, this does NOT require the file to already exist.
+     */
+    private static resolveWritePath(p: string | null): string {
+        return p ?? this.getDefaultMetadataPath();
+    }
+
     static write(path: string | null, metadata: Metadata): string {
-        const metadataFilePath = this.checkPath(path);
-        let output: string;
+        const metadataFilePath = this.resolveWritePath(path);
 
         // create directory if it doesn't exist
         if (!Utils.validateDirectoryEntry(Utils.dirname(metadataFilePath))) {
             Utils.mkdirSync(Utils.dirname(metadataFilePath), { recursive: true });
         }
 
-        output = JSON.stringify(metadata, null, 2);
+        const output = JSON.stringify(metadata, null, 2);
         Utils.writeFileSync(metadataFilePath, output, 'utf8');
         return metadataFilePath;
     }

@@ -1,8 +1,29 @@
 import { Command } from 'commander';
-import scanCommand from './commands/scan/index.js';
-import { CLI_TOOL_DESCRIPTION, CLI_TOOL_NAME, CLI_VERSION } from 'apps/cli/src/constants.js';
-import showCommand from 'apps/cli/src/commands/show/index.js';
-import extractCommand from 'apps/cli/src/commands/extract/index.js';
+import scanCommand from './commands/scan';
+import { CLI_TOOL_DESCRIPTION, CLI_TOOL_NAME, CLI_VERSION } from 'constants.js';
+import showCommand from 'commands/show/index';
+import extractCommand from 'commands/extract';
+
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import { FileSystemUtils } from 'utils/FileSystemUtils';
+
+import path from "path";
+
+if (process.versions.bun) {
+    console.log('Bun detected, adjusting path resolution');
+    const __dirname = path.dirname(process.execPath);
+    console.log(__dirname);
+
+    FileSystemUtils.setToolExecutableRoot(__dirname);
+}
+else {
+    // Setting executable root for standard Node.js environment
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+
+    FileSystemUtils.setToolExecutableRoot(__dirname);
+}
 
 const program = new Command();
 program

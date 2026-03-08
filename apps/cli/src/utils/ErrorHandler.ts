@@ -1,4 +1,4 @@
-import { createLogger } from "apps/cli/src/shared/Logger";
+import { createLogger } from "utils";
 
 export class CliError extends Error {
     constructor(message: string, public details?: unknown) {

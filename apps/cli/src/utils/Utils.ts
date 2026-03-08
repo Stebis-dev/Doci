@@ -1,8 +1,9 @@
-import { LANGUAGE_MAP, MIME_MAP } from "apps/cli/src/constants";
+import { LANGUAGE_MAP, MIME_MAP } from "constants.js";
 import path from "path";
 import fs from "fs";
-import { CliError } from "apps/cli/src/shared/ErrorHandler";
+// import { CliError } from "apps/cli/src/shared/ErrorHandler";
 
+// TODO : Move fs wrappers out of Utils to separate FileSystemUtils class
 export abstract class Utils {
 
     /**
@@ -80,6 +81,15 @@ export abstract class Utils {
     static getFileModificationDate(filePath: string): Date {
         const stats = Utils._getFileStatistics(filePath);
         return stats.mtime;
+    }
+
+    /**
+     * @description Get the size of a file in bytes
+     * @param filePath - The path to the file
+     * @returns File size in bytes
+     */
+    static getFileSizeBytes(filePath: string): number {
+        return Utils._getFileStatistics(filePath).size;
     }
 
     /**
