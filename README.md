@@ -1,6 +1,6 @@
 # Doci
 
-[![Build CLI Binaries](https://github.com/Stebis-dev/Doci/actions/workflows/CICD_CLI_build.yml/badge.svg?branch=main)](https://github.com/Stebis-dev/Doci/actions/workflows/CICD_CLI_build.yml)
+[![Build CLI Binaries](https://github.com/Stebis-dev/Doci/actions/workflows/CICD_CLI_build.yml/badge.svg)](https://github.com/Stebis-dev/Doci/actions/workflows/CICD_CLI_build.yml)
 
 Code documentation and analysis tool — scan a repository, extract structured metadata from source files, and visualise class hierarchies, method graphs, and dependency diagrams.
 
