@@ -3,9 +3,10 @@ import { SCAN_COMMAND_DESCRIPTION, SCAN_COMMAND_NAME, ScanDepth } from './scan.c
 import { DirectoryTraverser, TraversalOptions } from 'commands/scan/DirectoryTraverser';
 import { command } from 'commands/command.types';
 import { PopulateMetadata } from 'commands/scan/PopulateMetadata';
-import { createLogger, handleError, Logger, MetadataFile, Utils } from 'utils';
+import { createLogger, handleError, IndexFile, Logger, MetadataFile, Utils } from 'utils';
 import { helpOptions, requiredOptions, scanOptions } from 'commands/command.constants';
 import { ExtractionOrchestrator } from 'controllers/ExtractionOrchestrator';
+import { IndexBuilder } from 'controllers/IndexBuilder';
 import type { ExtractedDetails } from 'controllers/extract.types';
 
 /** Exit codes per Issue 29 spec */
@@ -131,6 +132,12 @@ async function scanAction(options: any, logger: Logger) {
         try {
             const metadataFilePath = MetadataFile.write(outputPath, metadata);
             logger.info(`Metadata written to: ${metadataFilePath}`);
+
+            if (options.emitIndex) {
+                const entries = IndexBuilder.buildIndex(fileMetadata);
+                const indexFilePath = IndexFile.write(metadataFilePath, entries);
+                logger.info(`Index written to: ${indexFilePath} (${entries.length} symbol(s))`);
+            }
         } catch (err) {
             handleError(err);
             process.exit(EXIT_FATAL);

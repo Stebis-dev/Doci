@@ -63,3 +63,26 @@ export interface Metadata {
     totalProjects: number;
     counts: ScanCounts;
 }
+
+/** Symbol kind values used in the flat index */
+export type SymbolKind = 'class' | 'method' | 'constructor' | 'property' | 'enum';
+
+/**
+ * One row in the flat symbol index (index.json).
+ * Designed for fast LLM look-up and frontend search:
+ * every symbol across all files in a single sorted array.
+ */
+export interface IndexEntry {
+    /** Symbol display name (class, method, property, or enum name) */
+    symbolName: string;
+    /** What kind of symbol this is */
+    kind: SymbolKind;
+    /** Absolute path to the source file */
+    filePath: string;
+    /** 1-based start line */
+    startLine: number;
+    /** 1-based end line */
+    endLine: number;
+    /** Leading JSDoc / doc-comment text if captured, otherwise null */
+    docstring: string | null;
+}

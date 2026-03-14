@@ -72,3 +72,26 @@ interface FileMetadata {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     symbols?: any;
 }
+
+/** Discriminated union of all symbol kinds tracked in the flat index. */
+type SymbolKind = 'class' | 'method' | 'constructor' | 'property' | 'enum';
+
+/**
+ * One entry in the flat symbol index (index.json).
+ * Each entry describes a single named symbol so that LLMs and frontends can
+ * locate any symbol without re-parsing the source tree.
+ */
+interface IndexEntry {
+    /** The declared name of the symbol. */
+    symbolName: string;
+    /** What kind of symbol this is. */
+    kind: SymbolKind;
+    /** Absolute path to the file containing the symbol. */
+    filePath: string;
+    /** 1-based line where the symbol declaration opens. */
+    startLine: number;
+    /** 1-based line where the symbol declaration closes. */
+    endLine: number;
+    /** Leading doc-comment text, or null when none is present. */
+    docstring: string | null;
+}
