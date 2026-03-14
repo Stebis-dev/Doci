@@ -58,6 +58,7 @@ function runScan(args: string[]): RunResult {
         encoding: 'utf8',
         shell: true,      // lets Windows resolve tsx.cmd automatically
         timeout: 25_000,
+        maxBuffer: 10 * 1024 * 1024, // 10 MB — prevents truncation on macOS with long paths
     });
     return {
         exitCode: result.status ?? -1,

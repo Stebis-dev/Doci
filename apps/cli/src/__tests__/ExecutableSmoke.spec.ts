@@ -48,6 +48,7 @@ function runExe(args: string[], cwd = CLI_ROOT): RunResult {
         cwd,
         encoding: 'utf8',
         timeout: 30_000,
+        maxBuffer: 10 * 1024 * 1024, // 10 MB — prevents truncation on macOS with long paths
     });
     return {
         exitCode: result.status ?? -1,
