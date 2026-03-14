@@ -1,32 +1,142 @@
 # Doci
 
-Project API documentation tool
+[![Build CLI Binaries](https://github.com/Stebis-dev/Doci/actions/workflows/CICD_CLI_build.yml/badge.svg?branch=main)](https://github.com/Stebis-dev/Doci/actions/workflows/CICD_CLI_build.yml)
 
-This is monorepo project created with [Nx workspace](https://nx.dev)
+Code documentation and analysis tool — scan a repository, extract structured metadata from source files, and visualise class hierarchies, method graphs, and dependency diagrams.
 
-## Run tasks
+**→ [CLI documentation](apps/cli/readme.md)**
 
-To run for development you can use these two commands:
+---
 
-```sh
-npx nx serve electron:angular-client
+## Repository structure
+
+```
+.
+├── apps/
+│   ├── angular-client/   # Browser UI — visualises metadata as diagrams and trees
+│   ├── cli/              # Standalone CLI — scans dirs, emits metadata.json / index.json
+│   ├── electron/         # Electron shell wrapping angular-client for desktop use
+│   └── renderer-e2e/     # Cypress end-to-end tests for the renderer
+├── azure/                # Azure Functions backend (GitHub token exchange, LLM docs)
+└── libs/
+    └── types/            # @doci/types — shared TypeScript interfaces and constants
 ```
 
+---
+
+## Packages
+
+| Package                              | Description                                                                      |
+| ------------------------------------ | -------------------------------------------------------------------------------- |
+| [`apps/cli`](apps/cli/readme.md)     | CLI tool — `doci scan`, `show`, `extract`                                        |
+| `apps/angular-client`                | Angular 19 SPA — file-tree explorer, class-detail panels, Mermaid/Sigma diagrams |
+| `apps/electron`                      | Electron 33 desktop wrapper, IPC handlers, local file-system access              |
+| [`libs/types`](libs/types/README.md) | Shared type definitions (`@doci/types`) consumed by all packages                 |
+| `azure/`                             | Azure Functions — GitHub OAuth proxy, OpenAI code-documentation endpoint         |
+
+---
+
+## Prerequisites
+
+| Tool    | Version                         |
+| ------- | ------------------------------- |
+| Node.js | ≥ 22                            |
+| pnpm    | 10.x (`corepack enable`)        |
+| Bun     | latest (CLI binary builds only) |
+
+---
+
+## Setup
+
 ```sh
-npm run dev
+# Install all workspace dependencies
+pnpm install
 ```
 
-To create a production bundle:
+---
+
+## Development
+
+### Angular client (browser)
+
+```sh
+npx nx serve angular-client
+```
+
+### Electron desktop app
+
+```sh
+npx nx serve electron
+```
+
+### CLI (development mode)
+
+```sh
+cd apps/cli
+pnpm run dev -- scan -d /path/to/repo
+```
+
+---
+
+## Building
+
+### Production Angular + Electron bundle
 
 ```sh
 npx nx build angular-client && npx nx build electron
 ```
 
-To package electron:
+### Package Electron app (installer)
 
 ```sh
-npx nx package electron
+npm run electron_builder
 ```
+
+### CLI standalone binaries
+
+```sh
+cd apps/cli
+pnpm run build:win    # → release/win/doci-cli-win.exe
+pnpm run build:mac    # → release/mac/doci-cli-macos
+pnpm run build:linux  # → release/linux/doci-cli-linux
+```
+
+---
+
+## Testing
+
+### CLI unit + integration tests
+
+```sh
+cd apps/cli
+pnpm run test:unit    # 55+ vitest tests
+pnpm run test:smoke   # smoke tests against the compiled binary
+```
+
+### Angular client unit tests
+
+```sh
+npx nx test angular-client
+```
+
+### End-to-end tests
+
+```sh
+npx nx e2e renderer-e2e
+```
+
+---
+
+## CI/CD
+
+The [`CICD_CLI_build.yml`](.github/workflows/CICD_CLI_build.yml) pipeline runs on every push to `main` that touches `apps/cli/` and executes across Ubuntu, macOS, and Windows:
+
+1. Unit tests
+2. Build binary
+3. Smoke tests against the compiled binary
+4. Upload binary as a CI artifact
+
+Pre-built CLI binaries are available from the **[latest CI run artifacts](https://github.com/Stebis-dev/Doci/actions/workflows/CICD_CLI_build.yml)**.
 
 To see all available targets to run for a project, run:
 
