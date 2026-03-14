@@ -1,0 +1,70 @@
+name: Build CLI Binaries
+
+on:
+  push:
+    # tags: // TODO enable on release
+    #   - 'v*'
+    paths:
+      - 'apps/cli/**'
+  workflow_dispatch:
+
+jobs:
+  test-build-smoke:
+    name: Test, Build & Smoke — ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: macos-latest
+            platform: mac
+          - os: windows-latest
+            platform: win
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install PNPM
+        run: npm install -g pnpm
+
+      - name: Install Dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      # ── Step 1: Unit tests (smoke excluded) ───────────────────────────────────
+      - name: Run Unit Tests
+        shell: bash
+        working-directory: apps/cli
+        run: |
+          echo "## Unit Tests" >> "$GITHUB_STEP_SUMMARY"
+          pnpm test:unit
+
+      # ── Step 2: Build binary + copy WASM ─────────────────────────────────────
+      - name: Build CLI Binary
+        working-directory: apps/cli
+        run: pnpm run build:${{ matrix.platform }}
+
+      # ── Step 3: Smoke tests against the compiled binary ───────────────────────
+      - name: Run Smoke Tests
+        shell: bash
+        working-directory: apps/cli
+        run: |
+          echo "## Smoke Tests" >> "$GITHUB_STEP_SUMMARY"
+          pnpm test:smoke
+
+      # ── Publish artifact ──────────────────────────────────────────────────────
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: doci-cli-${{ matrix.os }}
+          path: apps/cli/release/${{ matrix.platform }}/

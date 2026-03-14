@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { FileSystemService } from '../fileSystem.service';
 import { PlatformService } from '../platform.service';
 import { ElectronService } from '../electron.service';
-import { FlatProject } from '@doci/shared';
+import { FlatProject } from '@doci/types';
 import * as browserImporter from '../../utils/browserProjectImporter';
 import { of } from 'rxjs';
 import { Injectable } from '@angular/core';

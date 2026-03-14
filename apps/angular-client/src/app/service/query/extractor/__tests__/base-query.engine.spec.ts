@@ -1,5 +1,5 @@
 import { BaseQueryEngine } from '../base-query.engine';
-import { ExtractorType } from '@doci/shared';
+import { ExtractorType } from '@doci/types';
 import { Parser, Tree, Query, QueryMatch } from 'web-tree-sitter';
 
 // Mock the Query class

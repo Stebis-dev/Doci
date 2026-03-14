@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FileTreeComponent } from '../../components/file-tree/file-tree.component';
 import { ClassDetailsComponent } from '../../components/class-details/class-details.component';
 import { ProjectService } from '../../service/project.service';
-import { ProjectFile } from '@doci/shared';
+import { ProjectFile } from '@doci/types';
 import { FileTreeSelection } from '../../components/file-tree/file-tree.types';
 import { MethodDetailsComponent } from '../../components/method-details/method-details.component';
 

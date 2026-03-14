@@ -5,7 +5,7 @@ import { PlatformService } from '../../service/platform.service';
 import { IconComponent } from '../icon.component';
 import { BrandingComponent } from '../branding/branding.component';
 import { ProjectService } from '../../service/project.service';
-import { FlatProject } from '@doci/shared';
+import { FlatProject } from '@doci/types';
 import { GitHubAuthService } from '../../service/github/github-auth.service';
 import { GitHubService } from '../../service/github/github.service';
 import { GitHubRepoModalComponent } from '../github-repo-modal/github-repo-modal.component';

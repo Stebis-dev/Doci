@@ -1,6 +1,7 @@
-import { Tree } from "web-tree-sitter";
+import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { ExtractorType, NodePosition, MethodsUsedDetail } from "@doci/shared";
+import type { NodePosition, MethodsUsedDetail } from "@doci/types";
+import { ExtractorType } from "@doci/types";
 
 // TODO add local method usage 
 export class MethodUsageExtractor extends BaseQueryEngine {

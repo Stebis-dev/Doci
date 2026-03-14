@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { GitHubAuthService } from './github-auth.service';
-import { ENVIRONMENT, GitHubRepo, GitHubRepoMapper } from '@doci/shared';
+import { ENVIRONMENT, GitHubRepo, GitHubRepoMapper } from '@doci/types';
 
 @Injectable({
     providedIn: 'root'

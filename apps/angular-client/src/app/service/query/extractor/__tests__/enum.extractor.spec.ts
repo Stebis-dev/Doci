@@ -1,6 +1,6 @@
 import { EnumExtractor } from '../enum.extractor';
 import { Parser, Tree, Query, QueryMatch, QueryCapture } from 'web-tree-sitter';
-import { ExtractorType, EnumDetail } from '@doci/shared';
+import { ExtractorType, EnumDetail } from '@doci/types';
 
 // Mock the Query class
 jest.mock('web-tree-sitter', () => ({

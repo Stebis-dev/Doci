@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Parser, Language, Tree } from 'web-tree-sitter';
 import { extensionToLanguage } from './parser.strategy';
-import { ProgrammingLanguageExtension } from '@doci/shared';
+import { ProgrammingLanguageExtension } from '@doci/types';
 
 
 @Injectable({

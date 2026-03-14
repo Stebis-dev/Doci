@@ -1,0 +1,21 @@
+{
+    "pipeline": {
+        "build:cli": {
+            "dependsOn": [],
+            "outputs": [
+                "apps/cli/release/**"
+            ]
+        },
+        "build": {
+            "dependsOn": [
+                "^build"
+            ],
+            "outputs": [
+                "dist/**"
+            ]
+        },
+        "dev": {
+            "cache": false
+        }
+    }
+}

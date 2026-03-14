@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClassDetail, ExtractorType, MethodDetail, ParameterDetail, ProjectFile } from '@doci/shared';
+import { ClassDetail, ExtractorType, MethodDetail, ParameterDetail, ProjectFile } from '@doci/types';
 import { FileTreeSelection } from '../file-tree/file-tree.types';
 import { MethodGraphComponent } from '../method-graph/method-graph.component';
 import { DescriptionComponent } from '../description/description.component';

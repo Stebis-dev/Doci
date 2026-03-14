@@ -1,0 +1,109 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "name": "CICD",
+      "path": "./.github/workflows"
+    },
+    {
+      "name": "CLI",
+      "path": "apps/cli"
+    }
+  ],
+  "settings": {
+    // Use the workspace TypeScript version
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+
+    // Formatting / linting (adjust to your stack)
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+    // Make path suggestions smarter in monorepo
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "javascript.preferences.importModuleSpecifier": "non-relative",
+
+    // Turn on ESLint for the whole workspace if you use it
+    "eslint.workingDirectories": [
+      {
+        "mode": "auto"
+      }
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "CLI (ts-node dev)",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder:CLI}",
+        "runtimeExecutable": "pnpm",
+        "runtimeArgs": ["run", "dev"],
+        "console": "integratedTerminal"
+      },
+      {
+        "name": "CLI (built dist)",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder:CLI}",
+        "program": "${workspaceFolder:CLI}/dist/index.js",
+        "console": "integratedTerminal"
+      }
+    ],
+    "compounds": [
+      {
+        "name": "Dev: web + CLI",
+        "configurations": ["CLI (ts-node dev)"]
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "turbo dev",
+        "type": "shell",
+        "command": "pnpm",
+        "args": ["turbo", "run", "dev"],
+        "problemMatcher": [],
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      },
+      {
+        "label": "turbo build",
+        "type": "shell",
+        "command": "pnpm",
+        "args": ["turbo", "run", "build"],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "CLI: dev",
+        "type": "shell",
+        "command": "pnpm",
+        "args": ["run", "dev"],
+        "options": {
+          "cwd": "${workspaceFolder:CLI}"
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "CLI: build",
+        "type": "shell",
+        "command": "pnpm",
+        "args": ["run", "build"],
+        "options": {
+          "cwd": "${workspaceFolder:CLI}"
+        },
+        "problemMatcher": []
+      }
+    ]
+  }
+}

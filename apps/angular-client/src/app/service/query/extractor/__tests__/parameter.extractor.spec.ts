@@ -1,6 +1,6 @@
 import { ParameterExtractor } from '../parameter.extractor';
 import { Parser, Tree, Query, QueryMatch, QueryCapture } from 'web-tree-sitter';
-import { ExtractorType, ParameterDetail } from '@doci/shared';
+import { ExtractorType, ParameterDetail } from '@doci/types';
 
 // Mock the Query class
 jest.mock('web-tree-sitter', () => ({

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ConstructorListComponent } from './constructor-list.component';
-import { ConstructorMethodDetail, ParameterDetail, NodePosition } from '@doci/shared';
+import { ConstructorMethodDetail, ParameterDetail, NodePosition } from '@doci/types';
 
 describe('ConstructorListComponent', () => {
     let component: ConstructorListComponent;

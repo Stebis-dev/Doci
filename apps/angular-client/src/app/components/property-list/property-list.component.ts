@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { PropertyDetail } from '@doci/shared';
+import { PropertyDetail } from '@doci/types';
 
 @Component({
     selector: 'app-property-list',

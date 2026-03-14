@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ENVIRONMENT } from '@doci/shared';
+import { ENVIRONMENT } from '@doci/types';
 import { ProjectService } from '../project.service';
 import { resolveEntityUuid, extractCodeSnippet } from '../../utils/entityResolver';
 

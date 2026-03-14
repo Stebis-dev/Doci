@@ -1,4 +1,5 @@
-import { ExtractedDetails, ExtractorType, ProjectFile, ClassTemporaryDetail, MethodDetail, PropertyDetail, ConstructorMethodDetail, MethodsUsedDetail, ParameterDetail, Details } from "@doci/shared";
+import type { ProjectFile, ClassTemporaryDetail, MethodDetail, PropertyDetail, ConstructorMethodDetail, MethodsUsedDetail, ParameterDetail, Details } from "@doci/types";
+import { ExtractorType } from "@doci/types";
 import { extractDetails } from "../extract-details";
 import { Parser, Tree } from "web-tree-sitter";
 import { ClassExtractor } from "../extractor/class.extractor";

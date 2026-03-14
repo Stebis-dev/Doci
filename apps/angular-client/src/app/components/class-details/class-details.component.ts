@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClassDetail, ConstructorMethodDetail, EnumDetail, EnumMember, ExtractorType, MethodDetail, ProjectFile, PropertyDetail } from '@doci/shared';
+import { ClassDetail, ConstructorMethodDetail, EnumDetail, EnumMember, ExtractorType, MethodDetail, ProjectFile, PropertyDetail } from '@doci/types';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import mermaid from 'mermaid';
 import { MermaidService } from '../../service/mermaid/mermaid.service';

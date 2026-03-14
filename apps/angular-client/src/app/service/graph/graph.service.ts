@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MethodDetail } from '@doci/shared';
+import { MethodDetail } from '@doci/types';
 
 export interface GraphData {
     nodes: Array<{

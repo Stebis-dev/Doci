@@ -1,6 +1,6 @@
 import { PropertyExtractor } from '../property.extractor';
 import { Parser, Tree, Query, QueryMatch, QueryCapture } from 'web-tree-sitter';
-import { ExtractorType, PropertyDetail } from '@doci/shared';
+import { ExtractorType, PropertyDetail } from '@doci/types';
 
 // Mock the Query class
 jest.mock('web-tree-sitter', () => ({

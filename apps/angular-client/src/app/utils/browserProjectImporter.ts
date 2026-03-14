@@ -1,4 +1,4 @@
-import { FILE_SIZE_LIMIT, FlatProject, IGNORED_PATTERNS, PARSABLE_EXTENSIONS, ProjectFile } from '@doci/shared';
+import { FILE_SIZE_LIMIT, FlatProject, IGNORED_PATTERNS, PARSABLE_EXTENSIONS, ProjectFile } from '@doci/types';
 // TODO delete library
 import { directoryOpen } from 'browser-fs-access';
 // TODO add content reader of delete content from projectFile attribute

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { GitHubService } from '../../service/github/github.service';
 import { GitHubImporterService } from '../../service/github/github-importer.service';
 import { ProjectService } from '../../service/project.service';
-import { GitHubRepo } from '@doci/shared';
+import { GitHubRepo } from '@doci/types';
 
 // TODO add normal ui with DaisyUi and tailwind 
 

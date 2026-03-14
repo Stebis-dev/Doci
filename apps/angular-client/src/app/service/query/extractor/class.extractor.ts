@@ -1,7 +1,8 @@
+import type { ClassTemporaryDetail, NodePosition } from "@doci/types";
+import { ExtractorType } from "@doci/types";
 import { Tree } from "web-tree-sitter";
-import { BaseQueryEngine } from "./base-query.engine";
-import { ClassTemporaryDetail, ExtractorType, NodePosition } from "@doci/shared";
 import { generateUUID } from "../../../utils/utils";
+import { BaseQueryEngine } from "./base-query.engine";
 
 // TODO get OOP details (inheritance, interfaces, etc.)
 

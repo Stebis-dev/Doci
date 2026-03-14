@@ -1,6 +1,7 @@
 import { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { Details, ExtractorType, NodePosition } from "@doci/shared";
+import { ExtractorType } from "@doci/types";
+import type { Details, NodePosition } from "@doci/types";
 
 export class CommentsExtractor extends BaseQueryEngine {
     type = ExtractorType.Comments;

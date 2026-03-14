@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { DescriptionGenerationService } from './description-generation.service';
 import { ProjectService } from '../project.service';
-import { ENVIRONMENT } from '@doci/shared';
+import { ENVIRONMENT } from '@doci/types';
 
 describe('DescriptionGenerationService', () => {
     let service: DescriptionGenerationService;

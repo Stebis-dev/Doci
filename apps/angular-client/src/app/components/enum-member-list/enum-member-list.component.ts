@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { EnumMember } from '@doci/shared';
+import { EnumMember } from '@doci/types';
 
 @Component({
     selector: 'app-enum-member-list',

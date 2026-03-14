@@ -1,7 +1,7 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { PlatformService } from './platform.service';
-import { FlatProject, GitHubAuthCredentials, GitHubAuthResponse } from '@doci/shared';
+import { FlatProject, GitHubAuthCredentials, GitHubAuthResponse } from '@doci/types';
 
 interface ElectronWindowAPI {
     minimizeWindow: () => void;

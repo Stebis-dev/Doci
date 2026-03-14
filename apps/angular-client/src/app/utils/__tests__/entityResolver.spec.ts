@@ -1,4 +1,4 @@
-import { FlatProject, ProjectFile, ClassDetail, MethodDetail, PropertyDetail, ConstructorMethodDetail, EnumDetail, ExtractorType } from '@doci/shared';
+import { FlatProject, ProjectFile, ClassDetail, MethodDetail, PropertyDetail, ConstructorMethodDetail, EnumDetail, ExtractorType } from '@doci/types';
 import { resolveEntityUuid, extractCodeSnippet, EntityType, ResolvedEntity } from '../entityResolver';
 
 describe('entityResolver', () => {

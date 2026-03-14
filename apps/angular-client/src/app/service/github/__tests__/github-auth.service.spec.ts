@@ -3,9 +3,9 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { GitHubAuthService } from '../github-auth.service';
 import { PlatformService } from '../../platform.service';
 import { ElectronService } from '../../electron.service';
-import { ENVIRONMENT, GitHubAuthResponse } from '@doci/shared';
+import { ENVIRONMENT, GitHubAuthResponse } from '@doci/types';
 
-jest.mock('@doci/shared', () => ({
+jest.mock('@doci/types', () => ({
     ENVIRONMENT: {
         github: {
             url: 'https://github.com/login/oauth/authorize?',
@@ -18,7 +18,7 @@ jest.mock('@doci/shared', () => ({
             tokenExchange: 'token-exchange'
         }
     },
-    GitHubAuthResponse: jest.requireActual('@doci/shared').GitHubAuthResponse
+    GitHubAuthResponse: jest.requireActual('@doci/types').GitHubAuthResponse
 }));
 
 describe('GitHubAuthService', () => {

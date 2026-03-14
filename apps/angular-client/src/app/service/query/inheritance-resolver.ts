@@ -1,4 +1,4 @@
-import { ClassDetail, FlatProject } from '@doci/shared';
+import { ClassDetail, FlatProject } from '@doci/types';
 
 /**
  * Resolves and populates parent class names for each class based on inheritance.

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { MermaidService } from './mermaid.service';
 import { ProjectService } from '../project.service';
-import { ClassDetail, EnumDetail, MethodDetail, ParameterDetail, PropertyDetail, MethodsUsedDetail } from '@doci/shared';
+import { ClassDetail, EnumDetail, MethodDetail, ParameterDetail, PropertyDetail, MethodsUsedDetail } from '@doci/types';
 
 function createMockNodePosition() {
     return {

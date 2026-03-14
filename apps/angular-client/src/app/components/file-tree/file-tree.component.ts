@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../../service/project.service';
-import { ProjectFile, ClassDetail, MethodDetail, EnumDetail } from '@doci/shared';
+import { ProjectFile, ClassDetail, MethodDetail, EnumDetail } from '@doci/types';
 import { IconComponent } from '../icon.component';
 import { TreeNode, FileTreeSelection, NodeType } from './file-tree.types';
 

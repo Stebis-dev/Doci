@@ -1,6 +1,6 @@
 {
   "cSpell.words": ["Doci", "titlebar", "unmaximize"],
-  "editor.rulers": [80],
+  "editor.rulers": [100],
   "workbench.colorCustomizations": {
     "editorRuler.foreground": "#504e7b"
   },
@@ -9,6 +9,16 @@
   "azureFunctions.projectLanguage": "TypeScript",
   "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "neverOpen",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
   "azureFunctions.projectLanguageModel": 4,
-  "azureFunctions.preDeployTask": "npm prune (functions)"
+  "azureFunctions.preDeployTask": "npm prune (functions)",
+
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false, // if you want nested groups collapsed by default
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, nx.json, tsconfig*.json, tsconfig.*.json, eslint*.json, eslint.*.mjs, .eslintrc*.json, jest.*.js, jest.*.ts, .prettierrc*, .prettierrc.*, .prettierignore, .dockerignore, Dockerfile*, turbo.json, pnpm-workspace.yaml, pnpm-lock.yaml, monorepo.code-workspace, vitest.config.ts"
+    // and you can add more patterns for other configs
+  }
 }

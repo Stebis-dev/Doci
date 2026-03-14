@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MethodListComponent } from './method-list.component';
-import { MethodDetail, ParameterDetail, NodePosition } from '@doci/shared';
+import { MethodDetail, ParameterDetail, NodePosition } from '@doci/types';
 
 describe('MethodListComponent', () => {
     let component: MethodListComponent;

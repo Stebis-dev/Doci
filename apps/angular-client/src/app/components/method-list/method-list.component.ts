@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MethodDetail, ParameterDetail } from '@doci/shared';
+import { MethodDetail, ParameterDetail } from '@doci/types';
 
 @Component({
     selector: 'app-method-list',
