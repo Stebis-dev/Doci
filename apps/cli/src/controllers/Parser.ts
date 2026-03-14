@@ -1,5 +1,7 @@
 import { getLanguage, isLanguageSupported } from "controllers/parser.types";
 import { Parser as TreeSitterParser, Tree } from "web-tree-sitter";
+import path from 'path';
+import { FileSystemUtils } from 'utils/FileSystemUtils';
 
 /**
  * Wraps web-tree-sitter's Parser.
@@ -17,7 +19,19 @@ export class Parser {
 
     async initialize(): Promise<void> {
         if (!Parser._wasmInitialized) {
-            await TreeSitterParser.init();
+            if (process.versions.bun) {
+                const root = FileSystemUtils.getToolExecutableRoot();
+                if (root) {
+                    const wasmDir = path.join(root, 'wasm');
+                    await TreeSitterParser.init({
+                        locateFile: (name: string) => path.join(wasmDir, name),
+                    });
+                } else {
+                    await TreeSitterParser.init();
+                }
+            } else {
+                await TreeSitterParser.init();
+            }
             Parser._wasmInitialized = true;
         }
         this._parser = new TreeSitterParser();

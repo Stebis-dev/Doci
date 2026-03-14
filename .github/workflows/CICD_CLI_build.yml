@@ -9,12 +9,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build executable for ${{ matrix.os }}
+  test-build-smoke:
+    name: Test, Build & Smoke — ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: macos-latest
+            platform: mac
+          - os: windows-latest
+            platform: win
 
     steps:
       - uses: actions/checkout@v4
@@ -32,31 +38,24 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Run CLI Tests
+      # ── Step 1: Unit tests (smoke excluded) ───────────────────────────────────
+      - name: Run Unit Tests
         working-directory: apps/cli
-        run: npx vitest run
-        # A non-zero exit from vitest (any test failure) marks this step as
-        # failed, which stops the job and prevents the build steps from running.
-        # GitHub Actions honours the exit code automatically; no extra flag needed.
+        run: pnpm test:unit
 
-      - name: Build CLI (Windows)
-        if: matrix.os == 'windows-latest'
+      # ── Step 2: Build binary + copy WASM ─────────────────────────────────────
+      - name: Build CLI Binary
         working-directory: apps/cli
-        run: bun build --compile --outfile=release/doci-cli-win.exe src/index.ts
-        shell: powershell
+        run: pnpm run build:${{ matrix.platform }}
 
-      - name: Build CLI (macOS)
-        if: matrix.os == 'macos-latest'
+      # ── Step 3: Smoke tests against the compiled binary ───────────────────────
+      - name: Run Smoke Tests
         working-directory: apps/cli
-        run: bun build --compile --outfile=release/doci-cli-macos src/index.ts
+        run: pnpm test:smoke
 
-      - name: Build CLI (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        working-directory: apps/cli
-        run: bun build --compile --outfile=release/doci-cli-linux src/index.ts
-
-      - name: Upload artifacts
+      # ── Publish artifact ──────────────────────────────────────────────────────
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: doci-cli-${{ matrix.os }}
-          path: apps/cli/release/*
+          path: apps/cli/release/${{ matrix.platform }}/

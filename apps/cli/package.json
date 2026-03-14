@@ -13,9 +13,11 @@
         "dev_extract": "tsx src/index.ts -- extract",
         "test": "vitest run",
         "test:watch": "vitest",
-        "build:win": "bun build --compile --outfile=release/win/doci-cli-win.exe src/index.ts  --external:*.wasm && bun ./scripts/copy-wasm.ts -- win",
-        "build:linux": "bun build --compile --outfile=release/linux/doci-cli-linux src/index.ts  --external:*.wasm && bun ./scripts/copy-wasm.ts",
-        "build:mac": "bun build --compile --outfile=release/mac/doci-cli-macos src/index.ts  --external:*.wasm && bun ./scripts/copy-wasm.ts"
+        "test:unit": "vitest run --exclude **/ExecutableSmoke.spec.ts",
+        "test:smoke": "vitest run ExecutableSmoke",
+        "build:win": "bun build --compile --outfile=release/win/doci-cli-win.exe src/index.ts  --external:*.wasm && bun ./scripts/copy-wasm.ts win",
+        "build:linux": "bun build --compile --outfile=release/linux/doci-cli-linux src/index.ts  --external:*.wasm && bun ./scripts/copy-wasm.ts linux",
+        "build:mac": "bun build --compile --outfile=release/mac/doci-cli-macos src/index.ts  --external:*.wasm && bun ./scripts/copy-wasm.ts mac"
     },
     "engines": {
         "node": ">=18"

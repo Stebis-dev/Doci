@@ -11,9 +11,9 @@ import { FileSystemUtils } from 'utils/FileSystemUtils';
 import path from "path";
 
 if (process.versions.bun) {
-    console.log('Bun detected, adjusting path resolution');
+    process.stderr.write('Bun detected, adjusting path resolution\n');
     const __dirname = path.dirname(process.execPath);
-    console.log(__dirname);
+    process.stderr.write(__dirname + '\n');
 
     FileSystemUtils.setToolExecutableRoot(__dirname);
 }

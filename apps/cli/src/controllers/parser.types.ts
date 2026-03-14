@@ -1,6 +1,8 @@
 import { Language } from "web-tree-sitter";
 import { createRequire } from "module";
 import { existsSync } from "fs";
+import path from 'path';
+import { FileSystemUtils } from 'utils/FileSystemUtils';
 
 /**
  * Maps a normalised language key to the npm package name and the WASM file
@@ -36,8 +38,15 @@ export async function getLanguage(language: string): Promise<Language> {
         throw new Error(`Language "${language}" is not supported.`);
     }
 
-    const require = createRequire(import.meta.url);
-    const wasmPath = require.resolve(`${entry.package}/${entry.wasm}`);
+    let wasmPath: string;
+    if (process.versions.bun) {
+        const root = FileSystemUtils.getToolExecutableRoot();
+        if (!root) throw new Error('FileSystemUtils.toolExecutableRoot is not set in Bun binary mode.');
+        wasmPath = path.join(root, 'wasm', entry.wasm);
+    } else {
+        const require = createRequire(import.meta.url);
+        wasmPath = require.resolve(`${entry.package}/${entry.wasm}`);
+    }
 
     if (!existsSync(wasmPath)) {
         throw new Error(`WASM file for language "${language}" not found at: ${wasmPath}`);

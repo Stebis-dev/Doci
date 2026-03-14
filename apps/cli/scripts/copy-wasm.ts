@@ -4,7 +4,7 @@ const platform = process.argv[2] || "win";
 
 const platformMap: Record<string, string> = {
     win: "release/win/wasm",
-    mac: "release/macos/wasm",
+    mac: "release/mac/wasm",
     linux: "release/linux/wasm",
 };
 
