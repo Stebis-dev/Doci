@@ -1,4 +1,4 @@
-import type { ConstructorMethodDetail, MethodDetail, ParameterDetail, Details, ClassTemporaryDetail } from "@doci/shared";
+import type { ConstructorMethodDetail, MethodDetail, ParameterDetail, Details, ClassTemporaryDetail } from "@doci/types";
 
 export function assignParametersToMethods(parameterDetails: ParameterDetail[], methodDetails: MethodDetail[]): MethodDetail[] {
     if (parameterDetails && methodDetails) {

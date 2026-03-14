@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ElementRef, ViewChild, OnDestroy, SimpleChang
 import { CommonModule } from '@angular/common';
 import Graph from 'graphology';
 import Sigma from 'sigma';
-import { MethodDetail } from '@doci/shared';
+import { MethodDetail } from '@doci/types';
 import { GraphService, GraphData } from '../../service/graph/graph.service';
 
 @Component({

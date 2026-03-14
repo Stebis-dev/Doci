@@ -1,4 +1,4 @@
-import { FlatProject, ProjectFile } from '@doci/shared';
+import { FlatProject, ProjectFile } from '@doci/types';
 import {
     ClassDetail,
     MethodDetail,
@@ -6,7 +6,7 @@ import {
     ConstructorMethodDetail,
     EnumDetail,
     ExtractorType
-} from '@doci/shared';
+} from '@doci/types';
 
 /**
  * Entity types that can be resolved from a UUID

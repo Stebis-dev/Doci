@@ -1,3 +1,4 @@
+import type { FileMetadata, FileStatus } from '@doci/types';
 import { PopulateMetadata } from 'commands/scan/PopulateMetadata';
 import { SCHEMA_VERSION } from 'commands/scan/scan.constants';
 import * as fs from 'fs';

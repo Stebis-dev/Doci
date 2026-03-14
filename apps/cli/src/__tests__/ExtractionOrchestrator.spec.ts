@@ -1,6 +1,6 @@
+import { ExtractorType } from '@doci/types';
 import { ScanDepth } from 'commands/scan/scan.constants';
 import { ExtractionOrchestrator } from 'controllers/ExtractionOrchestrator';
-import { ExtractorType } from 'controllers/extract.types';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';

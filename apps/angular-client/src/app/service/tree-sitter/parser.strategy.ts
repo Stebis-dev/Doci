@@ -1,4 +1,4 @@
-import { ProgrammingLanguageExtension, WASMProgrammingLanguage } from '@doci/shared';
+import { ProgrammingLanguageExtension, WASMProgrammingLanguage } from '@doci/types';
 
 export const extensionToLanguage = new Map<ProgrammingLanguageExtension, string>([
     [ProgrammingLanguageExtension.CSharp, WASMProgrammingLanguage.CSharp],

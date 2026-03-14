@@ -1,5 +1,5 @@
-import type { ClassTemporaryDetail, ExtractedDetails, ResolvedRef } from "controllers/extract.types";
-import { ExtractorType } from "controllers/extract.types";
+import type { ClassTemporaryDetail, ExtractedDetails, FileMetadata, ResolvedRef } from "@doci/types";
+import { ExtractorType } from "@doci/types";
 
 
 /**

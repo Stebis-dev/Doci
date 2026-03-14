@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Octokit } from '@octokit/rest';
 import { GitHubAuthService } from './github-auth.service';
-import { FlatProject, ProjectFile, GitHubContent, PARSABLE_EXTENSIONS, FILE_SIZE_LIMIT } from '@doci/shared';
+import { FlatProject, ProjectFile, GitHubContent, PARSABLE_EXTENSIONS, FILE_SIZE_LIMIT } from '@doci/types';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Base64 } from 'js-base64';

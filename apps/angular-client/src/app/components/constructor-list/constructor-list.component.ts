@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ConstructorMethodDetail, ParameterDetail } from '@doci/shared';
+import { ConstructorMethodDetail, ParameterDetail } from '@doci/types';
 
 @Component({
     selector: 'app-constructor-list',

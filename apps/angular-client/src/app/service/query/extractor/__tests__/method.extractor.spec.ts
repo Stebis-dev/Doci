@@ -1,6 +1,6 @@
 import { MethodExtractor } from '../method.extractor';
 import { Parser, Tree, Query, QueryMatch, QueryCapture } from 'web-tree-sitter';
-import { ExtractorType, MethodDetail, NodePosition, ParameterDetail } from '@doci/shared';
+import { ExtractorType, MethodDetail, NodePosition, ParameterDetail } from '@doci/types';
 
 // Mock UUID generation to have consistent test results
 jest.mock('../../../../utils/utils', () => ({

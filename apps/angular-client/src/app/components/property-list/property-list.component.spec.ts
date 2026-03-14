@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PropertyListComponent } from './property-list.component';
-import { PropertyDetail, NodePosition } from '@doci/shared';
+import { PropertyDetail, NodePosition } from '@doci/types';
 
 describe('PropertyListComponent', () => {
     let component: PropertyListComponent;

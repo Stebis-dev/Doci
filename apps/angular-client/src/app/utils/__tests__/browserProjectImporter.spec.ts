@@ -1,4 +1,4 @@
-import { FILE_SIZE_LIMIT } from '@doci/shared';
+import { FILE_SIZE_LIMIT } from '@doci/types';
 import { importProjectBrowser } from '../browserProjectImporter';
 
 describe('browserProjectImporter', () => {

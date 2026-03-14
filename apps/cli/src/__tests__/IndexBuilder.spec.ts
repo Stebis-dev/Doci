@@ -1,5 +1,6 @@
+import type { FileMetadata } from '@doci/types';
+import { ExtractorType } from '@doci/types';
 import { IndexBuilder } from 'controllers/IndexBuilder';
-import { ExtractorType } from 'controllers/extract.types';
 import { describe, expect, it } from 'vitest';
 
 // ── helpers ───────────────────────────────────────────────────────────────────

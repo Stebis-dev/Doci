@@ -1,7 +1,7 @@
+import type { ExtractedDetails } from "@doci/types";
 import { ScanDepth } from "commands/scan/scan.constants";
-import { Parser } from "controllers/Parser";
-import { ExtractedDetails } from "controllers/extract.types";
 import { extractDetails } from "controllers/extractDetails";
+import { Parser } from "controllers/Parser";
 import { isLanguageSupported } from "controllers/parser.types";
 import { Utils, createLogger } from "utils";
 

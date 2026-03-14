@@ -1,4 +1,4 @@
-import { ExtractorType } from "controllers/extract.types";
+import { ExtractorType } from "@doci/types";
 import { createLogger, Logger } from "utils";
 import type { Parser, Tree } from "web-tree-sitter";
 import { Query } from "web-tree-sitter";

@@ -1,5 +1,5 @@
 /** Counts reported at the end of a scan run */
-interface ScanCounts {
+export interface ScanCounts {
     /** Total files discovered during traversal */
     scanned: number;
     /** Files successfully parsed / catalogued */
@@ -10,7 +10,7 @@ interface ScanCounts {
     failed: number;
 }
 
-interface ProjectMetadata {
+export interface ProjectMetadata {
     /** @description UUID */
     id: string;
     /** @description Directory / project name */
@@ -26,7 +26,7 @@ interface ProjectMetadata {
     modifiedAt: string;
 }
 
-interface Metadata {
+export interface Metadata {
     /** @description UUID for this specific scan run */
     instanceId: string;
     /** @description Schema version – increment when shape changes */
@@ -39,9 +39,15 @@ interface Metadata {
     counts: ScanCounts;
 }
 
-type FileStatus = 'processed' | 'skipped' | 'failed';
+export const FileState = {
+    PROCESSED: 'processed',
+    SKIPPED: 'skipped',
+    FAILED: 'failed',
+}
 
-interface FileMetadata {
+export type FileStatus = typeof FileState[keyof typeof FileState];
+
+export interface FileMetadata {
     /** @description UUID */
     id: string;
     /** @description Absolute path to the file */
@@ -67,21 +73,21 @@ interface FileMetadata {
     /**
      * @description Semantic symbols extracted from this file.
      * Populated when --depth is 'symbols' or 'full'.
-     * Runtime type is ExtractedDetails from controllers/extract.types.ts.
+     * Runtime type is ExtractedDetails from @doci/types.ts.
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     symbols?: any;
 }
 
 /** Discriminated union of all symbol kinds tracked in the flat index. */
-type SymbolKind = 'class' | 'method' | 'constructor' | 'property' | 'enum';
+export type SymbolKind = 'class' | 'method' | 'constructor' | 'property' | 'enum';
 
 /**
  * One entry in the flat symbol index (index.json).
  * Each entry describes a single named symbol so that LLMs and frontends can
  * locate any symbol without re-parsing the source tree.
  */
-interface IndexEntry {
+export interface IndexEntry {
     /** The declared name of the symbol. */
     symbolName: string;
     /** What kind of symbol this is. */

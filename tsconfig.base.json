@@ -13,7 +13,7 @@
     "lib": ["es2020", "dom"],
     "baseUrl": ".",
     "paths": {
-      "@doci/shared": ["libs/shared/index.ts"]
+      "@doci/types": ["libs/types"]
     }
   },
   "exclude": ["node_modules", "tmp"]

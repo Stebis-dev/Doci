@@ -5,6 +5,8 @@ export const CLI_VERSION = pkg.version;
 export const CLI_TOOL_NAME = 'doci-cli-tool';
 export const CLI_TOOL_DESCRIPTION = 'Doci Command Line Interface Tool';
 
+
+// TODO to share package 
 /** Minimal mime lookup for common extensions */
 export const MIME_MAP: Record<string, string> = {
     js: "application/javascript",

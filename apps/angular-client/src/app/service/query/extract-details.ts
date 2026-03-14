@@ -1,5 +1,5 @@
-import type { ExtractedDetails, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, MethodsUsedDetail, ParameterDetail, Details } from "@doci/shared";
-import { ExtractorType } from "@doci/shared";
+import type { ExtractedDetails, MethodDetail, ProjectFile, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, MethodsUsedDetail, ParameterDetail, Details } from "@doci/types";
+import { ExtractorType } from "@doci/types";
 import { assignParametersToConstructors, assignParametersToMethods, assignCommentsToMethods } from "./build-method-details";
 import { assignCommentsToClasses, buildClassDetails } from "./build-class-details";
 import { Parser, Tree } from "web-tree-sitter";

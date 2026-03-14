@@ -1,5 +1,5 @@
-import type { ExtractedDetails } from "controllers/extract.types";
-import { ExtractorType } from "controllers/extract.types";
+import type { ExtractedDetails, FileMetadata, IndexEntry, SymbolKind } from "@doci/types";
+import { ExtractorType } from "@doci/types";
 
 /**
  * Builds a flat, sorted symbol index from an array of FileMetadata entries.

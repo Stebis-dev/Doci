@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FileTreeComponent } from './file-tree.component';
 import { ProjectService } from '../../service/project.service';
 import { BehaviorSubject } from 'rxjs';
-import { ProjectFile, ClassDetail, MethodDetail, EnumDetail, NodePosition } from '@doci/shared';
+import { ProjectFile, ClassDetail, MethodDetail, EnumDetail, NodePosition } from '@doci/types';
 import { IconComponent } from '../icon.component';
 
 describe('FileTreeComponent', () => {

@@ -1,6 +1,6 @@
 import { CommentsExtractor } from '../comment.extractor';
 import { Parser, Tree, Query, QueryMatch, QueryCapture } from 'web-tree-sitter';
-import { ExtractorType, Details } from '@doci/shared';
+import { ExtractorType, Details } from '@doci/types';
 
 // Mock the Query class
 jest.mock('web-tree-sitter', () => ({

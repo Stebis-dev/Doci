@@ -1,4 +1,4 @@
-﻿import type { MethodsUsedDetail } from "controllers/extract.types";
+import type { MethodsUsedDetail } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
 

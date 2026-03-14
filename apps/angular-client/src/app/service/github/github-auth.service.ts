@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { PlatformService } from '../platform.service';
-import { ENVIRONMENT, GitHubAuthResponse } from '@doci/shared';
+import { ENVIRONMENT, GitHubAuthResponse } from '@doci/types';
 import { ElectronService } from '../electron.service';
 
 export interface GitHubAuthCredentials {

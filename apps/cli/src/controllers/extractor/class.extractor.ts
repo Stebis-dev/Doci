@@ -1,4 +1,4 @@
-import type { ClassTemporaryDetail, NodePosition } from "controllers/extract.types";
+import type { ClassTemporaryDetail, NodePosition } from "@doci/types";
 import { randomUUID } from "crypto";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";

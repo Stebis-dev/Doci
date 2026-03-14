@@ -1,5 +1,6 @@
+import type { ExtractedDetails } from "@doci/types";
+import { ExtractorType } from "@doci/types";
 import { ScanDepth } from "commands/scan/scan.constants";
-import { ExtractedDetails, ExtractorType } from "controllers/extract.types";
 import { ClassExtractor } from "controllers/extractor/class.extractor";
 import { CommentsExtractor } from "controllers/extractor/comment.extractor";
 import { ConstructorExtractor } from "controllers/extractor/constructor.extractor";

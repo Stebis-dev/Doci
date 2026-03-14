@@ -1,4 +1,4 @@
-﻿import type { ConstructorMethodDetail, NodePosition, ParameterDetail } from "controllers/extract.types";
+import type { ConstructorMethodDetail, NodePosition, ParameterDetail } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
 

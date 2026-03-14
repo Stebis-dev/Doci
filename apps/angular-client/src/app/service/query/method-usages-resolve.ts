@@ -1,4 +1,4 @@
-import type { FlatProject, MethodDetail } from "@doci/shared";
+import type { FlatProject, MethodDetail } from "@doci/types";
 
 export function resolveMethodUsages(project: FlatProject): FlatProject {
     // Create a map of all methods for quick lookup

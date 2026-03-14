@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GitHubService } from '../github.service';
 import { GitHubAuthService } from '../github-auth.service';
 import { of, throwError } from 'rxjs';
-import { ENVIRONMENT, GitHubRepo } from '@doci/shared';
+import { ENVIRONMENT, GitHubRepo } from '@doci/types';
 
 describe('GitHubService', () => {
     let service: GitHubService;

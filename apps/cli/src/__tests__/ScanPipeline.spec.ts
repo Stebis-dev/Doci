@@ -7,6 +7,7 @@
  * is exercised without mocking, and exit-code / stdout / file-system
  * side-effects can all be asserted.
  */
+import type { IndexEntry, Metadata } from '@doci/types';
 import { spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';

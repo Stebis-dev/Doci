@@ -1,5 +1,5 @@
 // Query/BaseQueryEngine.ts
-import { ExtractorType } from "@doci/shared";
+import { ExtractorType } from "@doci/types";
 import type { Parser, Tree } from "web-tree-sitter";
 import { Query } from "web-tree-sitter";
 

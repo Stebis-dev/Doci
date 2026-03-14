@@ -1,4 +1,4 @@
-import type { ClassDetail, MethodDetail, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, NodePosition, MethodsUsedDetail, Details } from "@doci/shared";
+import type { ClassDetail, MethodDetail, ClassTemporaryDetail, ConstructorMethodDetail, PropertyDetail, NodePosition, MethodsUsedDetail, Details } from "@doci/types";
 import { generateUUID } from "../../utils/utils";
 
 function findDetails<T extends { name: string; startPosition: NodePosition; endPosition: NodePosition }>(

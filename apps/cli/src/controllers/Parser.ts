@@ -7,7 +7,7 @@ import { Parser as TreeSitterParser } from "web-tree-sitter";
 /**
  * Wraps web-tree-sitter's Parser.
  * `TreeSitterParser.init()` is called once per process (tracked via the static
- * flag) so multiple `Parser` instances share the same WASM initialisation.
+ * flag) so multiple `Parser` instances share the same WASM initialization.
  */
 export class Parser {
     private _parser: TreeSitterParser | null = null;
@@ -45,7 +45,7 @@ export class Parser {
      */
     async setLanguage(language: string): Promise<void> {
         if (!this._parser) {
-            throw new Error('Parser not initialised. Call initialize() first.');
+            throw new Error('Parser not initialized. Call initialize() first.');
         }
         const lang = await getLanguage(language);
         this._parser.setLanguage(lang);

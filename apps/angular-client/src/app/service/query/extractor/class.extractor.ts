@@ -1,5 +1,5 @@
-import type { ClassTemporaryDetail, NodePosition } from "@doci/shared";
-import { ExtractorType } from "@doci/shared";
+import type { ClassTemporaryDetail, NodePosition } from "@doci/types";
+import { ExtractorType } from "@doci/types";
 import { Tree } from "web-tree-sitter";
 import { generateUUID } from "../../../utils/utils";
 import { BaseQueryEngine } from "./base-query.engine";

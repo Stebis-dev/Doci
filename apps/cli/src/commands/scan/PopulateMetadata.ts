@@ -1,5 +1,6 @@
+import type { ExtractedDetails, FileMetadata, FileStatus, Metadata, ProjectMetadata, ScanCounts } from "@doci/types";
+import { FileState } from "@doci/types";
 import { SCHEMA_VERSION } from "commands/scan/scan.constants";
-import type { ExtractedDetails } from "controllers/extract.types";
 import { randomUUID } from "crypto";
 import path from "path";
 import { Utils } from "utils";
@@ -12,9 +13,9 @@ export abstract class PopulateMetadata {
     static populateMetadata(projectMetadata: ProjectMetadata[], fileMetadata: FileMetadata[]): Metadata {
         const counts: ScanCounts = {
             scanned: fileMetadata.length,
-            processed: fileMetadata.filter(f => f.status === 'processed').length,
-            skipped: fileMetadata.filter(f => f.status === 'skipped').length,
-            failed: fileMetadata.filter(f => f.status === 'failed').length,
+            processed: fileMetadata.filter(f => f.status === FileState.PROCESSED).length,
+            skipped: fileMetadata.filter(f => f.status === FileState.SKIPPED).length,
+            failed: fileMetadata.filter(f => f.status === FileState.FAILED).length,
         };
 
         return {
@@ -55,7 +56,7 @@ export abstract class PopulateMetadata {
      */
     public static populateFileMetadata(
         files: string[],
-        symbolsMap?: Map<string, { symbols: ExtractedDetails | null; status: 'processed' | 'skipped' | 'failed'; error: string | null }>,
+        symbolsMap?: Map<string, { symbols: ExtractedDetails | null; status: FileStatus; error: string | null }>,
     ): FileMetadata[] {
         return files.map((file) => {
             const id = randomUUID();
@@ -67,7 +68,7 @@ export abstract class PopulateMetadata {
             let sizeBytes = 0;
             let createdAt = new Date().toISOString();
             let modifiedAt = new Date().toISOString();
-            let status: FileStatus = 'processed';
+            let status: FileStatus = FileState.PROCESSED;
             let error: string | null = null;
 
             try {
@@ -75,7 +76,7 @@ export abstract class PopulateMetadata {
                 modifiedAt = Utils.getFileModificationDate(file).toISOString();
                 sizeBytes = Utils.getFileSizeBytes(file);
             } catch (err) {
-                status = 'failed';
+                status = FileState.FAILED;
                 error = err instanceof Error ? err.message : String(err);
             }
 

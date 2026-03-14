@@ -1,7 +1,7 @@
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import type { NodePosition, ParameterDetail } from "@doci/shared";
-import { ExtractorType } from "@doci/shared";
+import type { NodePosition, ParameterDetail } from "@doci/types";
+import { ExtractorType } from "@doci/types";
 
 export class ParameterExtractor extends BaseQueryEngine {
     type = ExtractorType.Parameter;

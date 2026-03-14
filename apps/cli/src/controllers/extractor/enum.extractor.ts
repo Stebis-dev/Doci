@@ -1,4 +1,4 @@
-﻿import type { EnumDetail, EnumMember, NodePosition } from "controllers/extract.types";
+import type { EnumDetail, EnumMember, NodePosition } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
 

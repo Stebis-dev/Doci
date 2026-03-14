@@ -4,7 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MermaidService } from '../../service/mermaid/mermaid.service';
 import { ProjectService } from '../../service/project.service';
 import { ThemeService } from '../../service/theme.service';
-import { ClassDetail, EnumDetail, ExtractorType, NodePosition, ProjectFile } from '@doci/shared';
+import { ClassDetail, EnumDetail, ExtractorType, NodePosition, ProjectFile } from '@doci/types';
 import { BehaviorSubject, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MethodListComponent } from '../method-list/method-list.component';

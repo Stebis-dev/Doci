@@ -1,4 +1,4 @@
-import type { MethodDetail, ParameterDetail, Details, ClassTemporaryDetail, ConstructorMethodDetail } from "@doci/shared";
+import type { MethodDetail, ParameterDetail, Details, ClassTemporaryDetail, ConstructorMethodDetail } from "@doci/types";
 import { assignParametersToMethods, assignParametersToConstructors, assignCommentsToMethods } from "../build-method-details";
 
 describe('build-method-details', () => {

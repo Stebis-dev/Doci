@@ -5,7 +5,7 @@ import { GitHubImporterService } from '../../service/github/github-importer.serv
 import { ProjectService } from '../../service/project.service';
 import { FormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
-import { GitHubRepo, FlatProject } from '@doci/shared';
+import { GitHubRepo, FlatProject } from '@doci/types';
 
 describe('GitHubRepoModalComponent', () => {
     let component: GitHubRepoModalComponent;

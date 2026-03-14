@@ -12,6 +12,7 @@
  * Run locally after building:
  *   pnpm run build:win | build:mac | build:linux
  */
+import type { IndexEntry, Metadata } from '@doci/types';
 import { spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';

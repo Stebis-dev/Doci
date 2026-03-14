@@ -1,3 +1,4 @@
+import type { IndexEntry } from "@doci/types";
 import { Utils } from "./Utils";
 
 /**

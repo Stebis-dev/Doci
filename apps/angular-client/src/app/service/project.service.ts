@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { FileSystemService } from './fileSystem.service';
-import { FlatProject } from '@doci/shared';
+import { FlatProject } from '@doci/types';
 import { TreeSitterService } from './tree-sitter/tree-sitter.service';
 import { extractDetails } from './query/extract-details';
 import { Tree } from 'web-tree-sitter';

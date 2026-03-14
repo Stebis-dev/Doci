@@ -30,6 +30,7 @@
         "vitest": "^4.1.0"
     },
     "dependencies": {
+        "@doci/types": "workspace:*",
         "commander": "^14.0.2",
         "tree-sitter-javascript": "^0.23.1",
         "tree-sitter-typescript": "^0.23.2",

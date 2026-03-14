@@ -1,4 +1,4 @@
-ï»¿import type { MethodDetail, NodePosition, ParameterDetail } from "controllers/extract.types";
+import type { MethodDetail, NodePosition, ParameterDetail } from "@doci/types";
 import { randomUUID } from "crypto";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
@@ -6,7 +6,7 @@ import { BaseQueryEngine } from "./base-query.engine";
 /**
  * Extracts methods (class methods + standalone function declarations)
  * using the TypeScript/JavaScript tree-sitter grammar.
- * Constructor methods are excluded â€” use ConstructorExtractor for those.
+ * Constructor methods are excluded — use ConstructorExtractor for those.
  */
 export class MethodExtractor extends BaseQueryEngine {
     extract(tree: Tree): MethodDetail[] {
@@ -40,7 +40,7 @@ export class MethodExtractor extends BaseQueryEngine {
                 const paramsCapture = match.captures.find(c => c.name === 'method.params');
                 if (!nameCapture) continue;
 
-                // Skip constructors â€” handled by ConstructorExtractor
+                // Skip constructors — handled by ConstructorExtractor
                 if (nameCapture.node.text === 'constructor') continue;
 
                 const key = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ClassDetail, MethodDetail, PropertyDetail, EnumDetail, ParameterDetail } from '@doci/shared';
+import { ClassDetail, MethodDetail, PropertyDetail, EnumDetail, ParameterDetail } from '@doci/types';
 import { ProjectService } from '../project.service';
 
 @Injectable({

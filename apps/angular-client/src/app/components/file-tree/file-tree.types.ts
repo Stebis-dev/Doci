@@ -1,5 +1,5 @@
-import { ProjectFile } from '@doci/shared';
-import { MethodDetail } from '@doci/shared';
+import { ProjectFile } from '@doci/types';
+import { MethodDetail } from '@doci/types';
 
 export type NodeType = 'file' | 'directory' | 'class' | 'enum' | 'interface' | 'method';
 

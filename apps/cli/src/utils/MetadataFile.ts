@@ -1,3 +1,4 @@
+import type { Metadata } from "@doci/types";
 import { FileSystemUtils } from "utils/FileSystemUtils";
 import { CliError } from "./ErrorHandler";
 import { Utils } from "./Utils";

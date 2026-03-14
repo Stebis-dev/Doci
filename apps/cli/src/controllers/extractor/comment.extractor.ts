@@ -1,4 +1,4 @@
-﻿import type { Details, NodePosition } from "controllers/extract.types";
+import type { Details, NodePosition } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
 

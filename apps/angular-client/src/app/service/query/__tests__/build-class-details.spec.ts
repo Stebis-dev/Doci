@@ -1,4 +1,4 @@
-import { ClassDetail, ClassTemporaryDetail, ConstructorMethodDetail, Details, MethodDetail, MethodsUsedDetail, PropertyDetail } from '@doci/shared';
+import { ClassDetail, ClassTemporaryDetail, ConstructorMethodDetail, Details, MethodDetail, MethodsUsedDetail, PropertyDetail } from '@doci/types';
 import { buildClassDetails, assignCommentsToClasses } from '../build-class-details';
 
 jest.mock('../../../utils/utils', () => ({

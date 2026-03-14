@@ -3,7 +3,7 @@ import * as url from 'url';
 import * as http from 'http';
 import * as https from 'https';
 import App from '../app';
-import { ENVIRONMENT, GitHubAuthCredentials } from '@doci/shared';
+import { ENVIRONMENT, GitHubAuthCredentials } from '@doci/types';
 
 export default class GitHubAuthAPI {
     private static readonly clientId = ENVIRONMENT.github.electronClientId;

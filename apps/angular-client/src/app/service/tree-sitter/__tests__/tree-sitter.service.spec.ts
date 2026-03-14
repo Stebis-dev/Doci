@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { TreeSitterService } from '../tree-sitter.service';
 import { Parser, Language, Tree } from 'web-tree-sitter';
 import { extensionToLanguage } from '../parser.strategy';
-import { ProgrammingLanguageExtension } from '@doci/shared';
+import { ProgrammingLanguageExtension } from '@doci/types';
 
 jest.mock('web-tree-sitter');
 

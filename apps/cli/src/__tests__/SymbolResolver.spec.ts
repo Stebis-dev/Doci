@@ -1,5 +1,6 @@
+import type { FileMetadata } from '@doci/types';
+import { ExtractorType, FileState } from '@doci/types';
 import { SymbolResolver } from 'controllers/SymbolResolver';
-import { ExtractorType } from 'controllers/extract.types';
 import { describe, expect, it } from 'vitest';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
@@ -18,7 +19,7 @@ function makeFile(
         sizeBytes: 100,
         createdAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),
-        status: 'processed',
+        status: FileState.PROCESSED,
         error: null,
         symbols: {
             filePath,
@@ -35,7 +36,7 @@ function makeFile(
                 endPosition: { row: 10, column: 0 },
             })),
         },
-    } as unknown as FileMetadata;
+    } as FileMetadata;
 }
 
 // ── tests ─────────────────────────────────────────────────────────────────────
@@ -64,7 +65,7 @@ describe('SymbolResolver', () => {
                 id: 'test', filePath: '/f.ts', fileName: 'f.ts', extension: 'ts',
                 mimeType: 'text/typescript', language: 'TypeScript', sizeBytes: 0,
                 createdAt: new Date().toISOString(), modifiedAt: new Date().toISOString(),
-                status: 'skipped', error: null,
+                status: FileState.SKIPPED, error: null,
             };
 
             const registry = SymbolResolver.buildRegistry([empty]);

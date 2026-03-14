@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EnumMemberListComponent } from './enum-member-list.component';
-import { EnumMember, NodePosition } from '@doci/shared';
+import { EnumMember, NodePosition } from '@doci/types';
 
 describe('EnumMemberListComponent', () => {
     let component: EnumMemberListComponent;

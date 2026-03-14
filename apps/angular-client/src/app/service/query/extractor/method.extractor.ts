@@ -1,7 +1,7 @@
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import type { MethodDetail, NodePosition, ParameterDetail } from "@doci/shared";
-import { ExtractorType } from "@doci/shared";
+import type { MethodDetail, NodePosition, ParameterDetail } from "@doci/types";
+import { ExtractorType } from "@doci/types";
 import { generateUUID } from "../../../utils/utils";
 
 export class MethodExtractor extends BaseQueryEngine {
