@@ -34,10 +34,28 @@ export interface Details {
 }
 
 
+/**
+ * A resolved reference to a parent class or implemented interface.
+ * `filePath` is null when the parent was not found in the scanned directory
+ * (e.g. third-party library types).
+ */
+export interface ResolvedRef {
+    /** The declared name of the parent, e.g. "Animal" or "Serializable". */
+    name: string;
+    /** Absolute path to the file that declares this symbol, or null if not found. */
+    filePath: string | null;
+}
+
 export interface ClassTemporaryDetail extends Details {
     uuid: string;
     modifiers: string[];
+    /** Raw parent / interface names captured from extends / implements clauses. */
     inheritance: string[];
+    /**
+     * Cross-file resolved inheritance entries.
+     * Populated by SymbolResolver after all files have been extracted.
+     */
+    resolvedInheritance?: ResolvedRef[];
     methods: { name: string }[];
     properties: { name: string }[];
     constructors: { name: string }[];

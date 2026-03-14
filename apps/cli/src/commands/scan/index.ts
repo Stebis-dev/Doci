@@ -7,6 +7,7 @@ import { createLogger, handleError, IndexFile, Logger, MetadataFile, Utils } fro
 import { helpOptions, requiredOptions, scanOptions } from 'commands/command.constants';
 import { ExtractionOrchestrator } from 'controllers/ExtractionOrchestrator';
 import { IndexBuilder } from 'controllers/IndexBuilder';
+import { SymbolResolver } from 'controllers/SymbolResolver';
 import type { ExtractedDetails } from 'controllers/extract.types';
 
 /** Exit codes per Issue 29 spec */
@@ -118,6 +119,13 @@ async function scanAction(options: any, logger: Logger) {
 
     // ── Metadata assembly ─────────────────────────────────────────────────────
     const fileMetadata = PopulateMetadata.populateFileMetadata(files, symbolsMap);
+
+    // ── Cross-file symbol resolution ──────────────────────────────────────────
+    if (symbolsMap) {
+        const { resolved } = SymbolResolver.run(fileMetadata);
+        logger.info(`Symbol resolution complete — ${resolved} inheritance reference(s) resolved.`);
+    }
+
     const projectMetadata = PopulateMetadata.populateDirectoryMetadata(entryDirectory, fileMetadata);
     const metadata = PopulateMetadata.populateMetadata([projectMetadata], fileMetadata);
 

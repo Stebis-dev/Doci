@@ -57,7 +57,7 @@ export class ClassExtractor extends BaseQueryEngine {
                 uuid: randomUUID(),
                 name: nameCapture.node.text,
                 modifiers: [],
-                inheritance: [],
+                inheritance: extractInheritance(classCapture?.node ?? nameCapture.node),
                 methods,
                 properties,
                 constructors,
@@ -69,5 +69,47 @@ export class ClassExtractor extends BaseQueryEngine {
 
         return Array.from(classMap.values());
     }
+}
+
+/**
+ * Walk the direct children of a class / abstract-class declaration node and
+ * collect all parent names from `extends_clause` and `implements_clause` nodes.
+ *
+ * – `extends_clause`  → single base class (the first identifier-like child)
+ * – `implements_clause` → zero or more interfaces (all type_identifier children)
+ */
+function extractInheritance(classNode: any): string[] {
+    const names: string[] = [];
+
+    for (const child of classNode.children ?? []) {
+        if (child.type === 'class_heritage') {
+            for (const heritageChild of child.children ?? []) {
+                if (heritageChild.type === 'extends_clause') {
+                    // First identifier / type_identifier / member_expression child is the base class
+                    for (const n of heritageChild.children ?? []) {
+                        if (n.type === 'identifier' || n.type === 'type_identifier' || n.type === 'member_expression') {
+                            names.push(n.text);
+                            break;
+                        }
+                    }
+                } else if (heritageChild.type === 'implements_clause') {
+                    for (const n of heritageChild.children ?? []) {
+                        if (n.type === 'type_identifier' || n.type === 'identifier') {
+                            names.push(n.text);
+                        }
+                        // Handle generic references like "Serializable<string>" — take the outer name
+                        if (n.type === 'generic_type') {
+                            const inner = n.children?.find((c: any) =>
+                                c.type === 'type_identifier' || c.type === 'identifier'
+                            );
+                            if (inner) names.push(inner.text);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return names;
 }
 
