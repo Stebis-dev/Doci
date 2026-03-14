@@ -1,4 +1,4 @@
-import { LANGUAGE_MAP, MIME_MAP } from "constants.js";
+import { LANGUAGE_MAP, MIME_MAP } from "@doci/types";
 import fs from "fs";
 import path from "path";
 // import { CliError } from "apps/cli/src/shared/ErrorHandler";

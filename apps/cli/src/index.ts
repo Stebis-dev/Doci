@@ -1,12 +1,17 @@
 import { Command } from 'commander';
-import extractCommand from 'commands/extract';
-import showCommand from 'commands/show/index';
-import { CLI_TOOL_DESCRIPTION, CLI_TOOL_NAME, CLI_VERSION } from 'constants.js';
-import scanCommand from './commands/scan';
+import extractCommand from 'commands/extract.command';
+import showCommand from 'commands/show.command';
+import scanCommand from './commands/scan/scan.command';
 
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FileSystemUtils } from 'utils/FileSystemUtils';
+
+import pkg from "../package.json";
+
+const CLI_VERSION = pkg.version;
+const CLI_TOOL_NAME = 'doci-cli-tool';
+const CLI_TOOL_DESCRIPTION = 'Doci Command Line Interface Tool';
 
 import path from "path";
 

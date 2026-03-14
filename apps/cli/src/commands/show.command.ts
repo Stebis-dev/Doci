@@ -1,8 +1,10 @@
 import { Command } from 'commander';
 import { helpOptions, requiredOptions } from 'commands/command.constants';
 import { command } from 'commands/command.types';
-import { SHOW_COMMAND_DESCRIPTION, SHOW_COMMAND_NAME } from 'commands/show/show.constants';
 import { createLogger, Logger, MetadataFile } from 'utils';
+
+const SHOW_COMMAND_NAME = 'show';
+const SHOW_COMMAND_DESCRIPTION = 'Show metadata information';
 
 // show metadata command
 export default function showCommand(program: Command) {
