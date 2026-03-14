@@ -9,7 +9,7 @@
       "path": "./.github/workflows"
     },
     {
-      "name": "doci-cli-tool",
+      "name": "CLI",
       "path": "apps/cli"
     }
   ],

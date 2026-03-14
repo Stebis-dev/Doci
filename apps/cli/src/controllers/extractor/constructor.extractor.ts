@@ -1,6 +1,6 @@
-﻿import { Tree } from "web-tree-sitter";
+﻿import type { ConstructorMethodDetail, NodePosition, ParameterDetail } from "controllers/extract.types";
+import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { ConstructorMethodDetail, ExtractorType, NodePosition, ParameterDetail } from "controllers/extract.types";
 
 export class ConstructorExtractor extends BaseQueryEngine {
     extract(tree: Tree): ConstructorMethodDetail[] {
@@ -16,8 +16,8 @@ export class ConstructorExtractor extends BaseQueryEngine {
         const map = new Map<string, ConstructorMethodDetail>();
 
         for (const match of matches) {
-            const nameCapture   = match.captures.find(c => c.name === 'constructor.name');
-            const bodyCapture   = match.captures.find(c => c.name === 'constructor.body');
+            const nameCapture = match.captures.find(c => c.name === 'constructor.name');
+            const bodyCapture = match.captures.find(c => c.name === 'constructor.body');
             const paramsCapture = match.captures.find(c => c.name === 'constructor.params');
             if (!nameCapture || nameCapture.node.text !== 'constructor') continue;
 
@@ -35,7 +35,7 @@ export class ConstructorExtractor extends BaseQueryEngine {
                         genericName: [],
                         objectType: [],
                         startPosition: { row: child.startPosition.row, column: child.startPosition.column },
-                        endPosition:   { row: child.endPosition.row,   column: child.endPosition.column },
+                        endPosition: { row: child.endPosition.row, column: child.endPosition.column },
                     });
                 }
             }
@@ -46,7 +46,7 @@ export class ConstructorExtractor extends BaseQueryEngine {
                 parameters,
                 body: bodyCapture?.node.text ?? '',
                 startPosition: nameCapture.node.startPosition as NodePosition,
-                endPosition:   nameCapture.node.endPosition   as NodePosition,
+                endPosition: nameCapture.node.endPosition as NodePosition,
             });
         }
 

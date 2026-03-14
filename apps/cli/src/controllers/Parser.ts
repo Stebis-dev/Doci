@@ -1,7 +1,8 @@
-import { getLanguage, isLanguageSupported } from "controllers/parser.types";
-import { Parser as TreeSitterParser, Tree } from "web-tree-sitter";
+import { getLanguage } from "controllers/parser.types";
 import path from 'path';
 import { FileSystemUtils } from 'utils/FileSystemUtils';
+import type { Tree } from "web-tree-sitter";
+import { Parser as TreeSitterParser } from "web-tree-sitter";
 
 /**
  * Wraps web-tree-sitter's Parser.

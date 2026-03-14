@@ -1,6 +1,6 @@
-﻿import { Tree } from "web-tree-sitter";
+﻿import type { MethodsUsedDetail } from "controllers/extract.types";
+import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { ExtractorType, MethodsUsedDetail } from "controllers/extract.types";
 
 /**
  * TODO (Phase 5): resolve cross-file call-site references.

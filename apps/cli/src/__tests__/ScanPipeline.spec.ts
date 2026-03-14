@@ -7,11 +7,11 @@
  * is exercised without mocking, and exit-code / stdout / file-system
  * side-effects can all be asserted.
  */
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { spawnSync } from 'child_process';
 import * as fs from 'fs';
-import * as path from 'path';
 import * as os from 'os';
+import * as path from 'path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 /** Root of the CLI package (where package.json lives). */
 const CLI_ROOT = path.resolve(import.meta.dirname, '..', '..');

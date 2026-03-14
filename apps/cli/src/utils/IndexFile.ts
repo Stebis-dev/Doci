@@ -16,7 +16,7 @@ export class IndexFile {
     }
 
     /**
-     * Serialise `entries` to `index.json` next to the given metadata file.
+     * Serialize `entries` to `index.json` next to the given metadata file.
      * Creates the target directory if needed.
      * @returns The absolute path where `index.json` was written.
      */

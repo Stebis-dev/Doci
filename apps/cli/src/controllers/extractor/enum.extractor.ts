@@ -1,6 +1,6 @@
-﻿import { Tree } from "web-tree-sitter";
+﻿import type { EnumDetail, EnumMember, NodePosition } from "controllers/extract.types";
+import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { EnumDetail, EnumMember, ExtractorType, NodePosition } from "controllers/extract.types";
 
 export class EnumExtractor extends BaseQueryEngine {
     extract(tree: Tree): EnumDetail[] {
@@ -46,7 +46,7 @@ export class EnumExtractor extends BaseQueryEngine {
                 modifiers: [],
                 members,
                 startPosition: (enumCapture?.node.startPosition ?? nameCapture.node.startPosition) as NodePosition,
-                endPosition:   (enumCapture?.node.endPosition   ?? nameCapture.node.endPosition)   as NodePosition,
+                endPosition: (enumCapture?.node.endPosition ?? nameCapture.node.endPosition) as NodePosition,
             });
         }
 

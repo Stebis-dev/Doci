@@ -1,14 +1,14 @@
 import { Command } from 'commander';
-import { SCAN_COMMAND_DESCRIPTION, SCAN_COMMAND_NAME, ScanDepth } from './scan.constants';
-import { DirectoryTraverser, TraversalOptions } from 'commands/scan/DirectoryTraverser';
-import { command } from 'commands/command.types';
-import { PopulateMetadata } from 'commands/scan/PopulateMetadata';
-import { createLogger, handleError, IndexFile, Logger, MetadataFile, Utils } from 'utils';
 import { helpOptions, requiredOptions, scanOptions } from 'commands/command.constants';
+import { command } from 'commands/command.types';
+import { DirectoryTraverser, TraversalOptions } from 'commands/scan/DirectoryTraverser';
+import { PopulateMetadata } from 'commands/scan/PopulateMetadata';
 import { ExtractionOrchestrator } from 'controllers/ExtractionOrchestrator';
 import { IndexBuilder } from 'controllers/IndexBuilder';
 import { SymbolResolver } from 'controllers/SymbolResolver';
 import type { ExtractedDetails } from 'controllers/extract.types';
+import { createLogger, handleError, IndexFile, Logger, MetadataFile, Utils } from 'utils';
+import { SCAN_COMMAND_DESCRIPTION, SCAN_COMMAND_NAME, ScanDepth } from './scan.constants';
 
 /** Exit codes per Issue 29 spec */
 const EXIT_OK = 0;

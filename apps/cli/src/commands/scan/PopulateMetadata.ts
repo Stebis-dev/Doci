@@ -1,8 +1,8 @@
-import path from "path";
-import { randomUUID } from "crypto";
-import { Utils } from "utils";
 import { SCHEMA_VERSION } from "commands/scan/scan.constants";
 import type { ExtractedDetails } from "controllers/extract.types";
+import { randomUUID } from "crypto";
+import path from "path";
+import { Utils } from "utils";
 
 export abstract class PopulateMetadata {
 

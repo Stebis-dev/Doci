@@ -1,10 +1,10 @@
 import { Command } from 'commander';
-import { createLogger, Logger } from 'utils';
-import { command } from 'commands/command.types';
 import { helpOptions, optionalOptions } from 'commands/command.constants';
+import { command } from 'commands/command.types';
 import { EXTRACT_COMMAND_DESCRIPTION, EXTRACT_COMMAND_NAME } from 'commands/extract/extract.constants';
-import { MetadataFile } from 'utils/MetadataFile';
 import { Parser } from 'controllers/Parser';
+import { createLogger, Logger } from 'utils';
+import { MetadataFile } from 'utils/MetadataFile';
 
 export default function extractCommand(program: Command) {
     const logger = createLogger(command.EXTRACT);

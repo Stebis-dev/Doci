@@ -1,8 +1,8 @@
 import { Command } from 'commander';
-import { createLogger, Logger, MetadataFile } from 'utils';
+import { helpOptions, requiredOptions } from 'commands/command.constants';
 import { command } from 'commands/command.types';
 import { SHOW_COMMAND_DESCRIPTION, SHOW_COMMAND_NAME } from 'commands/show/show.constants';
-import { helpOptions, requiredOptions } from 'commands/command.constants';
+import { createLogger, Logger, MetadataFile } from 'utils';
 
 // show metadata command
 export default function showCommand(program: Command) {
@@ -19,8 +19,7 @@ export default function showCommand(program: Command) {
         )
         .option(
             requiredOptions.DIRECTORY,
-            "directory to show metadata from",
-            "." // default value
+            "directory containing metadata.json to show information from"
         )
         .action((options) => {
             showAction(options, logger);
@@ -29,13 +28,13 @@ export default function showCommand(program: Command) {
 
 function showAction(options: any, logger: Logger) {
     logger.info('Executing show command');
-    const dir = options.dir as string | null;
+    const metadataPath = options.dir as string | null;
 
-    if (!dir) {
-        logger.info('No directory specified for show command, current directory will be used.');
+    if (!metadataPath) {
+        logger.info('No metadata file specified for show command, default metadata location will be used.');
     }
 
-    const metadataFilePath = MetadataFile.read(dir);
+    const metadataFilePath = MetadataFile.read(metadataPath);
 
     const selected = normalizeShowOption(options.filter);
     logger.info(`Show options selected: ${selected.join(', ')}`);

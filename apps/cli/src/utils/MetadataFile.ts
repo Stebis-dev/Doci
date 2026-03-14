@@ -1,4 +1,6 @@
-import { CliError, Utils } from "utils";
+import { FileSystemUtils } from "utils/FileSystemUtils";
+import { CliError } from "./ErrorHandler";
+import { Utils } from "./Utils";
 
 export class MetadataFile {
     // Placeholder for MetadataFile class implementation
@@ -9,13 +11,7 @@ export class MetadataFile {
     }
 
     private static getExecutableDirectory(): string {
-        if ((process as any).pkg) {
-            // Running as packaged .exe
-            return Utils.dirname(process.execPath);
-        }
-
-        // Development mode (Node.js)
-        return Utils.join(process.cwd());
+        return FileSystemUtils.getToolExecutableRoot() ?? process.cwd();
     }
 
     public static getDefaultMetadataPath(): string {
@@ -23,12 +19,23 @@ export class MetadataFile {
     }
 
     /**
-     * @description Check if given path is valid, if not returns default metadata file path
-     * @param path - Path to the metadata file
-     * @returns Validated metadata file path
+     * Resolves the given path to a metadata file path, then validates it exists.
+     * - If `path` is a directory, resolves to `<path>/temp/metadata.json`.
+     * - If `path` is already a file, uses it as-is.
+     * - If `path` is null/undefined or the resolved file doesn't exist, falls back to
+     *   the default metadata location ({@link getDefaultMetadataPath}).
+     *
+     * @param path - A file path, directory path, or null.
+     * @returns A file path that is guaranteed to exist, or the default path as fallback.
      */
     private static checkPath(path: string | null): string {
         let metadataFilePath = path;
+
+        if (metadataFilePath && Utils.validateDirectoryEntry(metadataFilePath)) {
+            // Caller passed a directory — resolve to <dir>/temp/metadata.json
+            metadataFilePath = Utils.join(metadataFilePath, this._defaultMetadataPath);
+        }
+
         if (!metadataFilePath || !Utils.validateFileExistence(metadataFilePath)) {
             metadataFilePath = this.getDefaultMetadataPath();
         }

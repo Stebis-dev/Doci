@@ -1,12 +1,12 @@
-import { Language } from "web-tree-sitter";
-import { createRequire } from "module";
 import { existsSync } from "fs";
+import { createRequire } from "module";
 import path from 'path';
 import { FileSystemUtils } from 'utils/FileSystemUtils';
+import { Language } from "web-tree-sitter";
 
 /**
- * Maps a normalised language key to the npm package name and the WASM file
- * it ships.  Both keys are lowercase so callers must normalise before lookup.
+ * Maps a normalized language key to the npm package name and the WASM file
+ * it ships.  Both keys are lowercase so callers must normalize before lookup.
  */
 export const LanguageWasmMap: Record<string, { package: string; wasm: string }> = {
     javascript: { package: 'tree-sitter-javascript', wasm: 'tree-sitter-javascript.wasm' },
@@ -21,17 +21,17 @@ export const LanguageLibraries: { [key: string]: string } = {
     typescript: 'tree-sitter-typescript',
 };
 
-/** Normalise a language display name (e.g. "TypeScript") to a lookup key. */
-function normalise(language: string): string {
+/** Normalize a language display name (e.g. "TypeScript") to a lookup key. */
+function normalize(language: string): string {
     return language.toLowerCase().replace(/[^a-z]/g, '');
 }
 
 export function isLanguageSupported(language: string): boolean {
-    return normalise(language) in LanguageWasmMap;
+    return normalize(language) in LanguageWasmMap;
 }
 
 export async function getLanguage(language: string): Promise<Language> {
-    const key = normalise(language);
+    const key = normalize(language);
     const entry = LanguageWasmMap[key];
 
     if (!entry) {

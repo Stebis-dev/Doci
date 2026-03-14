@@ -1,7 +1,7 @@
-import { Tree } from "web-tree-sitter";
-import { BaseQueryEngine } from "./base-query.engine";
-import { ClassTemporaryDetail, ExtractorType, NodePosition } from "controllers/extract.types";
+import type { ClassTemporaryDetail, NodePosition } from "controllers/extract.types";
 import { randomUUID } from "crypto";
+import type { Tree } from "web-tree-sitter";
+import { BaseQueryEngine } from "./base-query.engine";
 
 /**
  * Extracts class declarations using the TypeScript tree-sitter grammar.

@@ -3,7 +3,7 @@
         "build:cli": {
             "dependsOn": [],
             "outputs": [
-                "packages/cli/release/**"
+                "apps/cli/release/**"
             ]
         },
         "build": {

@@ -1,6 +1,6 @@
-﻿import { Tree } from "web-tree-sitter";
+﻿import type { NodePosition, PropertyDetail } from "controllers/extract.types";
+import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { ExtractorType, NodePosition, PropertyDetail } from "controllers/extract.types";
 
 export class PropertyExtractor extends BaseQueryEngine {
     extract(tree: Tree): PropertyDetail[] {
@@ -36,7 +36,7 @@ export class PropertyExtractor extends BaseQueryEngine {
                 predefinedType: [],
                 objectType: [],
                 startPosition: (propCapture?.node.startPosition ?? nameCapture.node.startPosition) as NodePosition,
-                endPosition:   (propCapture?.node.endPosition   ?? nameCapture.node.endPosition)   as NodePosition,
+                endPosition: (propCapture?.node.endPosition ?? nameCapture.node.endPosition) as NodePosition,
             });
         }
 

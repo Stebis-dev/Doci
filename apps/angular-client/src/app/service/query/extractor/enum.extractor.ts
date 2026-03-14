@@ -1,9 +1,7 @@
-import { Tree } from "web-tree-sitter";
+import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { EnumDetail, EnumMember, ExtractorType, NodePosition } from "@doci/shared";
-import { e } from "@angular/core/weak_ref.d-DOjz-6fK";
-
-
+import type { EnumDetail, EnumMember, NodePosition } from "@doci/shared";
+import { ExtractorType } from "@doci/shared";
 
 export class EnumExtractor extends BaseQueryEngine {
     type = ExtractorType.Enum;

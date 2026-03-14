@@ -1,4 +1,5 @@
-import { ExtractorType, ExtractedDetails } from "controllers/extract.types";
+import { ScanDepth } from "commands/scan/scan.constants";
+import { ExtractedDetails, ExtractorType } from "controllers/extract.types";
 import { ClassExtractor } from "controllers/extractor/class.extractor";
 import { CommentsExtractor } from "controllers/extractor/comment.extractor";
 import { ConstructorExtractor } from "controllers/extractor/constructor.extractor";
@@ -6,9 +7,8 @@ import { EnumExtractor } from "controllers/extractor/enum.extractor";
 import { MethodExtractor } from "controllers/extractor/method.extractor";
 import { ParameterExtractor } from "controllers/extractor/parameter.extractor";
 import { PropertyExtractor } from "controllers/extractor/property.extractor";
-import { ScanDepth } from "commands/scan/scan.constants";
-import { Parser, Tree } from "web-tree-sitter";
 import { createLogger } from "utils";
+import type { Parser, Tree } from "web-tree-sitter";
 
 const logger = createLogger('ExtractDetails');
 

@@ -1,6 +1,7 @@
 import { ExtractorType } from "controllers/extract.types";
 import { createLogger, Logger } from "utils";
-import { Parser, Tree, Query } from "web-tree-sitter";
+import type { Parser, Tree } from "web-tree-sitter";
+import { Query } from "web-tree-sitter";
 
 export abstract class BaseQueryEngine {
     public type: ExtractorType;

@@ -1,10 +1,10 @@
-import { describe, it, expect, afterAll } from 'vitest';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as os from 'os';
+import { ScanDepth } from 'commands/scan/scan.constants';
 import { ExtractionOrchestrator } from 'controllers/ExtractionOrchestrator';
 import { ExtractorType } from 'controllers/extract.types';
-import { ScanDepth } from 'commands/scan/scan.constants';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { afterAll, describe, expect, it } from 'vitest';
 
 /** Absolute path to the pre-written fixture files. */
 const FIXTURES = path.resolve(import.meta.dirname, 'fixtures');

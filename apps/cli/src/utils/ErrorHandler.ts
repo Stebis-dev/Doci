@@ -1,4 +1,4 @@
-import { createLogger } from "utils";
+import { createLogger } from "./Logger";
 
 export class CliError extends Error {
     constructor(message: string, public details?: unknown) {
@@ -9,7 +9,7 @@ export class CliError extends Error {
 
 export const wrap =
     <T extends (...args: any[]) => Promise<any>>(fn: T) =>
-        async (...args: Parameters<T>): Promise<ReturnType<T>> => {
+        async (...args: Parameters<T>): Promise<Awaited<ReturnType<T>>> => {
             try {
                 return await fn(...args);
             } catch (err) {

@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
 import { SymbolResolver } from 'controllers/SymbolResolver';
 import { ExtractorType } from 'controllers/extract.types';
+import { describe, expect, it } from 'vitest';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 

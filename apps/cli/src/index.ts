@@ -1,11 +1,11 @@
 import { Command } from 'commander';
-import scanCommand from './commands/scan';
-import { CLI_TOOL_DESCRIPTION, CLI_TOOL_NAME, CLI_VERSION } from 'constants.js';
-import showCommand from 'commands/show/index';
 import extractCommand from 'commands/extract';
+import showCommand from 'commands/show/index';
+import { CLI_TOOL_DESCRIPTION, CLI_TOOL_NAME, CLI_VERSION } from 'constants.js';
+import scanCommand from './commands/scan';
 
-import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { fileURLToPath } from "url";
 import { FileSystemUtils } from 'utils/FileSystemUtils';
 
 import path from "path";

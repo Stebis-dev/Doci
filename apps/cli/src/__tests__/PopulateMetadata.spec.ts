@@ -1,9 +1,9 @@
-import { describe, it, expect, afterEach } from 'vitest';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as os from 'os';
 import { PopulateMetadata } from 'commands/scan/PopulateMetadata';
 import { SCHEMA_VERSION } from 'commands/scan/scan.constants';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { afterEach, describe, expect, it } from 'vitest';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

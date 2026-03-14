@@ -1,7 +1,7 @@
-﻿import { Tree } from "web-tree-sitter";
-import { BaseQueryEngine } from "./base-query.engine";
-import { ExtractorType, MethodDetail, NodePosition, ParameterDetail } from "controllers/extract.types";
+﻿import type { MethodDetail, NodePosition, ParameterDetail } from "controllers/extract.types";
 import { randomUUID } from "crypto";
+import type { Tree } from "web-tree-sitter";
+import { BaseQueryEngine } from "./base-query.engine";
 
 /**
  * Extracts methods (class methods + standalone function declarations)
@@ -34,9 +34,9 @@ export class MethodExtractor extends BaseQueryEngine {
             const matches = this.runQuery(tree, queryStr) as { captures: any[] }[];
 
             for (const match of matches) {
-                const nameCapture   = match.captures.find(c => c.name === 'method.name');
+                const nameCapture = match.captures.find(c => c.name === 'method.name');
                 const methodCapture = match.captures.find(c => c.name === 'method');
-                const bodyCapture   = match.captures.find(c => c.name === 'method.body');
+                const bodyCapture = match.captures.find(c => c.name === 'method.body');
                 const paramsCapture = match.captures.find(c => c.name === 'method.params');
                 if (!nameCapture) continue;
 
@@ -58,7 +58,7 @@ export class MethodExtractor extends BaseQueryEngine {
                     parameters,
                     body: bodyCapture?.node.text ?? '',
                     startPosition: (methodCapture?.node.startPosition ?? nameCapture.node.startPosition) as NodePosition,
-                    endPosition:   (methodCapture?.node.endPosition   ?? nameCapture.node.endPosition)   as NodePosition,
+                    endPosition: (methodCapture?.node.endPosition ?? nameCapture.node.endPosition) as NodePosition,
                 });
             }
         }
@@ -82,7 +82,7 @@ function parseParameters(paramsNode: any): ParameterDetail[] {
                 genericName: [],
                 objectType: [],
                 startPosition: { row: child.startPosition.row, column: child.startPosition.column },
-                endPosition:   { row: child.endPosition.row,   column: child.endPosition.column },
+                endPosition: { row: child.endPosition.row, column: child.endPosition.column },
             });
         }
     }

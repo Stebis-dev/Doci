@@ -1,4 +1,6 @@
-import { ClassTemporaryDetail, ExtractedDetails, ExtractorType, ResolvedRef } from "controllers/extract.types";
+import type { ClassTemporaryDetail, ExtractedDetails, ResolvedRef } from "controllers/extract.types";
+import { ExtractorType } from "controllers/extract.types";
+
 
 /**
  * A map from declared symbol name → the file that declares it.

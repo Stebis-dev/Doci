@@ -1,8 +1,8 @@
-import { Parser } from "controllers/Parser";
-import { extractDetails } from "controllers/extractDetails";
-import { ExtractedDetails } from "controllers/extract.types";
-import { isLanguageSupported } from "controllers/parser.types";
 import { ScanDepth } from "commands/scan/scan.constants";
+import { Parser } from "controllers/Parser";
+import { ExtractedDetails } from "controllers/extract.types";
+import { extractDetails } from "controllers/extractDetails";
+import { isLanguageSupported } from "controllers/parser.types";
 import { Utils, createLogger } from "utils";
 
 const logger = createLogger('ExtractionOrchestrator');

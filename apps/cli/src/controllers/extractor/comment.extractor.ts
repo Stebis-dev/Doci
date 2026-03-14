@@ -1,6 +1,6 @@
-﻿import { Tree } from "web-tree-sitter";
+﻿import type { Details, NodePosition } from "controllers/extract.types";
+import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { Details, ExtractorType, NodePosition } from "controllers/extract.types";
 
 export class CommentsExtractor extends BaseQueryEngine {
     extract(tree: Tree): Details[] {
@@ -28,7 +28,7 @@ export class CommentsExtractor extends BaseQueryEngine {
             map.set(key, {
                 name: clean,
                 startPosition: capture.node.startPosition as NodePosition,
-                endPosition:   capture.node.endPosition   as NodePosition,
+                endPosition: capture.node.endPosition as NodePosition,
             });
         }
 

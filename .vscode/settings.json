@@ -9,6 +9,9 @@
   "azureFunctions.projectLanguage": "TypeScript",
   "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "neverOpen",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
   "azureFunctions.projectLanguageModel": 4,
   "azureFunctions.preDeployTask": "npm prune (functions)",
 

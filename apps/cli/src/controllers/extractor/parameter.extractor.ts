@@ -1,6 +1,6 @@
-﻿import { Tree } from "web-tree-sitter";
+﻿import type { NodePosition, ParameterDetail } from "controllers/extract.types";
+import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { ExtractorType, NodePosition, ParameterDetail } from "controllers/extract.types";
 
 /** Extracts all parameters across all function/method declarations. */
 export class ParameterExtractor extends BaseQueryEngine {
@@ -29,7 +29,7 @@ export class ParameterExtractor extends BaseQueryEngine {
                     genericName: [],
                     objectType: [],
                     startPosition: capture.node.startPosition as NodePosition,
-                    endPosition:   capture.node.endPosition   as NodePosition,
+                    endPosition: capture.node.endPosition as NodePosition,
                 });
             }
         }
