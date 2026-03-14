@@ -32,6 +32,13 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile
 
+      - name: Run CLI Tests
+        working-directory: apps/cli
+        run: npx vitest run
+        # A non-zero exit from vitest (any test failure) marks this step as
+        # failed, which stops the job and prevents the build steps from running.
+        # GitHub Actions honours the exit code automatically; no extra flag needed.
+
       - name: Build CLI (Windows)
         if: matrix.os == 'windows-latest'
         working-directory: apps/cli

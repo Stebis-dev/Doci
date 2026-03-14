@@ -10,15 +10,15 @@ export class Logger {
 
     info(message: string | any) {
         if (typeof message !== "string") {
-            console.log(message);
+            process.stderr.write(JSON.stringify(message) + '\n');
             return;
         }
 
-        console.log(this.format("info", message));
+        process.stderr.write(this.format("info", message) + '\n');
     }
 
     warn(message: string) {
-        console.warn(this.format("warn", message));
+        process.stderr.write(this.format("warn", message) + '\n');
     }
 
     error(message: string, error?: unknown) {
