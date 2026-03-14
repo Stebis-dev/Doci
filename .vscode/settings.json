@@ -15,7 +15,7 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false, // if you want nested groups collapsed by default
   "explorer.fileNesting.patterns": {
-    "package.json": "package-lock.json, nx.json, tsconfig*.json, tsconfig.*.json, eslint*.json, eslint.*.mjs, .eslintrc*.json, jest.*.js, jest.*.ts, .prettierrc*, .prettierrc.*, .prettierignore, .dockerignore, Dockerfile*, turbo.json, pnpm-workspace.yaml, pnpm-lock.yaml, monorepo.code-workspace"
+    "package.json": "package-lock.json, nx.json, tsconfig*.json, tsconfig.*.json, eslint*.json, eslint.*.mjs, .eslintrc*.json, jest.*.js, jest.*.ts, .prettierrc*, .prettierrc.*, .prettierignore, .dockerignore, Dockerfile*, turbo.json, pnpm-workspace.yaml, pnpm-lock.yaml, monorepo.code-workspace, vitest.config.ts"
     // and you can add more patterns for other configs
   }
 }

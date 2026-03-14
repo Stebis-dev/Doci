@@ -26,6 +26,10 @@ const TSX = path.join(CLI_ROOT, 'node_modules', '.bin', 'tsx');
 /** The two known fixture files written by the Phase-6 test setup. */
 const FIXTURES = path.resolve(import.meta.dirname, 'fixtures');
 
+/** Default output path the CLI falls back to when --output is not given. */
+const DEFAULT_METADATA = path.join(CLI_ROOT, 'temp', 'metadata.json');
+const DEFAULT_INDEX = path.join(CLI_ROOT, 'temp', 'index.json');
+
 /** Temp directory used for --output tests (created once, cleaned up after). */
 let outDir: string;
 
@@ -35,6 +39,9 @@ beforeAll(() => {
 
 afterAll(() => {
     if (outDir) fs.rmSync(outDir, { recursive: true, force: true });
+    // Remove any metadata.json / index.json left at the default location
+    if (fs.existsSync(DEFAULT_METADATA)) fs.rmSync(DEFAULT_METADATA);
+    if (fs.existsSync(DEFAULT_INDEX)) fs.rmSync(DEFAULT_INDEX);
 });
 
 // ── helper ────────────────────────────────────────────────────────────────────
@@ -63,7 +70,9 @@ function runScan(args: string[]): RunResult {
 
 describe('scan pipeline — exit codes', () => {
     it('exits 0 on a successful scan (depth=file)', () => {
-        const { exitCode } = runScan(['-d', FIXTURES]);
+        // Use --output so no metadata.json is written to the default CWD location
+        const outFile = path.join(outDir, 'meta-exit0.json');
+        const { exitCode } = runScan(['-d', FIXTURES, '--output', outFile]);
         expect(exitCode).toBe(0);
     });
 

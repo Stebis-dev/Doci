@@ -2,7 +2,7 @@ import { CliError, Utils } from "utils";
 
 export class MetadataFile {
     // Placeholder for MetadataFile class implementation
-    private static _defaultMetadataPath: string = 'metadata.json';
+    private static _defaultMetadataPath: string = 'temp/metadata.json';
 
     public static setMetadataPath(path: string): void {
         this._defaultMetadataPath = path;
