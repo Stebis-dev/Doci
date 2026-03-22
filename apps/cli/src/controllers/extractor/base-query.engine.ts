@@ -2,9 +2,8 @@ import { ExtractorType } from "@doci/types";
 import { createLogger, Logger } from "utils";
 import type { Parser, Tree } from "web-tree-sitter";
 import { Query } from "web-tree-sitter";
-import type { LanguageDialect } from "./query-builder/dialects/dialect";
-import { serializeQuery } from "./query-builder/query.serializer";
-import type { TreeSitterQuery } from "./query-builder/query.types";
+import type { LanguageDialect, TreeSitterQuery } from "./query-builder/query";
+import { serializeQuery } from "./query-builder/query";
 
 export abstract class BaseQueryEngine {
     public type: ExtractorType;

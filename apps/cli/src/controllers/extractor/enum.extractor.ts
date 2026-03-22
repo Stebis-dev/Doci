@@ -1,7 +1,7 @@
 import type { EnumDetail, EnumMember, NodePosition } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { Q } from "./query-builder/query.builder";
+import { Q } from "./query-builder/query";
 
 export class EnumExtractor extends BaseQueryEngine {
     extract(tree: Tree): EnumDetail[] {

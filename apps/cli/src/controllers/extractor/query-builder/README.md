@@ -56,7 +56,7 @@ This keeps extractor logic mostly language-agnostic while allowing grammar-speci
 - `query.serializer.ts`: AST to Tree-sitter S-expression string.
 - `dialects/dialect.types.ts`: Dialect interfaces.
 - `dialects/typescript.dialect.ts`: TypeScript grammar mapping.
-- `dialects/index.ts`: Registry and lookup (`getDialect`).
+- `dialects/dialect.ts`: Registry and lookup (`getDialect`).
 - `query-builder.spec.ts`: Serialization and dialect tests.
 
 ## Core Concepts
@@ -93,14 +93,12 @@ These names are the contract between query builders and extractor parsing logic 
 ## Quick Start
 
 ```ts
-import { Q, serializeQuery, getDialect } from './query-builder';
+import { Q, serializeQuery, getDialect } from './query-builder/query';
 
 const dialect = getDialect('TypeScript');
 const d = dialect.nodes;
 
-const query = Q.query(
-  Q.node(d.comment, { capture: 'comments' })
-);
+const query = Q.query(Q.node(d.comment, { capture: 'comments' }));
 
 const queryString = serializeQuery(query);
 // -> (comment) @comments
@@ -146,10 +144,10 @@ Q.child(Q.node('required_parameter', { capture: 'param' }));
 Builds an alternatives block.
 
 ```ts
-Q.alt([
-  Q.node('class_declaration'),
-  Q.node('abstract_class_declaration')
-], 'class');
+Q.alt(
+  [Q.node('class_declaration'), Q.node('abstract_class_declaration')],
+  'class'
+);
 ```
 
 ### `Q.predicate(operator, capture, value)`
@@ -199,7 +197,7 @@ const d = dialect.nodes;
 
 const query = Q.query(
   Q.alt(
-    d.classDeclarations.map(nodeType =>
+    d.classDeclarations.map((nodeType) =>
       Q.node(nodeType, {
         fields: [
           Q.field('name', Q.node(d.typeIdentifier, { capture: 'class.name' })),
@@ -207,7 +205,7 @@ const query = Q.query(
         ],
       })
     ),
-    'class',
+    'class'
   )
 );
 ```
@@ -232,7 +230,10 @@ const query = Q.query(
     capture: 'method',
     fields: [
       Q.field('name', Q.node(d.propertyIdentifier, { capture: 'method.name' })),
-      Q.field('parameters', Q.node(d.formalParameters, { capture: 'method.params' })),
+      Q.field(
+        'parameters',
+        Q.node(d.formalParameters, { capture: 'method.params' })
+      ),
       Q.field('body', Q.node(d.statementBlock, { capture: 'method.body' })),
     ],
   })
@@ -339,10 +340,10 @@ Important: the exact node names must match that language's Tree-sitter grammar.
 
 ### Step 2: Register in dialect registry
 
-Update `dialects/index.ts`:
+Update `dialects/dialect.ts`:
 
-- Export the new dialect.
-- Add registry keys (normalized aliases) to `dialectRegistry`.
+- Export the new dialect from `dialects/dialect.ts`.
+- Add registry keys (normalized aliases) to `dialectRegistry` in that file.
 
 Example:
 
@@ -385,9 +386,12 @@ Add tests similar to `query-builder.spec.ts`:
 
 ```ts
 import type { Tree } from 'web-tree-sitter';
-import { Q, getDialect } from './query-builder';
+import { Q, getDialect } from './query-builder/query';
 
-function buildCommentMatches(tree: Tree, runTypedQuery: (tree: Tree, q: any) => any[]) {
+function buildCommentMatches(
+  tree: Tree,
+  runTypedQuery: (tree: Tree, q: any) => any[]
+) {
   const d = getDialect('TypeScript').nodes;
   const q = Q.query(Q.node(d.comment, { capture: 'comments' }));
   return runTypedQuery(tree, q);

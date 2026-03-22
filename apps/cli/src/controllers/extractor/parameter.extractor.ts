@@ -1,7 +1,7 @@
 import type { NodePosition, ParameterDetail } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { Q } from "./query-builder/query.builder";
+import { Q } from "./query-builder/query";
 
 /** Extracts all parameters across all function/method declarations. */
 export class ParameterExtractor extends BaseQueryEngine {

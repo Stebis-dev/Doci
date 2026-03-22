@@ -3,7 +3,7 @@
  * node type strings used by a particular tree-sitter grammar.
  *
  * Adding support for a new language means implementing this interface and
- * registering the dialect in `dialects/index.ts`.
+ * registering the dialect in `dialects/dialect.ts`.
  */
 export interface LanguageDialectNodes {
     /**

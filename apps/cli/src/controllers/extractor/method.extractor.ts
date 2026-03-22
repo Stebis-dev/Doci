@@ -2,8 +2,8 @@ import type { MethodDetail, NodePosition, ParameterDetail } from "@doci/types";
 import { randomUUID } from "crypto";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { Q } from "./query-builder/query.builder";
-import type { TreeSitterQuery } from "./query-builder/query.types";
+import type { TreeSitterQuery } from "./query-builder/query";
+import { Q } from "./query-builder/query";
 
 /**
  * Extracts methods (class methods + standalone function declarations)

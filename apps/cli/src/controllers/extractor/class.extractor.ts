@@ -2,7 +2,7 @@ import type { ClassTemporaryDetail, NodePosition } from "@doci/types";
 import { randomUUID } from "crypto";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
-import { Q } from "./query-builder/query.builder";
+import { Q } from "./query-builder/query";
 
 /**
  * Extracts class declarations using the TypeScript tree-sitter grammar.
