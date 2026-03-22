@@ -1,18 +1,22 @@
 import type { EnumDetail, EnumMember, NodePosition } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
+import { Q } from "./query-builder/query.builder";
 
 export class EnumExtractor extends BaseQueryEngine {
     extract(tree: Tree): EnumDetail[] {
-        // TypeScript enum declaration
-        const query = `
-            (enum_declaration
-                name: (identifier) @enum.name
-                body: (enum_body) @enum.body
-            ) @enum
-        `;
+        const d = this.dialect.nodes;
+        const query = Q.query(
+            Q.node(d.enumDeclaration, {
+                capture: 'enum',
+                fields: [
+                    Q.field('name', Q.node(d.identifier, { capture: 'enum.name' })),
+                    Q.field('body', Q.node(d.enumBody, { capture: 'enum.body' })),
+                ],
+            })
+        );
 
-        const matches = this.runQuery(tree, query) as { captures: any[] }[];
+        const matches = this.runTypedQuery(tree, query) as { captures: any[] }[];
         const map = new Map<string, EnumDetail>();
 
         for (const match of matches) {

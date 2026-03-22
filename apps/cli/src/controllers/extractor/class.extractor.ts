@@ -2,6 +2,7 @@ import type { ClassTemporaryDetail, NodePosition } from "@doci/types";
 import { randomUUID } from "crypto";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
+import { Q } from "./query-builder/query.builder";
 
 /**
  * Extracts class declarations using the TypeScript tree-sitter grammar.
@@ -9,22 +10,22 @@ import { BaseQueryEngine } from "./base-query.engine";
  */
 export class ClassExtractor extends BaseQueryEngine {
     extract(tree: Tree): ClassTemporaryDetail[] {
-        // TypeScript grammar uses `type_identifier` for class names.
-        // Abstract classes use `abstract_class_declaration` — both are captured here.
-        const query = `
-            [
-              (class_declaration
-                  name: (type_identifier) @class.name
-                  body: (class_body) @class.body
-              )
-              (abstract_class_declaration
-                  name: (type_identifier) @class.name
-                  body: (class_body) @class.body
-              )
-            ] @class
-        `;
+        const d = this.dialect.nodes;
+        const query = Q.query(
+            Q.alt(
+                d.classDeclarations.map(nodeType =>
+                    Q.node(nodeType, {
+                        fields: [
+                            Q.field('name', Q.node(d.typeIdentifier, { capture: 'class.name' })),
+                            Q.field('body', Q.node(d.classBody, { capture: 'class.body' })),
+                        ],
+                    })
+                ),
+                'class',
+            )
+        );
 
-        const matches = this.runQuery(tree, query);
+        const matches = this.runTypedQuery(tree, query);
         const classMap = new Map<string, ClassTemporaryDetail>();
 
         for (const match of matches as { captures: any[] }[]) {

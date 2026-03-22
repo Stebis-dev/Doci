@@ -91,7 +91,7 @@ export class ExtractionOrchestrator {
                 return { symbols: null, status: 'failed', error: 'Underlying TreeSitterParser unavailable' };
             }
 
-            const symbols = extractDetails(tree, treeParser, filePath, depth);
+            const symbols = extractDetails(tree, treeParser, filePath, language, depth);
             return { symbols, status: 'processed', error: null };
 
         } catch (err) {

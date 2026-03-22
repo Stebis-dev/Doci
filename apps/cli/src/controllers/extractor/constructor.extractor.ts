@@ -1,25 +1,30 @@
 import type { ConstructorMethodDetail, NodePosition, ParameterDetail } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
+import { Q } from "./query-builder/query.builder";
 
 export class ConstructorExtractor extends BaseQueryEngine {
     extract(tree: Tree): ConstructorMethodDetail[] {
-        const query = `
-            (method_definition
-                name: (property_identifier) @constructor.name
-                parameters: (formal_parameters) @constructor.params
-                body: (statement_block) @constructor.body
-            ) @constructor
-        `;
+        const d = this.dialect.nodes;
+        const query = Q.query(
+            Q.node(d.methodDefinition, {
+                capture: 'constructor',
+                fields: [
+                    Q.field('name', Q.node(d.propertyIdentifier, { capture: 'constructor.name' })),
+                    Q.field('parameters', Q.node(d.formalParameters, { capture: 'constructor.params' })),
+                    Q.field('body', Q.node(d.statementBlock, { capture: 'constructor.body' })),
+                ],
+            })
+        );
 
-        const matches = this.runQuery(tree, query) as { captures: any[] }[];
+        const matches = this.runTypedQuery(tree, query) as { captures: any[] }[];
         const map = new Map<string, ConstructorMethodDetail>();
 
         for (const match of matches) {
             const nameCapture = match.captures.find(c => c.name === 'constructor.name');
             const bodyCapture = match.captures.find(c => c.name === 'constructor.body');
             const paramsCapture = match.captures.find(c => c.name === 'constructor.params');
-            if (!nameCapture || nameCapture.node.text !== 'constructor') continue;
+            if (!nameCapture || nameCapture.node.text !== d.constructorName) continue;
 
             const key = `${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
             if (map.has(key)) continue;
