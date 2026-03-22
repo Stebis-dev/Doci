@@ -1,11 +1,14 @@
 import type { Details, NodePosition } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
+import { Q } from "./query-builder/query";
 
 export class CommentsExtractor extends BaseQueryEngine {
     extract(tree: Tree): Details[] {
-        const query = `(comment) @comments`;
-        const matches = this.runQuery(tree, query) as { captures: any[] }[];
+        const query = Q.query(
+            Q.node(this.dialect.nodes.comment, { capture: 'comments' })
+        );
+        const matches = this.runTypedQuery(tree, query) as { captures: any[] }[];
         const map = new Map<string, Details>();
 
         for (const match of matches) {

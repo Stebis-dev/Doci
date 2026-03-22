@@ -8,6 +8,7 @@ import { EnumExtractor } from "controllers/extractor/enum.extractor";
 import { MethodExtractor } from "controllers/extractor/method.extractor";
 import { ParameterExtractor } from "controllers/extractor/parameter.extractor";
 import { PropertyExtractor } from "controllers/extractor/property.extractor";
+import { getDialect } from "controllers/extractor/query-builder/query";
 import { createLogger } from "utils";
 import type { Parser, Tree } from "web-tree-sitter";
 
@@ -20,25 +21,29 @@ const logger = createLogger('ExtractDetails');
  * @param ast       - Parsed Tree from web-tree-sitter
  * @param parser    - The underlying web-tree-sitter Parser (with language set)
  * @param filePath  - Absolute path to the source file (stored in the result)
+ * @param language  - Language display name (e.g. "TypeScript") used to select
+ *                    the appropriate query dialect
  * @param depth     - Extraction depth; 'symbols' skips body text, 'full' includes it
  */
 export function extractDetails(
     ast: Tree,
     parser: Parser,
     filePath: string,
+    language: string,
     depth: ScanDepth = ScanDepth.SYMBOLS,
 ): ExtractedDetails {
     const result: ExtractedDetails = { filePath };
+    const dialect = getDialect(language);
 
     const extractors = [
-        { type: ExtractorType.Class, instance: new ClassExtractor(parser, ExtractorType.Class) },
-        { type: ExtractorType.Property, instance: new PropertyExtractor(parser, ExtractorType.Property) },
-        { type: ExtractorType.Method, instance: new MethodExtractor(parser, ExtractorType.Method) },
-        { type: ExtractorType.Constructor, instance: new ConstructorExtractor(parser, ExtractorType.Constructor) },
-        { type: ExtractorType.Enum, instance: new EnumExtractor(parser, ExtractorType.Enum) },
-        { type: ExtractorType.Parameter, instance: new ParameterExtractor(parser, ExtractorType.Parameter) },
+        { type: ExtractorType.Class, instance: new ClassExtractor(parser, ExtractorType.Class, dialect) },
+        { type: ExtractorType.Property, instance: new PropertyExtractor(parser, ExtractorType.Property, dialect) },
+        { type: ExtractorType.Method, instance: new MethodExtractor(parser, ExtractorType.Method, dialect) },
+        { type: ExtractorType.Constructor, instance: new ConstructorExtractor(parser, ExtractorType.Constructor, dialect) },
+        { type: ExtractorType.Enum, instance: new EnumExtractor(parser, ExtractorType.Enum, dialect) },
+        { type: ExtractorType.Parameter, instance: new ParameterExtractor(parser, ExtractorType.Parameter, dialect) },
         ...(depth === ScanDepth.FULL
-            ? [{ type: ExtractorType.Comments, instance: new CommentsExtractor(parser, ExtractorType.Comments) }]
+            ? [{ type: ExtractorType.Comments, instance: new CommentsExtractor(parser, ExtractorType.Comments, dialect) }]
             : []),
     ];
 

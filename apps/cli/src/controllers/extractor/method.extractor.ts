@@ -2,36 +2,38 @@ import type { MethodDetail, NodePosition, ParameterDetail } from "@doci/types";
 import { randomUUID } from "crypto";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
+import type { TreeSitterQuery } from "./query-builder/query";
+import { Q } from "./query-builder/query";
 
 /**
  * Extracts methods (class methods + standalone function declarations)
  * using the TypeScript/JavaScript tree-sitter grammar.
- * Constructor methods are excluded — use ConstructorExtractor for those.
+ * Constructor methods are excluded â€” use ConstructorExtractor for those.
  */
 export class MethodExtractor extends BaseQueryEngine {
     extract(tree: Tree): MethodDetail[] {
+        const d = this.dialect.nodes;
         const methodMap = new Map<string, MethodDetail>();
 
-        // Class methods
-        const classMethodQuery = `
-            (method_definition
-                name: (property_identifier) @method.name
-                parameters: (formal_parameters) @method.params
-                body: (statement_block) @method.body
-            ) @method
-        `;
+        const buildQuery = (nodeType: string, nameNodeType: string): TreeSitterQuery =>
+            Q.query(
+                Q.node(nodeType, {
+                    capture: 'method',
+                    fields: [
+                        Q.field('name', Q.node(nameNodeType, { capture: 'method.name' })),
+                        Q.field('parameters', Q.node(d.formalParameters, { capture: 'method.params' })),
+                        Q.field('body', Q.node(d.statementBlock, { capture: 'method.body' })),
+                    ],
+                })
+            );
 
-        // Standalone function declarations
-        const funcDeclQuery = `
-            (function_declaration
-                name: (identifier) @method.name
-                parameters: (formal_parameters) @method.params
-                body: (statement_block) @method.body
-            ) @method
-        `;
+        const queries: TreeSitterQuery[] = [
+            buildQuery(d.methodDefinition, d.propertyIdentifier),
+            buildQuery(d.functionDeclaration, d.identifier),
+        ];
 
-        for (const queryStr of [classMethodQuery, funcDeclQuery]) {
-            const matches = this.runQuery(tree, queryStr) as { captures: any[] }[];
+        for (const query of queries) {
+            const matches = this.runTypedQuery(tree, query) as { captures: any[] }[];
 
             for (const match of matches) {
                 const nameCapture = match.captures.find(c => c.name === 'method.name');
@@ -40,8 +42,8 @@ export class MethodExtractor extends BaseQueryEngine {
                 const paramsCapture = match.captures.find(c => c.name === 'method.params');
                 if (!nameCapture) continue;
 
-                // Skip constructors — handled by ConstructorExtractor
-                if (nameCapture.node.text === 'constructor') continue;
+                // Skip constructors â€” handled by ConstructorExtractor
+                if (nameCapture.node.text === d.constructorName) continue;
 
                 const key = `${nameCapture.node.text}-${nameCapture.node.startPosition.row}-${nameCapture.node.startPosition.column}`;
                 if (methodMap.has(key)) continue;

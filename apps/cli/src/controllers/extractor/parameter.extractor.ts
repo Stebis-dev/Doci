@@ -1,18 +1,22 @@
 import type { NodePosition, ParameterDetail } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
+import { Q } from "./query-builder/query";
 
 /** Extracts all parameters across all function/method declarations. */
 export class ParameterExtractor extends BaseQueryEngine {
     extract(tree: Tree): ParameterDetail[] {
-        const query = `
-            (formal_parameters
-                (required_parameter) @param
-                (optional_parameter) @param
-            )
-        `;
+        const d = this.dialect.nodes;
+        const query = Q.query(
+            Q.node(d.formalParameters, {
+                anonymousChildren: [
+                    Q.child(Q.node(d.requiredParameter, { capture: 'param' })),
+                    Q.child(Q.node(d.optionalParameter, { capture: 'param' })),
+                ],
+            })
+        );
 
-        const matches = this.runQuery(tree, query) as { captures: any[] }[];
+        const matches = this.runTypedQuery(tree, query) as { captures: any[] }[];
         const map = new Map<string, ParameterDetail>();
 
         for (const match of matches) {

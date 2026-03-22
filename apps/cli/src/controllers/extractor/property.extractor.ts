@@ -1,17 +1,26 @@
 import type { NodePosition, PropertyDetail } from "@doci/types";
 import type { Tree } from "web-tree-sitter";
 import { BaseQueryEngine } from "./base-query.engine";
+import { Q } from "./query-builder/query";
 
 export class PropertyExtractor extends BaseQueryEngine {
     extract(tree: Tree): PropertyDetail[] {
-        // TypeScript class fields: public/private/protected/readonly field definitions
-        const query = `
-            (public_field_definition
-                name: (property_identifier) @property.name
-            ) @property
-        `;
+        const d = this.dialect.nodes;
+        // Handles all property definition variants (e.g. public/private/protected fields)
+        const query = Q.query(
+            Q.alt(
+                d.propertyDefinitions.map(nodeType =>
+                    Q.node(nodeType, {
+                        fields: [
+                            Q.field('name', Q.node(d.propertyIdentifier, { capture: 'property.name' })),
+                        ],
+                    })
+                ),
+                'property',
+            )
+        );
 
-        const matches = this.runQuery(tree, query) as { captures: any[] }[];
+        const matches = this.runTypedQuery(tree, query) as { captures: any[] }[];
         const map = new Map<string, PropertyDetail>();
 
         for (const match of matches) {
