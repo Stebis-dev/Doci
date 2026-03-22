@@ -8,7 +8,7 @@ import { EnumExtractor } from "controllers/extractor/enum.extractor";
 import { MethodExtractor } from "controllers/extractor/method.extractor";
 import { ParameterExtractor } from "controllers/extractor/parameter.extractor";
 import { PropertyExtractor } from "controllers/extractor/property.extractor";
-import { getDialect } from "controllers/extractor/query-builder/dialects/index";
+import { getDialect } from "controllers/extractor/query-builder/dialects/dialect";
 import { createLogger } from "utils";
 import type { Parser, Tree } from "web-tree-sitter";
 

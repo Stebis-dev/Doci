@@ -225,20 +225,20 @@ describe('serializeQuery — matches extractor grammar', () => {
 
 describe('getDialect', () => {
     it('returns TypeScriptDialect for "TypeScript"', async () => {
-        const { getDialect } = await import('./dialects/index');
+        const { getDialect } = await import('./dialects/dialect');
         const dialect = getDialect('TypeScript');
         expect(dialect.language).toBe('typescript');
         expect(dialect.nodes.classDeclarations).toContain('class_declaration');
     });
 
     it('returns TypeScriptDialect for "javascript"', async () => {
-        const { getDialect } = await import('./dialects/index');
+        const { getDialect } = await import('./dialects/dialect');
         const dialect = getDialect('javascript');
         expect(dialect.nodes.comment).toBe('comment');
     });
 
     it('throws for unknown language', async () => {
-        const { getDialect } = await import('./dialects/index');
+        const { getDialect } = await import('./dialects/dialect');
         expect(() => getDialect('C#')).toThrow(/No dialect registered/);
     });
 });

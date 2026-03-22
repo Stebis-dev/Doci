@@ -1,5 +1,5 @@
-export { getDialect, TypeScriptDialect } from './dialects/index';
-export type { LanguageDialect, LanguageDialectNodes } from './dialects/index';
+export { getDialect, TypeScriptDialect } from './dialects/dialect';
+export type { LanguageDialect, LanguageDialectNodes } from './dialects/dialect';
 export { Q } from './query.builder';
 export type { QueryNodeOptions } from './query.builder';
 export { serializePattern, serializeQuery } from './query.serializer';
