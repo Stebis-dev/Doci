@@ -53,8 +53,16 @@ function serializeAlternation(a: QueryAlternation): string {
     return appendCapture(`[\n${parts.join('\n')}\n]`, a.capture);
 }
 
+function escapePredicateValue(value: string): string {
+    return value
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"')
+        .replace(/\r/g, '\\r')
+        .replace(/\n/g, '\\n');
+}
 function serializePredicate(p: QueryPredicate): string {
-    return `(${p.operator} @${p.capture} "${p.value}")`;
+    const escapedValue = escapePredicateValue(p.value);
+    return `(${p.operator} @${p.capture} "${escapedValue}")`;
 }
 
 function appendCapture(s: string, capture?: string): string {
